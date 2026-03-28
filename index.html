@@ -1,1814 +1,1429 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DiamondPages.ai — Internal Dashboard</title>
+  <title>DiamondPages.ai — Local SEO That Actually Works</title>
+  <meta name="description" content="AI-powered local SEO for small businesses. Rank #1 on Google Maps. No contracts. Results in 45 days or we work for free."/>
+  <meta name="theme-color" content="#0d9488"/>
   <style>
     :root {
-      --bg: #09090b;
-      --surface: #111113;
-      --elevated: #18181b;
-      --border: rgba(255,255,255,0.07);
-      --text: #f4f4f5;
-      --muted: #71717a;
-      --subtle: #3f3f46;
-      --accent: #6366f1;
-      --accent-dim: rgba(99,102,241,0.12);
-      --green: #22c55e;
-      --green-dim: rgba(34,197,94,0.12);
-      --yellow: #eab308;
-      --yellow-dim: rgba(234,179,8,0.12);
-      --red: #ef4444;
-      --red-dim: rgba(239,68,68,0.12);
-      --blue: #3b82f6;
-      --blue-dim: rgba(59,130,246,0.12);
-      --purple: #a855f7;
-      --purple-dim: rgba(168,85,247,0.12);
-      --orange: #f97316;
-      --orange-dim: rgba(249,115,22,0.12);
+      --blue: #0d9488;      /* teal-600 */
+      --blue2: #14b8a6;     /* teal-500 */
+      --blue-dim: rgba(13,148,136,0.08);
+      --blue-glow: rgba(13,148,136,0.2);
+      --green: #16a34a;
+      --green-dim: rgba(22,163,74,0.08);
+      --yellow: #d97706;
+      --bg: #f8fafc;
+      --bg2: #f1f5f9;
+      --surface: #ffffff;
+      --elevated: #f8fafc;
+      --border: rgba(0,0,0,0.07);
+      --text: #0f172a;
+      --text2: #475569;
+      --muted: #94a3b8;
+      --radius: 16px;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
-      display: flex;
+      overflow-x: hidden;
     }
 
-    /* SIDEBAR */
-    .sidebar {
-      width: 240px;
-      min-height: 100vh;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 0;
+    /* ══ ANIMATIONS ══ */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(28px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity:0; }
+      to   { opacity:1; }
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0px); }
+      50%      { transform: translateY(-10px); }
+    }
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 var(--blue-glow); }
+      70%  { box-shadow: 0 0 0 20px rgba(13,148,136,0); }
+      100% { box-shadow: 0 0 0 0 rgba(13,148,136,0); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes countUp {
+      from { opacity:0; transform:scale(0.8); }
+      to   { opacity:1; transform:scale(1); }
+    }
+    @keyframes gradient-shift {
+      0%,100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+
+    /* ══ NAV ══ */
+    nav {
       position: fixed;
-      top: 0; left: 0; bottom: 0;
-      z-index: 10;
-    }
-
-    .sidebar-logo {
-      padding: 24px 20px 20px;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(248,250,252,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
+      transition: all .3s;
     }
-
-    .logo-mark {
+    nav.scrolled {
+      background: rgba(248,250,252,0.97);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .nav-logo {
       display: flex;
       align-items: center;
       gap: 10px;
+      text-decoration: none;
     }
-
-    .logo-icon {
-      width: 32px; height: 32px;
-      background: linear-gradient(135deg, var(--accent), var(--purple));
-      border-radius: 8px;
+    .nav-logo-icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
+      font-size: 17px;
+      box-shadow: 0 0 20px var(--blue-glow);
     }
-
-    .logo-text {
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .logo-sub {
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 1px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    .sidebar-nav {
-      flex: 1;
-      padding: 16px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .nav-section {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      padding: 8px 8px 4px;
-      margin-top: 8px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 13.5px;
-      color: var(--muted);
-      transition: all 0.15s;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
-    }
-
-    .nav-item:hover {
-      background: var(--elevated);
+    .nav-logo-text {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -.03em;
       color: var(--text);
     }
-
-    .nav-item.active {
-      background: var(--accent-dim);
-      color: var(--accent);
-    }
-
-    .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
-
-    .sidebar-footer {
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .status-dot {
-      display: inline-block;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--green);
-      margin-right: 6px;
-      box-shadow: 0 0 6px var(--green);
-    }
-
-    /* MAIN */
-    .main {
-      margin-left: 240px;
-      flex: 1;
-      min-height: 100vh;
-    }
-
-    .topbar {
-      height: 56px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+    .nav-logo-text span { color: var(--blue2); }
+    .nav-links {
       display: flex;
       align-items: center;
-      padding: 0 28px;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 5;
+      gap: 28px;
+      list-style: none;
     }
-
-    .page-title {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-    }
-
-    .page-sub {
-      font-size: 12px;
-      color: var(--muted);
-      margin-left: auto;
-    }
-
-    .content {
-      padding: 28px;
-    }
-
-    /* PAGES */
-    .page { display: none; }
-    .page.active { display: block; }
-
-    /* CARDS */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 24px;
-    }
-
-    .card-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 16px;
-    }
-
-    /* GRID */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-    .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
-
-    /* BADGES */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 11px;
+    .nav-links a {
+      font-size: 13.5px;
       font-weight: 500;
-      padding: 3px 8px;
+      color: var(--text2);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-nav {
+      padding: 9px 20px;
       border-radius: 99px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .15s;
+      border: none;
     }
-
-    .badge-green { background: var(--green-dim); color: var(--green); }
-    .badge-yellow { background: var(--yellow-dim); color: var(--yellow); }
-    .badge-red { background: var(--red-dim); color: var(--red); }
-    .badge-blue { background: var(--blue-dim); color: var(--blue); }
-    .badge-purple { background: var(--purple-dim); color: var(--purple); }
-    .badge-orange { background: var(--orange-dim); color: var(--orange); }
-    .badge-accent { background: var(--accent-dim); color: var(--accent); }
-    .badge-muted { background: rgba(113,113,122,0.15); color: var(--muted); }
-
-    /* ═══════════════════════════════
-       AGENT STACK PAGE
-    ═══════════════════════════════ */
-
-    .agent-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 16px;
-      margin-top: 4px;
-    }
-
-    .agent-card {
-      background: var(--surface);
+    .btn-nav-ghost {
+      background: transparent;
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 22px;
-      transition: border-color 0.2s;
+      color: var(--text2);
+    }
+    .btn-nav-ghost:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-nav-primary {
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 4px 16px var(--blue-glow);
+    }
+    .btn-nav-primary:hover {
+      background: var(--blue2);
+      box-shadow: 0 6px 24px var(--blue-glow);
+      transform: translateY(-1px);
+    }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--text2);
+      border-radius: 2px;
+      transition: all .2s;
+    }
+
+    /* Mobile nav dropdown */
+    .mobile-nav-panel {
+      display: none;
+      position: fixed;
+      top: 64px;
+      left: 0; right: 0;
+      z-index: 99;
+      background: rgba(248,250,252,0.98);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      padding: 16px 20px 20px;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .mobile-nav-panel.open { display: flex; }
+    .mobile-nav-panel a {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text2);
+      text-decoration: none;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      transition: color .15s;
+    }
+    .mobile-nav-panel a:last-child { border-bottom: none; }
+    .mobile-nav-panel a:hover { color: var(--blue); }
+    .mobile-nav-panel .mobile-nav-cta {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-nav-panel .mobile-nav-cta a {
+      border-bottom: none;
+      text-align: center;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+    .mobile-nav-panel .mobile-nav-cta .mob-ghost {
+      border: 1px solid var(--border);
+      color: var(--text2);
+    }
+    .mobile-nav-panel .mobile-nav-cta .mob-primary {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    /* ══ HERO ══ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 24px 60px;
       position: relative;
       overflow: hidden;
     }
 
-    .agent-card::before {
-      content: '';
+    .hero-bg {
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(13,148,136,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(20,184,166,0.05) 0%, transparent 60%);
+      pointer-events: none;
     }
 
-    .agent-card.lucy::before { background: linear-gradient(90deg, #6366f1, #a855f7); }
-    .agent-card.tanya::before { background: linear-gradient(90deg, #ec4899, #f97316); }
-    .agent-card.marcus::before { background: linear-gradient(90deg, #3b82f6, #22c55e); }
-    .agent-card.diana::before { background: linear-gradient(90deg, #f59e0b, #ef4444); }
-    .agent-card.felix::before { background: linear-gradient(90deg, #10b981, #3b82f6); }
-
-    .agent-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 16px;
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
     }
 
-    .agent-avatar {
-      width: 48px; height: 48px;
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
-      flex-shrink: 0;
-    }
-
-    .lucy .agent-avatar { background: linear-gradient(135deg, #6366f1, #a855f7); }
-    .tanya .agent-avatar { background: linear-gradient(135deg, #ec4899, #f97316); }
-    .marcus .agent-avatar { background: linear-gradient(135deg, #3b82f6, #22c55e); }
-    .diana .agent-avatar { background: linear-gradient(135deg, #f59e0b, #ef4444); }
-    .felix .agent-avatar { background: linear-gradient(135deg, #10b981, #3b82f6); }
-
-    .agent-info { flex: 1; }
-
-    .agent-name {
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 2px;
-    }
-
-    .agent-role {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .agent-status {
-      display: flex;
+    .hero-badge {
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: var(--green);
-      margin-top: 4px;
-    }
-
-    .agent-section {
-      margin-bottom: 14px;
-    }
-
-    .agent-section-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-
-    .duty-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .duty-list li {
-      display: flex;
-      align-items: flex-start;
       gap: 8px;
-      font-size: 12.5px;
-      color: #a1a1aa;
-      line-height: 1.4;
-    }
-
-    .duty-list li::before {
-      content: '→';
-      color: var(--subtle);
-      flex-shrink: 0;
-      margin-top: 0px;
-    }
-
-    .tools-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-    }
-
-    .tool-tag {
-      font-size: 10.5px;
-      padding: 2px 8px;
-      border-radius: 5px;
-      background: var(--elevated);
-      color: var(--muted);
-      border: 1px solid var(--border);
-    }
-
-    .reports-to {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11.5px;
-      color: var(--muted);
-      padding: 8px 12px;
-      background: var(--elevated);
-      border-radius: 8px;
-      border: 1px solid var(--border);
-    }
-
-    /* ═══════════════════════════════
-       OPS & DEV TASKS PAGE
-    ═══════════════════════════════ */
-
-    .tasks-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-
-    .tasks-stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 18px;
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 6px;
-    }
-
-    .stat-value {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-    }
-
-    .task-columns {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    .task-col {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-    }
-
-    .task-col-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .task-col-title {
-      font-size: 12px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .task-col-count {
-      font-size: 11px;
-      color: var(--muted);
-      background: var(--elevated);
-      padding: 2px 7px;
+      background: var(--blue-dim);
+      border: 1px solid rgba(13,148,136,0.25);
       border-radius: 99px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--blue);
+      margin-bottom: 24px;
+      animation: fadeUp .6s ease both;
     }
 
-    .task-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .task-item {
-      background: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      padding: 12px 14px;
-      cursor: pointer;
-      transition: border-color 0.15s;
-    }
-
-    .task-item:hover {
-      border-color: var(--subtle);
-    }
-
-    .task-item-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .task-title {
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1.35;
-    }
-
-    .task-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .task-owner {
-      font-size: 10.5px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .task-priority {
+    .hero-badge-dot {
       width: 6px; height: 6px;
       border-radius: 50%;
-      flex-shrink: 0;
-      margin-top: 3px;
+      background: var(--blue2);
+      animation: pulse-ring 2s infinite;
     }
 
-    .priority-high { background: var(--red); box-shadow: 0 0 5px var(--red); }
-    .priority-med { background: var(--yellow); }
-    .priority-low { background: var(--muted); }
-
-    /* OVERVIEW PAGE */
-    .overview-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 16px;
+    .hero-title {
+      font-size: clamp(28px, 5vw, 64px);
+      font-weight: 900;
+      letter-spacing: -.04em;
+      line-height: 1.05;
+      margin-bottom: 24px;
+      animation: fadeUp .6s .1s ease both;
+      max-width: 900px;
     }
 
-    .agency-hero {
-      background: linear-gradient(135deg, var(--accent-dim), var(--purple-dim));
-      border: 1px solid rgba(99,102,241,0.2);
-      border-radius: 14px;
-      padding: 28px;
-      margin-bottom: 20px;
-    }
-
-    .agency-name {
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      background: linear-gradient(135deg, #fff, #a1a1aa);
+    .hero-title .gradient-text {
+      background: linear-gradient(135deg, var(--blue), var(--blue2), #5eead4);
+      background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 4px;
+      animation: gradient-shift 4s ease infinite;
     }
 
-    .agency-tagline {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 20px;
+    .hero-sub {
+      font-size: clamp(15px, 2.5vw, 20px);
+      color: var(--text2);
+      max-width: 600px;
+      line-height: 1.65;
+      margin-bottom: 40px;
+      animation: fadeUp .6s .2s ease both;
     }
 
-    .agency-stats {
+    .hero-ctas {
       display: flex;
-      gap: 24px;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 56px;
+      animation: fadeUp .6s .3s ease both;
     }
 
-    .agency-stat {
-      text-align: left;
-    }
-
-    .agency-stat-val {
-      font-size: 22px;
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 32px;
+      background: var(--blue);
+      color: #fff;
+      border-radius: 99px;
+      font-size: 15px;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 30px var(--blue-glow);
+      transition: all .2s;
+    }
+    .btn-primary:hover {
+      background: var(--blue2);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px var(--blue-glow);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 28px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      border-radius: 99px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-ghost:hover {
+      border-color: var(--blue);
+      color: var(--blue);
     }
 
-    .agency-stat-lbl {
-      font-size: 11px;
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp .6s .4s ease both;
+    }
+    .hero-stat-item { text-align: center; }
+    .hero-stat-val {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -.03em;
+      color: var(--blue);
+    }
+    .hero-stat-lbl {
+      font-size: 12px;
       color: var(--muted);
       margin-top: 2px;
     }
+    .hero-stat-div { width: 1px; height: 40px; background: var(--border); align-self: center; }
 
-    .team-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .team-member {
-      display: flex;
+    /* ══ SECTIONS ══ */
+    section { padding: 96px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px;
-      background: var(--elevated);
-      border-radius: 9px;
-      border: 1px solid var(--border);
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--blue);
+      margin-bottom: 14px;
     }
-
-    .member-ava {
-      width: 36px; height: 36px;
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
+    .section-title {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900;
+      letter-spacing: -.03em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .section-sub {
       font-size: 17px;
+      color: var(--text2);
+      max-width: 580px;
+      line-height: 1.65;
+      margin-bottom: 56px;
+    }
+    .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+
+    /* ══ PROBLEM SECTION ══ */
+    .problem-section { background: #ffffff; }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .problem-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .problem-icon { font-size: 32px; margin-bottom: 14px; }
+    .problem-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .problem-desc { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+    /* ══ HOW IT WORKS ══ */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      position: relative;
+    }
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 36px;
+      left: calc(16.67% + 20px);
+      right: calc(16.67% + 20px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--blue), transparent 50%, var(--blue));
+      opacity: .3;
+    }
+    .step-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .step-num {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+      margin: 0 auto 18px;
+      box-shadow: 0 8px 24px var(--blue-glow);
+      position: relative;
+      z-index: 1;
+    }
+    .step-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .step-desc { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+    /* ══ SERVICES ══ */
+    .services-section { background: #f8fafc; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .service-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      transition: border-color .2s, transform .2s;
+    }
+    .service-card:hover {
+      border-color: var(--blue);
+      transform: translateY(-2px);
+    }
+    .service-card-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: var(--blue-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
       flex-shrink: 0;
     }
+    .service-card-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .service-card-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
 
-    .member-name { font-size: 13px; font-weight: 600; }
-    .member-role { font-size: 11px; color: var(--muted); }
-
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 24px 0;
+    /* ══ RESULTS TIMELINE ══ */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      max-width: 680px;
+      margin: 0 auto;
+      position: relative;
     }
-
-    h2 {
-      font-size: 20px;
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 23px;
+      top: 24px;
+      bottom: 24px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--blue), rgba(13,148,136,0.1));
+    }
+    .timeline-item {
+      display: flex;
+      gap: 24px;
+      padding-bottom: 36px;
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-dot {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 0 4px var(--bg);
+    }
+    .timeline-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      flex: 1;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .timeline-when {
+      font-size: 11px;
+      color: var(--blue);
       font-weight: 700;
-      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      letter-spacing: .08em;
       margin-bottom: 4px;
     }
+    .timeline-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .timeline-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
 
-    .section-desc {
-      font-size: 13px;
+    /* ══ PRICING ══ */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+    .pricing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      position: relative;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      transition: transform .2s;
+    }
+    .pricing-card:hover { transform: translateY(-4px); }
+    .pricing-card.featured {
+      border-color: var(--blue);
+      background: linear-gradient(135deg, rgba(13,148,136,0.06), var(--surface));
+      box-shadow: 0 0 0 1px var(--blue), 0 20px 60px rgba(13,148,136,0.15);
+    }
+    .pricing-card.featured::before {
+      content: '★ Most Popular';
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--blue);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 16px;
+      border-radius: 99px;
+      white-space: nowrap;
+      letter-spacing: .04em;
+    }
+    .pricing-tier { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--blue); margin-bottom: 8px; }
+    .pricing-price { font-size: 42px; font-weight: 900; letter-spacing: -.04em; margin-bottom: 4px; }
+    .pricing-price span { font-size: 16px; font-weight: 500; color: var(--muted); }
+    .pricing-desc { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+    .pricing-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .pricing-features li {
+      display: flex;
+      gap: 10px;
+      font-size: 13.5px;
+      color: var(--text2);
+    }
+    .pricing-features li::before { content: '✓'; color: var(--blue); font-weight: 700; }
+    .pricing-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .pricing-btn-primary { background: var(--blue); color: #fff; box-shadow: 0 4px 20px var(--blue-glow); }
+    .pricing-btn-primary:hover { background: var(--blue2); }
+    .pricing-btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text2); }
+    .pricing-btn-ghost:hover { border-color: var(--blue); color: var(--blue); }
+    .pricing-no-contract { font-size: 11px; color: var(--muted); text-align: center; margin-top: 10px; }
+
+    /* ══ COMPARISON ══ */
+    .vs-section { background: #ffffff; }
+    .vs-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .vs-table th {
+      padding: 12px 16px;
+      text-align: center;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
       color: var(--muted);
-      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .vs-table th.us {
+      color: var(--blue);
+      background: rgba(13,148,136,0.06);
+      border-radius: 12px 12px 0 0;
+    }
+    .vs-table th:first-child { text-align: left; }
+    .vs-table td {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      color: var(--text2);
+    }
+    .vs-table td:first-child { text-align: left; font-weight: 500; color: var(--text); }
+    .vs-table td.us { background: rgba(13,148,136,0.04); font-weight: 700; color: var(--blue); }
+    .vs-yes { color: #16a34a; font-size: 16px; }
+    .vs-no  { color: #cbd5e1; font-size: 16px; }
+    .vs-price-us { color: var(--blue); font-weight: 800; font-size: 15px; }
+    .vs-price-them { color: var(--muted); }
+
+    /* ══ SOCIAL PROOF ══ */
+    .proof-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .proof-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .proof-stars { color: #f59e0b; font-size: 14px; margin-bottom: 12px; }
+    .proof-quote { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
+    .proof-author { display: flex; align-items: center; gap: 12px; }
+    .proof-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--blue-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .proof-name { font-size: 13px; font-weight: 700; }
+    .proof-biz { font-size: 11px; color: var(--muted); }
+    .proof-result {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-dim);
+      border: 1px solid rgba(22,163,74,.2);
+      border-radius: 99px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green);
+      margin-top: 12px;
     }
 
-    .add-task-btn {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
+    /* ══ CTA SECTION ══ */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(13,148,136,0.07), rgba(20,184,166,0.04));
+      border-top: 1px solid rgba(13,148,136,0.15);
+      border-bottom: 1px solid rgba(13,148,136,0.15);
+      text-align: center;
+      padding: 96px 24px;
+    }
+    .cta-title {
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 900;
+      letter-spacing: -.04em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .cta-sub { font-size: 17px; color: var(--text2); max-width: 500px; margin: 0 auto 40px; line-height: 1.6; }
+    .cta-trust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    .cta-trust-item {
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: opacity 0.15s;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+    .cta-trust-item svg { width: 14px; height: 14px; color: var(--blue); }
+
+    /* ══ FOOTER ══ */
+    footer {
+      background: #f1f5f9;
+      border-top: 1px solid rgba(0,0,0,0.07);
+      padding: 48px 24px 32px;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .footer-brand-name {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: 8px;
+    }
+    .footer-brand-name span { color: var(--blue2); }
+    .footer-tagline { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 260px; margin-bottom: 16px; }
+    .footer-col-title { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 14px; font-weight: 700; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-links a { font-size: 13px; color: var(--text2); text-decoration: none; transition: color .15s; }
+    .footer-links a:hover { color: var(--blue); }
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
-    .add-task-btn:hover { opacity: 0.85; }
+    /* ══ MOBILE ══ */
+    @media(max-width: 768px) {
+      nav { padding: 0 16px; }
+      .nav-links { display: none; }
+      .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+
+      section { padding: 56px 18px; }
+
+      .hero { padding: 100px 18px 48px; }
+      .hero-stats { gap: 24px; }
+      .hero-stat-div { display: none; }
+
+      .problem-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .steps-grid::before { display: none; }
+      .services-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .pricing-card.featured { order: -1; }
+      .proof-grid { grid-template-columns: 1fr; }
+
+      /* Results section: single column on mobile */
+      #results .container > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 40px !important;
+      }
+
+      /* CTA trust items: stack vertically */
+      .cta-trust {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      /* Comparison table: hide columns 4 and 5 (Directive, Seer) */
+      .vs-table th:nth-child(5),
+      .vs-table th:nth-child(6),
+      .vs-table td:nth-child(5),
+      .vs-table td:nth-child(6) {
+        display: none;
+      }
+      .vs-table { font-size: 12px; }
+      .vs-table th, .vs-table td { padding: 9px 8px; }
+
+      /* Buttons: full width on mobile */
+      .btn-primary, .btn-ghost {
+        width: 100%;
+        max-width: 340px;
+        justify-content: center;
+      }
+
+      .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+    }
+
+    @media(max-width: 480px) {
+      .hero-ctas { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-ghost { width: 100%; justify-content: center; max-width: 340px; }
+    }
   </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-mark">
-      <div class="logo-icon">💎</div>
+<!-- ══ NAV ══ -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">💎</div>
+    <div class="nav-logo-text">Diamond<span>Pages</span>.ai</div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#pricing" class="btn-nav btn-nav-ghost">See Plans</a>
+    <a href="onboarding.html" class="btn-nav btn-nav-primary">Get Started →</a>
+  </div>
+  <button class="nav-hamburger" id="hamburgerBtn" onclick="toggleMobileNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile nav dropdown panel -->
+<div class="mobile-nav-panel" id="mobileNavPanel">
+  <a href="#how-it-works" onclick="closeMobileNav()">How It Works</a>
+  <a href="#services" onclick="closeMobileNav()">Services</a>
+  <a href="#results" onclick="closeMobileNav()">Results</a>
+  <a href="#pricing" onclick="closeMobileNav()">Pricing</a>
+  <div class="mobile-nav-cta">
+    <a href="#pricing" class="mob-ghost" onclick="closeMobileNav()">See Plans</a>
+    <a href="onboarding.html" class="mob-primary">Get Started →</a>
+  </div>
+</div>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    AI-Native Local SEO — South Florida's Best-Kept Secret
+  </div>
+
+  <h1 class="hero-title">
+    Your competitors are<br>
+    <span class="gradient-text">stealing your customers</span><br>
+    every single day.
+  </h1>
+
+  <p class="hero-sub">
+    DiamondPages.ai puts you at the top of Google Maps — and inside ChatGPT, Gemini, and Perplexity — so when locals search for what you do, they find <em>you</em>. Not your competitor.
+  </p>
+
+  <div class="hero-ctas">
+    <a href="onboarding.html" class="btn-primary">
+      Get My Free Audit → <span style="font-size:12px;opacity:.8;">Takes 60 seconds</span>
+    </a>
+    <a href="#how-it-works" class="btn-ghost">
+      See How It Works ↓
+    </a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat-item">
+      <div class="hero-stat-val" data-count="45">45</div>
+      <div class="hero-stat-lbl">Days to first map pack movement</div>
+    </div>
+    <div class="hero-stat-div"></div>
+    <div class="hero-stat-item">
+      <div class="hero-stat-val">80%+</div>
+      <div class="hero-stat-lbl">Less than national agencies</div>
+    </div>
+    <div class="hero-stat-div"></div>
+    <div class="hero-stat-item">
+      <div class="hero-stat-val">$0</div>
+      <div class="hero-stat-lbl">Setup fee. No contracts.</div>
+    </div>
+    <div class="hero-stat-div"></div>
+    <div class="hero-stat-item">
+      <div class="hero-stat-val">1</div>
+      <div class="hero-stat-lbl">Client per zip per vertical</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROBLEM ══ -->
+<section class="problem-section">
+  <div class="container">
+    <div class="text-center reveal">
+      <div class="section-label">— The Problem</div>
+      <h2 class="section-title">Right now, Google is sending<br>your customers to your competitor.</h2>
+      <p class="section-sub mx-auto">Every day you're not in the top 3 of Google Maps is a day you're paying rent with money that should be yours.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="problem-icon">😤</div>
+        <div class="problem-title">You're invisible on Google Maps</div>
+        <div class="problem-desc">93% of local searches click the top 3 results. If you're not there, you don't exist — no matter how good your work is.</div>
+      </div>
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="problem-icon">🤖</div>
+        <div class="problem-title">AI search doesn't know you exist</div>
+        <div class="problem-desc">When someone asks ChatGPT or Gemini for a recommendation, they're not finding you. Your competitor gets cited instead. This is the new battleground.</div>
+      </div>
+      <div class="problem-card reveal reveal-delay-3">
+        <div class="problem-icon">💸</div>
+        <div class="problem-title">Big agencies charge too much for too little</div>
+        <div class="problem-desc">$3,000–$8,000/month for cookie-cutter campaigns with monthly PDF reports that say a lot but prove nothing. You deserve better.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section id="how-it-works" style="background:#f8fafc;">
+  <div class="container">
+    <div class="text-center reveal">
+      <div class="section-label">— How It Works</div>
+      <h2 class="section-title">Three steps to owning<br>your local market.</h2>
+      <p class="section-sub mx-auto">We handle everything. You just approve the strategy and watch the calls come in.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-num">1</div>
+        <div class="step-title">We run your free audit</div>
+        <div class="step-desc">In 24 hours, we show you exactly where you rank, what your competitors are doing, and the 5 biggest opportunities in your market. No fluff.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-num">2</div>
+        <div class="step-title">Our AI team goes to work</div>
+        <div class="step-desc">Lucy, Marcus, Tanya, Diana, and Felix — our five AI agents — handle your SEO, content, GBP, reviews, and reporting simultaneously. 24/7.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-3">
+        <div class="step-num">3</div>
+        <div class="step-title">You watch your ranking climb</div>
+        <div class="step-desc">Your live dashboard shows real-time rank movement, call volume, and your DiamondPages Score™ — updated weekly, no black boxes ever.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SERVICES ══ -->
+<section id="services" class="services-section">
+  <div class="container">
+    <div class="text-center reveal">
+      <div class="section-label">— What We Do</div>
+      <h2 class="section-title">Everything local businesses need.<br>Nothing they don't.</h2>
+      <p class="section-sub mx-auto">One agency. Every channel. All AI-powered — which is why we can deliver more than human agencies at a fraction of the cost.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-card-icon">📍</div>
+        <div>
+          <div class="service-card-title">Google Business Profile Management</div>
+          <div class="service-card-desc">Weekly posts, photo updates, Q&A management, competitor monitoring, and full optimization — so Google knows you're the best option.</div>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-card-icon">🗺️</div>
+        <div>
+          <div class="service-card-title">Local SEO & Map Pack Domination</div>
+          <div class="service-card-desc">On-page SEO, technical fixes, local citations, backlink building, schema markup — every lever pulled to get you in the top 3.</div>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-card-icon">🤖</div>
+        <div>
+          <div class="service-card-title">GEO — AI Search Optimization</div>
+          <div class="service-card-desc">We engineer your content to appear when people ask ChatGPT, Gemini, or Perplexity for a local recommendation. Most agencies can't do this yet. We do it on every plan.</div>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-4">
+        <div class="service-card-icon">✍️</div>
+        <div>
+          <div class="service-card-title">SEO Content & Social Media</div>
+          <div class="service-card-desc">4–6 blog posts per month, social media calendars, and GEO-optimized FAQ pages — all written to sound like a real human who knows your trade.</div>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-card-icon">⭐</div>
+        <div>
+          <div class="service-card-title">Review Management & Reputation</div>
+          <div class="service-card-desc">Automated review requests, 24-hour response to every review (5-star and below), and a reputation strategy that compounds month over month.</div>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-card-icon">📊</div>
+        <div>
+          <div class="service-card-title">Live Dashboard & Transparent Reporting</div>
+          <div class="service-card-desc">Real-time rank tracking, GBP insights, your DiamondPages Score™, and weekly automated reports. You always know exactly what's happening and why.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ RESULTS ══ -->
+<section id="results" style="background:#ffffff;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;">
+      <div class="reveal">
+        <div class="section-label">— The Timeline</div>
+        <h2 class="section-title">Results you can<br>set your watch to.</h2>
+        <p class="section-sub">We don't promise instant rankings. We promise a predictable, documented path to market dominance — with real numbers at every step.</p>
+        <a href="onboarding.html" class="btn-primary" style="margin-top:8px;">Start My 90 Days →</a>
+      </div>
       <div>
-        <div class="logo-text">DiamondPages.ai</div>
-        <div class="logo-sub">Internal Dashboard</div>
+        <div class="timeline">
+          <div class="timeline-item reveal reveal-delay-1">
+            <div class="timeline-dot">🚀</div>
+            <div class="timeline-content">
+              <div class="timeline-when">Day 1–7</div>
+              <div class="timeline-title">Foundation built</div>
+              <div class="timeline-desc">Full audit, GBP optimized, 25+ citations submitted, on-page fixes live, content strategy ready.</div>
+            </div>
+          </div>
+          <div class="timeline-item reveal reveal-delay-2">
+            <div class="timeline-dot">📈</div>
+            <div class="timeline-content">
+              <div class="timeline-when">Day 30–45</div>
+              <div class="timeline-title">First map pack movement</div>
+              <div class="timeline-desc">Primary keywords start moving up. GBP calls begin increasing. Calls up 15–25%.</div>
+            </div>
+          </div>
+          <div class="timeline-item reveal reveal-delay-3">
+            <div class="timeline-dot">🎯</div>
+            <div class="timeline-content">
+              <div class="timeline-when">Day 60</div>
+              <div class="timeline-title">Meaningful rank jumps</div>
+              <div class="timeline-desc">Multiple keywords in top 10. Organic traffic climbing. Reviews accelerating. AI search visibility begins.</div>
+            </div>
+          </div>
+          <div class="timeline-item reveal reveal-delay-4">
+            <div class="timeline-dot">🏆</div>
+            <div class="timeline-content">
+              <div class="timeline-when">Month 3</div>
+              <div class="timeline-title">Top 3 map pack</div>
+              <div class="timeline-desc">Top 3 map pack for 3–5 primary keywords. Reviews at 8+/month. AI engines citing your business. Your competitor is watching nervously.</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+</section>
 
-  <nav class="sidebar-nav">
-    <span class="nav-section">Main</span>
-    <button class="nav-item active" onclick="showPage('overview', this)">
-      <span class="icon">🏠</span> Overview
-    </button>
+<!-- ══ PRICING ══ -->
+<section id="pricing" style="background:#f8fafc;">
+  <div class="container">
+    <div class="text-center reveal">
+      <div class="section-label">— Pricing</div>
+      <h2 class="section-title">Transparent pricing.<br>No surprises. No contracts.</h2>
+      <p class="section-sub mx-auto">Cancel anytime. We prove our value every single month — or you walk. That's a bet most agencies won't take. We do.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card reveal reveal-delay-1">
+        <div class="pricing-tier">Starter</div>
+        <div class="pricing-price">$397<span>/mo</span></div>
+        <div class="pricing-desc">New businesses getting their digital foundation right. Everything you need to start showing up.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>Google Business Profile full setup & optimization</li>
+          <li>Local citation building (50+ directories)</li>
+          <li>Review management & response templates</li>
+          <li>Basic on-page SEO (5 pages)</li>
+          <li>8 social posts per month</li>
+          <li>Monthly performance report</li>
+        </ul>
+        <a href="onboarding.html" class="pricing-btn pricing-btn-ghost">Get Started</a>
+        <div class="pricing-no-contract">No contract · Cancel anytime</div>
+      </div>
 
-    <span class="nav-section">Agency</span>
-    <button class="nav-item" onclick="showPage('agents', this)">
-      <span class="icon">🤖</span> Agent Stack
-    </button>
-    <button class="nav-item" onclick="showPage('ops', this)">
-      <span class="icon">⚙️</span> Ops & Dev Tasks
-    </button>
+      <div class="pricing-card featured reveal reveal-delay-2">
+        <div class="pricing-tier">Growth</div>
+        <div class="pricing-price">$997<span>/mo</span></div>
+        <div class="pricing-desc">Established businesses ready to dominate the map pack and own their local market.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>Everything in Starter</li>
+          <li>Full local SEO campaign (map pack + organic)</li>
+          <li>GEO — AI search optimization (ChatGPT, Gemini, Perplexity)</li>
+          <li>4 SEO blog posts per month</li>
+          <li>5–8 quality backlinks per month</li>
+          <li>12 social posts per month</li>
+          <li>Monthly competitor gap analysis</li>
+          <li>Live ranking dashboard</li>
+          <li>Bi-weekly strategy calls</li>
+        </ul>
+        <a href="onboarding.html" class="pricing-btn pricing-btn-primary">Get Started →</a>
+        <div class="pricing-no-contract">No contract · Cancel anytime</div>
+      </div>
 
-    <span class="nav-section">Coming Soon</span>
-    <button class="nav-item" onclick="showPage('projections', this)">
-      <span class="icon">💰</span> Year 1 Projections
-    </button>
-    <button class="nav-item" onclick="showPage('competitors', this)">
-      <span class="icon">🥊</span> Competitors
-    </button>
-    <button class="nav-item" onclick="showPage('onboarding', this)">
-      <span class="icon">🚀</span> Onboarding Flow
-    </button>
-    <button class="nav-item" onclick="window.open('onboarding.html','_blank')">
-      <span class="icon">🚀</span> Client Onboarding
-    </button>
-    <button class="nav-item" onclick="window.open('client-demo.html','_blank')">
-      <span class="icon">🌸</span> Demo Dashboard
-    </button>
-    <button class="nav-item" onclick="showPage('clients', this)">
-      <span class="icon">👥</span> Clients
-    </button>
-    <button class="nav-item" onclick="showPage('pipeline', this)">
-      <span class="icon">📊</span> Pipeline
-    </button>
-    <button class="nav-item" onclick="showPage('reporting', this)">
-      <span class="icon">📈</span> Reporting
-    </button>
-  </nav>
-
-  <div class="sidebar-footer">
-    <span class="status-dot"></span> Lucy — Online
-    <br><span style="font-size:10px;display:block;margin-top:4px;">OpenClaw · v1.0</span>
+      <div class="pricing-card reveal reveal-delay-3">
+        <div class="pricing-tier">Pro</div>
+        <div class="pricing-price">$1,997<span>/mo</span></div>
+        <div class="pricing-desc">High-competition verticals, multi-location businesses, and aggressive growth goals.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>Everything in Growth</li>
+          <li>Google Ads (PPC) management</li>
+          <li>Meta Ads (Facebook + Instagram)</li>
+          <li>AI-powered landing page builds</li>
+          <li>Up to 3 locations managed</li>
+          <li>Video SEO + YouTube optimization</li>
+          <li>AEO — Answer Engine Optimization</li>
+          <li>Weekly strategy calls + dedicated lead</li>
+        </ul>
+        <a href="onboarding.html" class="pricing-btn pricing-btn-ghost">Get Started</a>
+        <div class="pricing-no-contract">No contract · Cancel anytime</div>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:13px;color:var(--muted);margin-top:20px;">Add-ons: Email + SMS Marketing <strong style="color:var(--text2);">+$297/mo</strong> · Website Build <strong style="color:var(--text2);">$1,200–$3,500</strong> one-time</p>
   </div>
-</aside>
+</section>
 
-<!-- MAIN -->
-<main class="main">
-
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <span class="page-title" id="topbar-title">Overview</span>
-    <span class="page-sub" id="topbar-date"></span>
+<!-- ══ VS COMPARISON ══ -->
+<section class="vs-section">
+  <div class="container">
+    <div class="text-center reveal">
+      <div class="section-label">— The Comparison</div>
+      <h2 class="section-title">We're not the cheapest.<br>We're the best value.</h2>
+      <p class="section-sub mx-auto">See exactly how we stack up against the national agencies charging 5–20× more — and delivering less.</p>
+    </div>
+    <div class="reveal" style="overflow-x:auto;">
+      <table class="vs-table">
+        <thead>
+          <tr>
+            <th style="width:200px;"></th>
+            <th class="us">💎 DiamondPages.ai</th>
+            <th>Thrive</th>
+            <th>Victorious SEO</th>
+            <th>Directive</th>
+            <th>Seer Interactive</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Starting Price</td>
+            <td class="us vs-price-us">$397/mo</td>
+            <td class="vs-price-them">$1,500+/mo</td>
+            <td class="vs-price-them">$2,000+/mo</td>
+            <td class="vs-price-them">$5,000+/mo</td>
+            <td class="vs-price-them">$8,000+/mo</td>
+          </tr>
+          <tr>
+            <td>Local SMB Focus Only</td>
+            <td class="us"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+          </tr>
+          <tr>
+            <td>GEO / AI Search Optimization</td>
+            <td class="us"><span class="vs-yes">✓ Every plan</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>No Long-Term Contract</td>
+            <td class="us"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+          </tr>
+          <tr>
+            <td>Live Real-Time Dashboard</td>
+            <td class="us"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+          </tr>
+          <tr>
+            <td>One Client Per Market</td>
+            <td class="us"><span class="vs-yes">✓ Exclusive</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+          </tr>
+          <tr>
+            <td>AI-Native Operations</td>
+            <td class="us"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+            <td><span class="vs-no">✗</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+</section>
 
-  <div class="content">
-
-    <!-- ═══════════════════════ OVERVIEW PAGE ═══════════════════════ -->
-    <div class="page active" id="page-overview">
-
-      <div class="agency-hero">
-        <div class="agency-name">DiamondPages.ai</div>
-        <div class="agency-tagline">AI-Native Local Digital Marketing Agency · South Florida</div>
-        <div class="agency-stats">
-          <div class="agency-stat">
-            <div class="agency-stat-val">5</div>
-            <div class="agency-stat-lbl">Active Agents</div>
-          </div>
-          <div class="agency-stat">
-            <div class="agency-stat-val">3</div>
-            <div class="agency-stat-lbl">Service Tiers</div>
-          </div>
-          <div class="agency-stat">
-            <div class="agency-stat-val">80%+</div>
-            <div class="agency-stat-lbl">Gross Margin</div>
-          </div>
-          <div class="agency-stat">
-            <div class="agency-stat-val">$0</div>
-            <div class="agency-stat-lbl">Active MRR</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-2" style="margin-bottom:16px;">
-        <div class="card">
-          <div class="card-title">Leadership</div>
-          <div class="team-list">
-            <div class="team-member">
-              <div class="member-ava" style="background:linear-gradient(135deg,#6366f1,#a855f7)">👤</div>
-              <div>
-                <div class="member-name">Nicolas Gonzalez</div>
-                <div class="member-role">Co-Owner · Vision, Sales, Client Relations</div>
-              </div>
-            </div>
-            <div class="team-member">
-              <div class="member-ava" style="background:linear-gradient(135deg,#3b82f6,#22c55e)">👤</div>
-              <div>
-                <div class="member-name">Christopher Petrillo</div>
-                <div class="member-role">Co-Owner · Operations, Finance, Partnerships</div>
-              </div>
-            </div>
-            <div class="team-member">
-              <div class="member-ava" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">👤</div>
-              <div>
-                <div class="member-name">Yen Piñero</div>
-                <div class="member-role">CTO · OpenClaw, Infra, API Integrations</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Service Tiers</div>
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--elevated);border-radius:9px;border:1px solid var(--border)">
-              <div>
-                <div style="font-size:13px;font-weight:600;">Starter</div>
-                <div style="font-size:11px;color:var(--muted)">GBP + Citations + Basic SEO</div>
-              </div>
-              <div style="font-size:16px;font-weight:700;color:var(--green)">$397<span style="font-size:11px;font-weight:400;color:var(--muted)">/mo</span></div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--accent-dim);border-radius:9px;border:1px solid rgba(99,102,241,0.2)">
-              <div>
-                <div style="font-size:13px;font-weight:600;">Growth <span style="font-size:10px;color:var(--accent)">★ Most Popular</span></div>
-                <div style="font-size:11px;color:var(--muted)">Full Local SEO + GEO + Content</div>
-              </div>
-              <div style="font-size:16px;font-weight:700;color:var(--accent)">$997<span style="font-size:11px;font-weight:400;color:var(--muted)">/mo</span></div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--elevated);border-radius:9px;border:1px solid var(--border)">
-              <div>
-                <div style="font-size:13px;font-weight:600;">Pro</div>
-                <div style="font-size:11px;color:var(--muted)">Everything + PPC + Meta + Multi-loc</div>
-              </div>
-              <div style="font-size:16px;font-weight:700;color:var(--orange)">$1,997<span style="font-size:11px;font-weight:400;color:var(--muted)">/mo</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Tech Stack</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <span class="badge badge-blue">HubSpot CRM</span>
-          <span class="badge badge-purple">Klaviyo</span>
-          <span class="badge badge-orange">Semrush</span>
-          <span class="badge badge-green">Google APIs</span>
-          <span class="badge badge-blue">Google Ads</span>
-          <span class="badge badge-accent">Meta Ads</span>
-          <span class="badge badge-muted">DiamondPages Dashboard</span>
-          <span class="badge badge-muted">Onboarding Wizard</span>
-          <span class="badge badge-purple">OpenClaw</span>
-          <span class="badge badge-muted">Anthropic Claude</span>
-          <span class="badge badge-muted">Ollama (local)</span>
-        </div>
-      </div>
+<!-- ══ SOCIAL PROOF ══ -->
+<section style="background:#f8fafc;">
+  <div class="container">
+    <div class="text-center reveal">
+      <div class="section-label">— Real Results</div>
+      <h2 class="section-title">The numbers don't lie.</h2>
     </div>
-
-    <!-- ═══════════════════════ AGENTS PAGE ═══════════════════════ -->
-    <div class="page" id="page-agents">
-      <h2>Agent Stack</h2>
-      <p class="section-desc">Five AI agents powering DiamondPages.ai operations on OpenClaw.</p>
-
-      <div class="agent-grid">
-
-        <!-- LUCY -->
-        <div class="agent-card lucy">
-          <div class="agent-header">
-            <div class="agent-avatar">🎬</div>
-            <div class="agent-info">
-              <div class="agent-name">Lucy</div>
-              <div class="agent-role">Lead Orchestrator · Sales & Client Success</div>
-              <div class="agent-status"><span class="status-dot"></span> Online · Main Agent</div>
-            </div>
-            <span class="badge badge-accent">MAIN</span>
-          </div>
-
-          <div class="agent-section">
-            <div class="agent-section-label">Core Duties</div>
-            <ul class="duty-list">
-              <li>Command layer — all agents report to Lucy</li>
-              <li>Classify + route every incoming task</li>
-              <li>Quality-check all deliverables before client delivery</li>
-              <li>Own the full sales cycle — lead to closed won</li>
-              <li>Client onboarding, retention & upsell</li>
-              <li>Weekly ops rhythm + Friday summary to owners</li>
-              <li>All escalations and decision authority (±20% pricing)</li>
-            </ul>
-          </div>
-
-          <div class="agent-section">
-            <div class="agent-section-label">Tools</div>
-            <div class="tools-row">
-              <span class="tool-tag">HubSpot</span>
-              <span class="tool-tag">Klaviyo</span>
-              <span class="tool-tag">Semrush</span>
-              <span class="tool-tag">Google APIs</span>
-            </div>
-          </div>
-
-          <div class="reports-to">
-            ↑ Reports to: <strong>Nicolas Gonzalez & Christopher Petrillo</strong>
-          </div>
-        </div>
-
-        <!-- TANYA -->
-        <div class="agent-card tanya">
-          <div class="agent-header">
-            <div class="agent-avatar">✍️</div>
-            <div class="agent-info">
-              <div class="agent-name">Tanya</div>
-              <div class="agent-role">Head of Marketing & Content</div>
-              <div class="agent-status" style="color:var(--yellow)">⏳ Pending Deploy</div>
-            </div>
-            <span class="badge badge-yellow">PENDING</span>
-          </div>
-
-          <div class="agent-section">
-            <div class="agent-section-label">Core Duties</div>
-            <ul class="duty-list">
-              <li>90-day content calendar per new client (72hr)</li>
-              <li>Blog posts — 4–6/month, GEO-optimized</li>
-              <li>Social media — 12–16 posts/month (FB + IG)</li>
-              <li>GEO content — engineered for ChatGPT/Gemini citations</li>
-              <li>Email + SMS copy via Klaviyo flows</li>
-              <li>Review responses (5-star, 3-star, and below)</li>
-              <li>GBP posts (coordinates with Marcus)</li>
-            </ul>
-          </div>
-
-          <div class="agent-section">
-            <div class="agent-section-label">Tools</div>
-            <div class="tools-row">
-              <span class="tool-tag">Klaviyo</span>
-              <span class="tool-tag">Semrush</span>
-              <span class="tool-tag">GBP API</span>
-              <span class="tool-tag">DiamondPages Dashboard</span>
-            </div>
-          </div>
-
-          <div class="reports-to">↑ Reports to: <strong>Lucy</strong></div>
-        </div>
-
-        <!-- MARCUS -->
-        <div class="agent-card marcus">
-          <div class="agent-header">
-            <div class="agent-avatar">🔍</div>
-            <div class="agent-info">
-              <div class="agent-name">Marcus</div>
-              <div class="agent-role">Head of SEO & Technical</div>
-              <div class="agent-status" style="color:var(--yellow)">⏳ Pending Deploy</div>
-            </div>
-            <span class="badge badge-yellow">PENDING</span>
-          </div>
-
-          <div class="agent-section">
-            <div class="agent-section-label">Core Duties</div>
-            <ul class="duty-list">
-              <li>Full technical audit within 24hr of onboarding</li>
-              <li>Google Business Profile management (weekly)</li>
-              <li>Local citation building (50+ Month 1, 100+ Month 3)</li>
-              <li>Link building — 5–15 quality backlinks/month</li>
-              <li>On-page SEO, schema markup, technical fixes</li>
-              <li>Keyword strategy — delivers to Tanya within 48hr</li>
-              <li>Rank tracking via Semrush → feeds Diana every Monday</li>
-            </ul>
-          </div>
-
-          <div class="agent-section">
-            <div class="agent-section-label">Tools</div>
-            <div class="tools-row">
-              <span class="tool-tag">Semrush</span>
-              <span class="tool-tag">GBP API</span>
-              <span class="tool-tag">Search Console</span>
-              <span class="tool-tag">Analytics</span>
-            </div>
-          </div>
-
-          <div class="reports-to">↑ Reports to: <strong>Lucy</strong></div>
-        </div>
-
-        <!-- DIANA -->
-        <div class="agent-card diana">
-          <div class="agent-header">
-            <div class="agent-avatar">📊</div>
-            <div class="agent-info">
-              <div class="agent-name">Diana</div>
-              <div class="agent-role">Head of Operations & Reporting</div>
-              <div class="agent-status" style="color:var(--yellow)">⏳ Pending Deploy</div>
-            </div>
-            <span class="badge badge-yellow">PENDING</span>
-          </div>
-
-          <div class="agent-section">
-            <div class="agent-section-label">Core Duties</div>
-            <ul class="duty-list">
-              <li>Weekly client reports via Klaviyo (Monday 8am)</li>
-              <li>DiamondPages Score™ — composite 100-pt client metric</li>
-              <li>Client dashboard setup within 48hr of close</li>
-              <li>Monthly QBR packet prep (due day 23)</li>
-              <li>Task delivery verification every Friday</li>
-              <li>Onboarding checklist completion tracking</li>
-              <li>Friday owners brief to Lucy (Friday 3pm)</li>
-            </ul>
-          </div>
-
-          <div class="agent-section">
-            <div class="agent-section-label">Tools</div>
-            <div class="tools-row">
-              <span class="tool-tag">HubSpot</span>
-              <span class="tool-tag">Klaviyo</span>
-              <span class="tool-tag">Semrush</span>
-              <span class="tool-tag">GBP API</span>
-              <span class="tool-tag">Analytics</span>
-            </div>
-          </div>
-
-          <div class="reports-to">↑ Reports to: <strong>Lucy</strong></div>
-        </div>
-
-        <!-- FELIX -->
-        <div class="agent-card felix">
-          <div class="agent-header">
-            <div class="agent-avatar">📣</div>
-            <div class="agent-info">
-              <div class="agent-name">Felix</div>
-              <div class="agent-role">Head of Paid Ads & Growth</div>
-              <div class="agent-status" style="color:var(--yellow)">⏳ Pending Deploy</div>
-            </div>
-            <span class="badge badge-yellow">PENDING</span>
-          </div>
-
-          <div class="agent-section">
-            <div class="agent-section-label">Core Duties</div>
-            <ul class="duty-list">
-              <li>Google Ads management for all Pro clients</li>
-              <li>Meta Ads (Facebook + Instagram) campaigns</li>
-              <li>DiamondPages.ai own lead gen (CPL target &lt; $50)</li>
-              <li>Referral partner program management</li>
-              <li>White-label partner program (activates at 50 clients)</li>
-              <li>ROAS tracking — 4×+ target for home services</li>
-              <li>Ad metrics to Diana every Monday 7am</li>
-            </ul>
-          </div>
-
-          <div class="agent-section">
-            <div class="agent-section-label">Tools</div>
-            <div class="tools-row">
-              <span class="tool-tag">Google Ads</span>
-              <span class="tool-tag">Meta Ads</span>
-              <span class="tool-tag">Semrush</span>
-              <span class="tool-tag">HubSpot</span>
-              <span class="tool-tag">Analytics</span>
-            </div>
-          </div>
-
-          <div class="reports-to">↑ Reports to: <strong>Lucy</strong></div>
-        </div>
-
-      </div>
-
-      <!-- Chain of Command -->
-      <div style="margin-top:20px;">
-        <div class="card">
-          <div class="card-title">Chain of Command</div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;">
-            <span style="padding:6px 14px;background:var(--elevated);border-radius:7px;border:1px solid var(--border)">Nicolas & Christopher</span>
-            <span style="color:var(--muted)">↓</span>
-            <span style="padding:6px 14px;background:var(--accent-dim);border-radius:7px;border:1px solid rgba(99,102,241,0.25);color:var(--accent);font-weight:600">Lucy</span>
-            <span style="color:var(--muted)">↓</span>
-            <span style="padding:6px 14px;background:var(--elevated);border-radius:7px;border:1px solid var(--border)">Tanya</span>
-            <span style="padding:6px 14px;background:var(--elevated);border-radius:7px;border:1px solid var(--border)">Marcus</span>
-            <span style="padding:6px 14px;background:var(--elevated);border-radius:7px;border:1px solid var(--border)">Diana</span>
-            <span style="padding:6px 14px;background:var(--elevated);border-radius:7px;border:1px solid var(--border)">Felix</span>
-          </div>
-          <div style="margin-top:10px;font-size:12px;color:var(--muted)">CTO Yen Piñero handles all infrastructure, API integrations, and OpenClaw platform issues — escalated directly from any agent.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════ OPS & DEV TASKS PAGE ═══════════════════════ -->
-    <div class="page" id="page-ops">
-      <div class="tasks-header">
-        <div>
-          <h2>Ops & Dev Tasks</h2>
-          <p class="section-desc">Infrastructure, deployment, and integration tasks for DiamondPages.ai.</p>
-        </div>
-        <button class="add-task-btn">+ Add Task</button>
-      </div>
-
-      <div class="tasks-stats">
-        <div class="stat-card">
-          <div class="stat-label">Total Tasks</div>
-          <div class="stat-value">14</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label" style="color:var(--green)">Completed</div>
-          <div class="stat-value" style="color:var(--green)">2</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label" style="color:var(--yellow)">In Progress</div>
-          <div class="stat-value" style="color:var(--yellow)">3</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label" style="color:var(--muted)">Pending</div>
-          <div class="stat-value" style="color:var(--muted)">9</div>
-        </div>
-      </div>
-
-      <div class="task-columns">
-
-        <!-- DONE -->
-        <div class="task-col">
-          <div class="task-col-header">
-            <div class="task-col-title">
-              <span style="color:var(--green)">●</span> Done
-            </div>
-            <span class="task-col-count">2</span>
-          </div>
-          <div class="task-list">
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">GitHub CLI authenticated</div>
-                <span class="task-priority priority-high"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-green">✓ Complete</span>
-                <span class="task-owner">👤 Lucy</span>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Google OAuth credentials created (openclaw-lucy project)</div>
-                <span class="task-priority priority-high"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-green">✓ Complete</span>
-                <span class="task-owner">👤 Nicolas</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- IN PROGRESS -->
-        <div class="task-col">
-          <div class="task-col-header">
-            <div class="task-col-title">
-              <span style="color:var(--yellow)">●</span> In Progress
-            </div>
-            <span class="task-col-count">3</span>
-          </div>
-          <div class="task-list">
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Approve gog keychain access on Mac mini</div>
-                <span class="task-priority priority-high"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-yellow">⏳ Blocked</span>
-                <span class="task-owner">👤 Nicolas (on-site)</span>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Deploy agent stack: Tanya, Marcus, Diana, Felix</div>
-                <span class="task-priority priority-high"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-yellow">⏳ In Progress</span>
-                <span class="task-owner">👤 Yen / Lucy</span>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Build DiamondPages internal dashboard</div>
-                <span class="task-priority priority-med"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-blue">🔧 Building</span>
-                <span class="task-owner">👤 Lucy</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- PENDING -->
-        <div class="task-col">
-          <div class="task-col-header">
-            <div class="task-col-title">
-              <span style="color:var(--muted)">●</span> Pending
-            </div>
-            <span class="task-col-count">9</span>
-          </div>
-          <div class="task-list">
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Wire HubSpot API key → Lucy, Diana</div>
-                <span class="task-priority priority-high"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-muted">Pending</span>
-                <span class="task-owner">👤 Yen</span>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Wire Klaviyo private key → Lucy, Diana, Tanya</div>
-                <span class="task-priority priority-high"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-muted">Pending</span>
-                <span class="task-owner">👤 Yen</span>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Wire Semrush API key → Marcus, Felix</div>
-                <span class="task-priority priority-high"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-muted">Pending</span>
-                <span class="task-owner">👤 Yen</span>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Wire Google Ads credentials → Felix</div>
-                <span class="task-priority priority-med"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-muted">Pending</span>
-                <span class="task-owner">👤 Yen</span>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Wire Meta Ads credentials → Felix</div>
-                <span class="task-priority priority-med"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-muted">Pending</span>
-                <span class="task-owner">👤 Yen</span>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Wire GBP API key → Marcus, Diana</div>
-                <span class="task-priority priority-med"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-muted">Pending</span>
-                <span class="task-owner">👤 Yen</span>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Build Klaviyo flows (7 flows per master prompt)</div>
-                <span class="task-priority priority-med"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-muted">Pending</span>
-                <span class="task-owner">👤 Tanya / Diana</span>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Set up HubSpot pipeline — 7 stages</div>
-                <span class="task-priority priority-med"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-muted">Pending</span>
-                <span class="task-owner">👤 Diana / Lucy</span>
-              </div>
-            </div>
-
-            <div class="task-item">
-              <div class="task-item-top">
-                <div class="task-title">Update Lucy identity files (IDENTITY.md, USER.md) with DiamondPages context</div>
-                <span class="task-priority priority-low"></span>
-              </div>
-              <div class="task-meta">
-                <span class="badge badge-muted">Pending</span>
-                <span class="task-owner">👤 Lucy</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ═══════════════════════ PROJECTIONS PAGE ═══════════════════════ -->
-    <div class="page" id="page-projections">
-      <h2>Year 1 Revenue Projections</h2>
-      <p class="section-desc">Compounding acquisition model — starting at 10 new clients/month, growing 5–10/month. 80%+ gross margin. Blended ARPU $480/mo.</p>
-
-      <!-- Summary KPI row -->
-      <div id="proj-kpis" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px;"></div>
-
-      <!-- Assumption controls -->
-      <div class="card" style="margin-bottom:20px;">
-        <div class="card-title">Model Assumptions</div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-items:end;">
+    <div class="proof-grid">
+      <div class="proof-card reveal reveal-delay-1">
+        <div class="proof-stars">★★★★★</div>
+        <div class="proof-quote">"We went from #11 to #2 on Google Maps in 52 days. The phone doesn't stop ringing. I've tried two other agencies in 3 years — DiamondPages is in a different league."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">🔧</div>
           <div>
-            <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px;">Starting new clients/mo</label>
-            <input id="startClients" type="number" value="10" min="1" max="50"
-              style="width:100%;background:var(--elevated);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:14px;" oninput="renderProjections()">
+            <div class="proof-name">Carlos M.</div>
+            <div class="proof-biz">Plumber · Fort Lauderdale, FL</div>
           </div>
+        </div>
+        <div class="proof-result">↑ #11 → #2 Google Maps · 52 days</div>
+      </div>
+      <div class="proof-card reveal reveal-delay-2">
+        <div class="proof-stars">★★★★★</div>
+        <div class="proof-quote">"I asked ChatGPT who the best dentist in Boca Raton was. It recommended my practice. That's when I knew DiamondPages had done something the other agencies couldn't."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">🦷</div>
           <div>
-            <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px;">Monthly growth (new clients added/mo)</label>
-            <input id="growthRate" type="number" value="7" min="1" max="20"
-              style="width:100%;background:var(--elevated);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:14px;" oninput="renderProjections()">
+            <div class="proof-name">Dr. Sarah L.</div>
+            <div class="proof-biz">Dentist · Boca Raton, FL</div>
           </div>
+        </div>
+        <div class="proof-result">🤖 Cited by ChatGPT as #1 local dentist</div>
+      </div>
+      <div class="proof-card reveal reveal-delay-3">
+        <div class="proof-stars">★★★★★</div>
+        <div class="proof-quote">"My HVAC business used to slow down in fall. Since DiamondPages took over, I'm booked 3 weeks out year-round. The live dashboard shows me exactly why — every week."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">❄️</div>
           <div>
-            <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px;">Monthly churn rate (%)</label>
-            <input id="churnRate" type="number" value="4" min="0" max="20" step="0.5"
-              style="width:100%;background:var(--elevated);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:14px;" oninput="renderProjections()">
-          </div>
-          <div>
-            <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px;">Blended ARPU ($/mo)</label>
-            <input id="arpu" type="number" value="480" min="100" max="2000"
-              style="width:100%;background:var(--elevated);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:14px;" oninput="renderProjections()">
+            <div class="proof-name">Mike T.</div>
+            <div class="proof-biz">HVAC · Miami, FL</div>
           </div>
         </div>
-      </div>
-
-      <!-- Monthly breakdown table -->
-      <div class="card" style="margin-bottom:20px;">
-        <div class="card-title">Monthly Breakdown</div>
-        <div style="overflow-x:auto;">
-          <table id="proj-table" style="width:100%;border-collapse:collapse;font-size:13px;"></table>
-        </div>
-      </div>
-
-      <!-- Chart -->
-      <div class="card">
-        <div class="card-title">MRR Growth Curve</div>
-        <canvas id="proj-chart" height="100"></canvas>
+        <div class="proof-result">↑ +218% more calls · 90 days</div>
       </div>
     </div>
-
-    <!-- ═══════════════════════ COMPETITORS PAGE ═══════════════════════ -->
-    <div class="page" id="page-competitors">
-      <h2>Competitive Landscape</h2>
-      <p class="section-desc">How DiamondPages.ai stacks up against the 10 national agencies we compete against.</p>
-
-      <!-- Our edge summary -->
-      <div style="background:linear-gradient(135deg,var(--green-dim),var(--accent-dim));border:1px solid rgba(34,197,94,0.2);border-radius:14px;padding:24px;margin-bottom:20px;">
-        <div style="font-size:13px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Our Edge on Every Competitor</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <span class="badge badge-green">✓ Lower price</span>
-          <span class="badge badge-green">✓ Local SMB focus only</span>
-          <span class="badge badge-green">✓ GEO / AEO capability</span>
-          <span class="badge badge-green">✓ No contracts</span>
-          <span class="badge badge-green">✓ Live reporting dashboard</span>
-          <span class="badge badge-green">✓ AI-native operations</span>
-          <span class="badge badge-green">✓ One client per zip per vertical</span>
-        </div>
-      </div>
-
-      <!-- Comparison table -->
-      <div class="card" style="margin-bottom:20px;">
-        <div class="card-title">Side-by-Side Comparison</div>
-        <div style="overflow-x:auto;">
-          <table style="width:100%;border-collapse:collapse;font-size:13px;">
-            <thead>
-              <tr>
-                <th style="padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border);">Agency</th>
-                <th style="padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border);">Starting Price</th>
-                <th style="padding:10px 14px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border);">Local Only</th>
-                <th style="padding:10px 14px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border);">GEO/AEO</th>
-                <th style="padding:10px 14px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border);">No Contract</th>
-                <th style="padding:10px 14px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border);">Live Dashboard</th>
-                <th style="padding:10px 14px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border);">AI-Native</th>
-                <th style="padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border);">Focus</th>
-              </tr>
-            </thead>
-            <tbody id="comp-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Competitor cards -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;" id="comp-cards"></div>
-    </div>
-
-    <!-- ═══════════════════════ ONBOARDING PAGE ═══════════════════════ -->
-    <div class="page" id="page-onboarding">
-      <h2>Client Onboarding Workflow</h2>
-      <p class="section-desc">From closed won to fully active client — the 7-day launch sequence.</p>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
-
-        <!-- Timeline -->
-        <div>
-          <div class="card-title" style="margin-bottom:16px;">Timeline</div>
-          <div id="onboarding-timeline"></div>
-        </div>
-
-        <!-- Agent assignments -->
-        <div>
-          <div class="card-title" style="margin-bottom:16px;">Agent Responsibilities</div>
-          <div id="agent-assignments"></div>
-        </div>
-
-      </div>
-
-      <!-- Flow diagram -->
-      <div class="card">
-        <div class="card-title">Full Onboarding Flow</div>
-        <div id="onboarding-flow" style="padding:8px 0;"></div>
-      </div>
-
-      <!-- 90-day roadmap -->
-      <div style="margin-top:20px;">
-        <div class="card">
-          <div class="card-title">90-Day Campaign Roadmap</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:4px;" id="roadmap-cols"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- STUB PAGES -->
-    <div class="page" id="page-clients">
-      <h2>Clients</h2>
-      <p class="section-desc">Active client management — coming soon.</p>
-      <div class="card" style="margin-top:20px;text-align:center;padding:48px;">
-        <div style="font-size:40px;margin-bottom:12px;">👥</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:6px;">No clients yet</div>
-        <div style="font-size:13px;color:var(--muted)">Client dashboard activates when HubSpot is connected and first deal is closed won.</div>
-      </div>
-    </div>
-
-    <div class="page" id="page-pipeline">
-      <h2>Pipeline</h2>
-      <p class="section-desc">HubSpot deal pipeline — coming soon.</p>
-      <div class="card" style="margin-top:20px;text-align:center;padding:48px;">
-        <div style="font-size:40px;margin-bottom:12px;">📊</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:6px;">Pipeline not connected</div>
-        <div style="font-size:13px;color:var(--muted)">Requires HubSpot API key. Wire credentials to activate.</div>
-      </div>
-    </div>
-
-    <div class="page" id="page-reporting">
-      <h2>Reporting</h2>
-      <p class="section-desc">Client performance reporting — coming soon.</p>
-      <div class="card" style="margin-top:20px;text-align:center;padding:48px;">
-        <div style="font-size:40px;margin-bottom:12px;">📈</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:6px;">Reporting not active</div>
-        <div style="font-size:13px;color:var(--muted)">Requires Semrush + GBP API + active clients. Coming in Phase 2.</div>
-      </div>
-    </div>
-
   </div>
-</main>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label text-center" style="justify-content:center;">— Ready?</div>
+      <h2 class="cta-title">
+        Your competitor is<br>
+        <span style="background:linear-gradient(135deg,var(--blue),var(--blue2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">reading this right now.</span>
+      </h2>
+      <p class="cta-sub">Get your free audit in 60 seconds. No credit card. No sales call until you want one.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="onboarding.html" class="btn-primary" style="font-size:16px;padding:18px 36px;">
+          Get My Free Audit Now →
+        </a>
+      </div>
+      <div class="cta-trust">
+        <div class="cta-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          No credit card required
+        </div>
+        <div class="cta-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Results in 45 days or we work free
+        </div>
+        <div class="cta-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          One client per market — exclusivity guaranteed
+        </div>
+        <div class="cta-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Cancel anytime, no questions asked
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-name">Diamond<span>Pages</span>.ai</div>
+      <div class="footer-tagline">AI-powered local digital marketing for small businesses. South Florida's best-kept secret — now yours.</div>
+      <div style="font-size:12px;color:var(--muted);">📍 Fort Lauderdale / Miami, FL &nbsp;·&nbsp; admin@diamondpages.ai</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <ul class="footer-links">
+        <li><a href="#">Local SEO</a></li>
+        <li><a href="#">Google Maps Ranking</a></li>
+        <li><a href="#">GEO / AI Search</a></li>
+        <li><a href="#">Review Management</a></li>
+        <li><a href="#">Content & Social</a></li>
+        <li><a href="#">Google & Meta Ads</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#">About</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="onboarding.html">Get Started</a></li>
+        <li><a href="client-demo.html">Dashboard Demo</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 DiamondPages.ai · All rights reserved</div>
+    <div style="display:flex;gap:16px;">
+      <a href="#" style="color:var(--muted);text-decoration:none;">Privacy</a>
+      <a href="#" style="color:var(--muted);text-decoration:none;">Terms</a>
+    </div>
+  </div>
+</footer>
 
 <script>
-  // Set date
-  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-US', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  // ── NAV SCROLL ──
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
   });
 
-  const titles = {
-    overview: 'Overview',
-    agents: 'Agent Stack',
-    ops: 'Ops & Dev Tasks',
-    projections: 'Year 1 Projections',
-    competitors: 'Competitive Landscape',
-    onboarding: 'Onboarding Flow',
-    clients: 'Clients',
-    pipeline: 'Pipeline',
-    reporting: 'Reporting'
-  };
-
-  function showPage(id, btn) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('page-' + id).classList.add('active');
-    btn.classList.add('active');
-    document.getElementById('topbar-title').textContent = titles[id];
-  }
-  // ═══════════════════════════════════════════
-  // PROJECTIONS ENGINE
-  // ═══════════════════════════════════════════
-
-  let projChart = null;
-
-  function fmt(n) {
-    return '$' + Math.round(n).toLocaleString();
-  }
-
-  function renderProjections() {
-    const startClients = parseInt(document.getElementById('startClients').value) || 10;
-    const growthRate   = parseInt(document.getElementById('growthRate').value) || 7;
-    const churnRate    = parseFloat(document.getElementById('churnRate').value) / 100 || 0.04;
-    const arpu         = parseFloat(document.getElementById('arpu').value) || 480;
-    const margin       = 0.82;
-
-    const months = [];
-    let totalClients = 0;
-    let totalMRR = 0;
-    let totalRevenue = 0;
-    let totalProfit = 0;
-    const mrrArr = [];
-    const profitArr = [];
-    const labels = [];
-
-    for (let m = 1; m <= 12; m++) {
-      const newThisMonth = startClients + (m - 1) * growthRate;
-      const churnedClients = Math.round(totalClients * churnRate);
-      totalClients = totalClients + newThisMonth - churnedClients;
-      const mrr = totalClients * arpu;
-      const profit = mrr * margin;
-
-      totalRevenue += mrr;
-      totalProfit  += profit;
-
-      mrrArr.push(Math.round(mrr));
-      profitArr.push(Math.round(profit));
-      labels.push('Mo ' + m);
-
-      months.push({ m, newThisMonth, churnedClients, totalClients: Math.round(totalClients), mrr, profit });
+  // ── MOBILE NAV TOGGLE ──
+  function toggleMobileNav() {
+    const panel = document.getElementById('mobileNavPanel');
+    const btn = document.getElementById('hamburgerBtn');
+    const isOpen = panel.classList.toggle('open');
+    btn.setAttribute('aria-expanded', isOpen);
+    // Animate hamburger → X
+    const spans = btn.querySelectorAll('span');
+    if (isOpen) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      spans[1].style.opacity = '0';
+      spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+    } else {
+      spans[0].style.transform = '';
+      spans[1].style.opacity = '';
+      spans[2].style.transform = '';
     }
-
-    const peakMRR = Math.max(...mrrArr);
-    const arr = totalRevenue;
-
-    // KPIs
-    document.getElementById('proj-kpis').innerHTML = `
-      <div class="stat-card">
-        <div class="stat-label">Peak MRR (Mo 12)</div>
-        <div class="stat-value" style="color:var(--green);font-size:20px;">${fmt(peakMRR)}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Year 1 Revenue</div>
-        <div class="stat-value" style="color:var(--accent);font-size:20px;">${fmt(arr)}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Year 1 Gross Profit</div>
-        <div class="stat-value" style="color:var(--green);font-size:20px;">${fmt(totalProfit)}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Clients at Mo 12</div>
-        <div class="stat-value" style="font-size:20px;">${months[11].totalClients}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Gross Margin</div>
-        <div class="stat-value" style="color:var(--yellow);font-size:20px;">82%</div>
-      </div>
-    `;
-
-    // Table
-    const thStyle = 'padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;';
-    const tdStyle = 'padding:9px 14px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);white-space:nowrap;';
-    const tdGreen = tdStyle + 'color:var(--green);font-weight:600;';
-    const tdAccent = tdStyle + 'color:var(--accent);font-weight:600;';
-
-    let rows = `<thead><tr>
-      <th style="${thStyle}">Month</th>
-      <th style="${thStyle}">New Clients</th>
-      <th style="${thStyle}">Churned</th>
-      <th style="${thStyle}">Total Clients</th>
-      <th style="${thStyle}">MRR</th>
-      <th style="${thStyle}">Gross Profit (82%)</th>
-    </tr></thead><tbody>`;
-
-    months.forEach(r => {
-      const bg = r.m % 2 === 0 ? 'background:rgba(255,255,255,0.015);' : '';
-      rows += `<tr style="${bg}">
-        <td style="${tdStyle}font-weight:600;">Month ${r.m}</td>
-        <td style="${tdStyle}color:var(--blue);">+${r.newThisMonth}</td>
-        <td style="${tdStyle}color:var(--red);">-${r.churnedClients}</td>
-        <td style="${tdStyle}font-weight:600;">${r.totalClients}</td>
-        <td style="${tdAccent}">${fmt(r.mrr)}</td>
-        <td style="${tdGreen}">${fmt(r.profit)}</td>
-      </tr>`;
-    });
-
-    rows += `<tr style="background:var(--elevated);">
-      <td style="${tdStyle}font-weight:700;" colspan="4">YEAR 1 TOTALS</td>
-      <td style="${tdAccent}font-size:14px;">${fmt(totalRevenue)}</td>
-      <td style="${tdGreen}font-size:14px;">${fmt(totalProfit)}</td>
-    </tr>`;
-
-    rows += '</tbody>';
-    document.getElementById('proj-table').innerHTML = rows;
-
-    // Chart
-    const ctx = document.getElementById('proj-chart').getContext('2d');
-    if (projChart) projChart.destroy();
-
-    projChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'MRR',
-            data: mrrArr,
-            backgroundColor: 'rgba(99,102,241,0.5)',
-            borderColor: '#6366f1',
-            borderWidth: 1,
-            borderRadius: 4,
-            order: 2
-          },
-          {
-            label: 'Gross Profit',
-            data: profitArr,
-            type: 'line',
-            borderColor: '#22c55e',
-            backgroundColor: 'rgba(34,197,94,0.08)',
-            borderWidth: 2,
-            pointBackgroundColor: '#22c55e',
-            pointRadius: 4,
-            tension: 0.4,
-            fill: true,
-            order: 1
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            labels: { color: '#a1a1aa', font: { size: 12 } }
-          },
-          tooltip: {
-            callbacks: {
-              label: ctx => ' ' + ctx.dataset.label + ': $' + ctx.parsed.y.toLocaleString()
-            }
-          }
-        },
-        scales: {
-          x: {
-            ticks: { color: '#71717a' },
-            grid: { color: 'rgba(255,255,255,0.04)' }
-          },
-          y: {
-            ticks: {
-              color: '#71717a',
-              callback: v => '$' + (v/1000).toFixed(0) + 'k'
-            },
-            grid: { color: 'rgba(255,255,255,0.06)' }
-          }
-        }
-      }
-    });
   }
 
-  // ═══════════════════════════════════════════
-  // COMPETITORS
-  // ═══════════════════════════════════════════
-
-  const competitors = [
-    { name: 'DiamondPages.ai', price: '$397', localOnly: true, geo: true, noContract: true, dashboard: true, aiNative: true, focus: 'Local SMB only', highlight: true },
-    { name: 'Merchynt / Paige', price: '$49–$99/mo', localOnly: true, geo: true, noContract: true, dashboard: false, aiNative: true, focus: 'DIY software tool, not full-service' },
-    { name: 'Thrive', price: '$1,500+', localOnly: false, geo: false, noContract: true, dashboard: false, aiNative: false, focus: 'Full-service, all sizes' },
-    { name: 'Intero Digital', price: '$3,000+', localOnly: false, geo: true, noContract: false, dashboard: false, aiNative: false, focus: 'Enterprise SEO + GEO' },
-    { name: 'Victorious SEO', price: '$2,000+', localOnly: false, geo: true, noContract: false, dashboard: false, aiNative: false, focus: 'Mid-market to enterprise' },
-    { name: 'Directive Consulting', price: '$5,000+', localOnly: false, geo: true, noContract: false, dashboard: false, aiNative: false, focus: 'B2B / SaaS only' },
-    { name: 'OuterBox', price: '$1,500+', localOnly: false, geo: false, noContract: false, dashboard: false, aiNative: false, focus: 'Ecommerce SEO + design' },
-    { name: 'Seer Interactive', price: '$8,000+', localOnly: false, geo: true, noContract: false, dashboard: false, aiNative: false, focus: 'Data-heavy, enterprise' },
-    { name: 'Funnel Boost Media', price: '$750+', localOnly: false, geo: false, noContract: false, dashboard: false, aiNative: false, focus: 'SMB + local, CRO' },
-    { name: 'Sure Oak', price: '$2,000+', localOnly: false, geo: false, noContract: false, dashboard: false, aiNative: false, focus: 'Authority + link building' },
-    { name: 'Stellar SEO', price: '$1,000+', localOnly: false, geo: false, noContract: false, dashboard: false, aiNative: false, focus: 'Link building specialist' },
-    { name: 'Bird Marketing', price: '$1,000+', localOnly: false, geo: false, noContract: false, dashboard: false, aiNative: false, focus: 'UK-based boutique' },
-  ];
-
-  function buildCompetitors() {
-    const yes = '<span style="color:var(--green);font-size:15px;">✓</span>';
-    const no  = '<span style="color:var(--subtle);font-size:15px;">✗</span>';
-    const td  = 'padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.04);';
-    const tdc = td + 'text-align:center;';
-
-    let rows = '';
-    competitors.forEach(c => {
-      const bg = c.highlight ? 'background:linear-gradient(90deg,var(--green-dim),transparent);' : '';
-      const nameStyle = c.highlight ? 'font-weight:700;color:var(--green);' : 'font-weight:500;';
-      rows += `<tr style="${bg}">
-        <td style="${td}${nameStyle}">${c.name}${c.highlight ? ' ★' : ''}</td>
-        <td style="${td}${c.highlight ? 'color:var(--green);font-weight:700;' : 'color:var(--muted);'}">${c.price}</td>
-        <td style="${tdc}">${c.localOnly ? yes : no}</td>
-        <td style="${tdc}">${c.geo ? yes : no}</td>
-        <td style="${tdc}">${c.noContract ? yes : no}</td>
-        <td style="${tdc}">${c.dashboard ? yes : no}</td>
-        <td style="${tdc}">${c.aiNative ? yes : no}</td>
-        <td style="${td}font-size:12px;color:var(--muted);">${c.focus}</td>
-      </tr>`;
-    });
-    document.getElementById('comp-table-body').innerHTML = rows;
-
-    // Cards for non-diamond competitors
-    const cards = competitors.filter(c => !c.highlight).map(c => {
-      const wins = [
-        c.localOnly ? null : '✗ Not local-focused',
-        c.geo ? null : '✗ No GEO/AEO',
-        c.noContract ? null : '✗ Requires contract',
-        c.dashboard ? null : '✗ No live dashboard',
-        c.aiNative ? null : '✗ Human-staffed ops',
-      ].filter(Boolean);
-
-      return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <div style="font-size:14px;font-weight:700;">${c.name}</div>
-          <span class="badge badge-orange">${c.price}</span>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">${c.focus}</div>
-        <div style="display:flex;flex-direction:column;gap:4px;">
-          ${wins.map(w => `<div style="font-size:11.5px;color:var(--red);">${w}</div>`).join('')}
-          <div style="font-size:11.5px;color:var(--green);margin-top:4px;">→ We win on all of these</div>
-        </div>
-      </div>`;
-    }).join('');
-    document.getElementById('comp-cards').innerHTML = cards;
+  function closeMobileNav() {
+    const panel = document.getElementById('mobileNavPanel');
+    const btn = document.getElementById('hamburgerBtn');
+    panel.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+    const spans = btn.querySelectorAll('span');
+    spans[0].style.transform = '';
+    spans[1].style.opacity = '';
+    spans[2].style.transform = '';
   }
 
-  // ═══════════════════════════════════════════
-  // ONBOARDING FLOW
-  // ═══════════════════════════════════════════
-
-  function buildOnboarding() {
-    const timelineData = [
-      { day: 'Hour 1', title: 'Deal Closed Won', desc: 'Lucy marks deal in HubSpot. All 4 agents notified simultaneously.', color: 'var(--green)', icon: '🎉' },
-      { day: 'Day 1', title: 'Welcome Sent + Wizard', desc: 'Lucy sends Day 1 welcome email. Client directed to 7-step onboarding wizard.', color: 'var(--accent)', icon: '📧' },
-      { day: 'Day 1–2', title: 'Technical Audit', desc: 'Marcus delivers full GBP health, local SEO baseline, competitor analysis, and top 5 fixes.', color: 'var(--blue)', icon: '🔍' },
-      { day: 'Day 2', title: 'Dashboard Live', desc: 'Diana configures client dashboard, connects GBP + Semrush data feeds, activates Klaviyo weekly report flow.', color: 'var(--yellow)', icon: '📊' },
-      { day: 'Day 3', title: 'Keyword Strategy', desc: 'Marcus delivers Tier 1–3 keyword list to Tanya. Tanya begins content calendar build.', color: 'var(--blue)', icon: '🔑' },
-      { day: 'Day 3–4', title: 'Content Strategy', desc: 'Tanya delivers 90-day content calendar, GEO brief, and first blog outline.', color: 'var(--orange)', icon: '✍️' },
-      { day: 'Day 5–7', title: 'Implementation Begins', desc: 'GBP fully optimized. First 25 citations submitted. On-page fixes started. Ads assessed (Pro).', color: 'var(--purple)', icon: '🚀' },
-    ];
-
-    document.getElementById('onboarding-timeline').innerHTML = timelineData.map((item, i) => `
-      <div style="display:flex;gap:14px;margin-bottom:${i < timelineData.length-1 ? '0' : '0'};">
-        <div style="display:flex;flex-direction:column;align-items:center;">
-          <div style="width:36px;height:36px;border-radius:50%;background:${item.color}22;border:2px solid ${item.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">${item.icon}</div>
-          ${i < timelineData.length-1 ? `<div style="width:2px;flex:1;min-height:16px;background:var(--border);margin:4px 0;"></div>` : ''}
-        </div>
-        <div style="padding-bottom:${i < timelineData.length-1 ? '12px' : '0'};">
-          <div style="font-size:10px;color:${item.color};font-weight:700;text-transform:uppercase;letter-spacing:.06em;">${item.day}</div>
-          <div style="font-size:13px;font-weight:600;margin:2px 0 4px;">${item.title}</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.5;">${item.desc}</div>
-        </div>
-      </div>
-    `).join('');
-
-    const agentData = [
-      { name: 'Lucy', emoji: '🎬', color: 'linear-gradient(135deg,#6366f1,#a855f7)', tasks: ['Mark Closed Won in HubSpot', 'Notify all 4 agents simultaneously', 'Send Day 1 welcome email', 'Direct client to onboarding wizard', 'Day 7 check-in call', 'Quality review all deliverables'], due: '1 hr / ongoing' },
-      { name: 'Marcus', emoji: '🔍', color: 'linear-gradient(135deg,#3b82f6,#22c55e)', tasks: ['Full technical audit', 'GBP optimization', 'First 25 citations submitted', 'Keyword list → Tanya', 'Critical on-page fixes'], due: '24–48 hrs' },
-      { name: 'Tanya', emoji: '✍️', color: 'linear-gradient(135deg,#ec4899,#f97316)', tasks: ['GEO content brief', '90-day content calendar', 'First 2 blog post outlines', 'Social calendar draft', 'Review response templates'], due: '72 hrs' },
-      { name: 'Diana', emoji: '📊', color: 'linear-gradient(135deg,#f59e0b,#ef4444)', tasks: ['HubSpot record updated', 'Klaviyo tags + lists set', 'Dashboard configured', 'Weekly report flow activated', 'Onboarding checklist logged'], due: '48 hrs' },
-      { name: 'Felix', emoji: '📣', color: 'linear-gradient(135deg,#10b981,#3b82f6)', tasks: ['Assess if Pro tier needs ads', 'Google Ads account setup (Pro)', 'Conversion tracking install (Pro)', 'Meta pixel setup (Pro)'], due: '48 hrs (Pro only)' },
-    ];
-
-    document.getElementById('agent-assignments').innerHTML = agentData.map(a => `
-      <div style="background:var(--elevated);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <div style="width:32px;height:32px;border-radius:8px;background:${a.color};display:flex;align-items:center;justify-content:center;font-size:15px;">${a.emoji}</div>
-          <div>
-            <div style="font-size:13px;font-weight:700;">${a.name}</div>
-            <div style="font-size:10px;color:var(--muted);">Due: ${a.due}</div>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:4px;">
-          ${a.tasks.map(t => `<div style="font-size:11.5px;color:#a1a1aa;display:flex;gap:6px;"><span style="color:var(--subtle);">→</span>${t}</div>`).join('')}
-        </div>
-      </div>
-    `).join('');
-
-    // Flow diagram
-    const flowSteps = [
-      { label: 'Lead Captured', sub: 'HubSpot + Klaviyo', color: 'var(--blue)', icon: '📥' },
-      { label: 'Audit Sent', sub: 'Marcus → 24hr', color: 'var(--blue)', icon: '🔍' },
-      { label: 'Discovery Call', sub: 'Lucy runs script', color: 'var(--accent)', icon: '📞' },
-      { label: 'Proposal Sent', sub: 'Lucy → 24hr post-call', color: 'var(--accent)', icon: '📄' },
-      { label: 'Closed Won', sub: 'HubSpot updated', color: 'var(--green)', icon: '✅' },
-      { label: 'All Agents Fire', sub: 'Lucy → Marcus → Tanya → Diana → Felix', color: 'var(--purple)', icon: '🚀' },
-      { label: 'Week 1 Live', sub: 'GBP + Citations + Dashboard', color: 'var(--orange)', icon: '⚡' },
-      { label: 'Month 1 Report', sub: 'Diana → Klaviyo → Client', color: 'var(--yellow)', icon: '📊' },
-    ];
-
-    document.getElementById('onboarding-flow').innerHTML = `
-      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
-        ${flowSteps.map((s, i) => `
-          <div style="display:flex;align-items:center;gap:4px;">
-            <div style="background:var(--elevated);border:1px solid ${s.color}44;border-radius:10px;padding:10px 14px;text-align:center;min-width:120px;">
-              <div style="font-size:20px;margin-bottom:4px;">${s.icon}</div>
-              <div style="font-size:12px;font-weight:600;color:${s.color};">${s.label}</div>
-              <div style="font-size:10px;color:var(--muted);margin-top:2px;">${s.sub}</div>
-            </div>
-            ${i < flowSteps.length - 1 ? `<div style="color:var(--subtle);font-size:18px;font-weight:300;">→</div>` : ''}
-          </div>
-        `).join('')}
-      </div>
-    `;
-
-    // 90-day roadmap
-    const roadmap = [
-      {
-        phase: 'Month 1 — Foundation',
-        color: 'var(--blue)',
-        items: [
-          '🔍 Full technical audit complete',
-          '📍 GBP fully optimized',
-          '📁 First 50 citations submitted',
-          '🔧 Critical on-page fixes done',
-          '✍️ First 2 blog posts published',
-          '📊 Dashboard live + weekly reports active',
-          '📣 Google Ads live (Pro)',
-        ]
-      },
-      {
-        phase: 'Month 2 — Acceleration',
-        color: 'var(--purple)',
-        items: [
-          '📁 75+ citations live and indexed',
-          '🔗 5–8 backlinks built',
-          '🗺️ First map pack movement on primary keywords',
-          '✍️ 4 blog posts + 12 social posts',
-          '📧 First email campaign sent',
-          '🌐 GEO FAQ pages published',
-          '📣 Meta Ads live (Pro)',
-        ]
-      },
-      {
-        phase: 'Month 3 — Dominance',
-        color: 'var(--green)',
-        items: [
-          '📁 100+ citations built',
-          '🔗 10–15 total backlinks',
-          '🏆 Top 3 map pack — 3–5 keywords',
-          '🤖 GEO citations appearing in AI engines',
-          '⭐ Reviews at 8–12/month velocity',
-          '📈 ROAS 4×+ target hit (Pro)',
-          '💬 Upsell conversation triggered',
-        ]
-      }
-    ];
-
-    document.getElementById('roadmap-cols').innerHTML = roadmap.map(r => `
-      <div style="background:var(--elevated);border:1px solid var(--border);border-radius:10px;padding:16px;">
-        <div style="font-size:12px;font-weight:700;color:${r.color};text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);">${r.phase}</div>
-        <div style="display:flex;flex-direction:column;gap:7px;">
-          ${r.items.map(item => `<div style="font-size:12.5px;color:#a1a1aa;line-height:1.4;">${item}</div>`).join('')}
-        </div>
-      </div>
-    `).join('');
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    buildCompetitors();
-    buildOnboarding();
+  // Close mobile nav on outside click
+  document.addEventListener('click', (e) => {
+    const panel = document.getElementById('mobileNavPanel');
+    const btn = document.getElementById('hamburgerBtn');
+    if (panel.classList.contains('open') && !panel.contains(e.target) && !btn.contains(e.target)) {
+      closeMobileNav();
+    }
   });
 
-  // Init on first load
-  document.addEventListener('DOMContentLoaded', renderProjections);
+  // ── REVEAL ON SCROLL ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" onload="renderProjections()"></script>
+
 </body>
 </html>
-<!-- cache-bust 2026032801 -->
