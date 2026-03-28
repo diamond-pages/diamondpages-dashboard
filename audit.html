@@ -518,7 +518,7 @@
         ['step-maps','step-gbp','step-competitors','step-speed','step-report','step-email']
           .forEach(id => document.getElementById(id).className = 'loading-step done');
 
-        await new Promise(r => setTimeout(r, 1000));
+        await new Promise(r => setTimeout(r, 800));
         document.getElementById('loading').classList.remove('active');
         document.getElementById('form-card').style.display = 'none';
         document.getElementById('success-name').textContent = name.split(' ')[0];
