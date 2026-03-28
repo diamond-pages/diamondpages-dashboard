@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome to DiamondPages.ai — Let's Get You Set Up</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#09090b">
+  <style>
+    :root {
+      --accent: #e11d48;
+      --accent-dim: rgba(225,29,72,0.12);
+      --accent-hover: #be123c;
+      --green: #22c55e;
+      --green-dim: rgba(34,197,94,0.12);
+      --blue: #3b82f6;
+      --blue-dim: rgba(59,130,246,0.12);
+      --yellow: #eab308;
+      --yellow-dim: rgba(234,179,8,0.12);
+      --purple: #a855f7;
+      --orange: #f97316;
+      --bg: #09090b;
+      --surface: #111113;
+      --elevated: #18181b;
+      --border: rgba(255,255,255,0.07);
+      --text: #f4f4f5;
+      --text2: #a1a1aa;
+      --muted: #71717a;
+      --radius: 16px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOP HEADER ── */
+    .ob-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .ob-logo { font-size: 22px; }
+    .ob-brand { font-size: 14px; font-weight: 700; letter-spacing: -.02em; }
+    .ob-brand span { color: var(--accent); }
+    .ob-header-right { margin-left: auto; font-size: 12px; color: var(--muted); }
+
+    /* ── PROGRESS ── */
+    .ob-progress {
+      background: var(--surface);
+      padding: 14px 20px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ob-progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .ob-progress-label { font-size: 12px; color: var(--muted); }
+    .ob-progress-pct { font-size: 12px; font-weight: 700; color: var(--accent); }
+    .ob-progress-bar {
+      height: 4px;
+      background: var(--elevated);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .ob-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #fb7185);
+      border-radius: 99px;
+      transition: width .4s ease;
+    }
+    .ob-steps-dots {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+    .ob-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      transition: all .2s;
+    }
+    .ob-dot.done { background: var(--accent); border-color: var(--accent); }
+    .ob-dot.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 3px rgba(225,29,72,0.2); width: 20px; border-radius: 99px; }
+
+    /* ── MAIN CONTENT ── */
+    .ob-body {
+      flex: 1;
+      padding: 24px 20px 100px;
+      max-width: 560px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── STEP CARD ── */
+    .ob-step { display: none; animation: stepIn .25s ease; }
+    .ob-step.active { display: block; }
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .ob-step-icon {
+      width: 60px; height: 60px;
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .ob-step-num {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .ob-step-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .ob-step-desc {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .ob-field { margin-bottom: 16px; }
+    .ob-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .ob-input, .ob-select, .ob-textarea {
+      width: 100%;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 15px;
+      padding: 13px 16px;
+      font-family: inherit;
+      transition: border-color .15s;
+      outline: none;
+    }
+    .ob-input:focus, .ob-select:focus, .ob-textarea:focus {
+      border-color: var(--accent);
+    }
+    .ob-textarea { min-height: 90px; resize: vertical; }
+    .ob-select { appearance: none; cursor: pointer; }
+    .ob-input::placeholder { color: var(--muted); }
+
+    .ob-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ── TIER CARDS ── */
+    .tier-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px; }
+    .tier-card {
+      background: var(--elevated);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: all .15s;
+      position: relative;
+    }
+    .tier-card:hover { border-color: var(--accent); }
+    .tier-card.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .tier-card input[type=radio] { position: absolute; opacity: 0; }
+    .tier-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .tier-name { font-size: 15px; font-weight: 700; }
+    .tier-price { font-size: 15px; font-weight: 800; color: var(--accent); }
+    .tier-desc { font-size: 12.5px; color: var(--text2); margin-bottom: 8px; }
+    .tier-features { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tier-tag { font-size: 10.5px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 2px 8px; color: var(--muted); }
+    .tier-popular {
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #fff; font-size: 10px; font-weight: 700;
+      padding: 2px 10px; border-radius: 99px; letter-spacing: .04em; white-space: nowrap;
+    }
+
+    /* ── INSTRUCTION BLOCKS ── */
+    .ob-instruction {
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .ob-instruction-header {
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .ob-instruction-body { padding: 16px; }
+    .ob-step-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .ob-step-list li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text2);
+    }
+    .ob-step-num-circle {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 1px solid rgba(225,29,72,.25);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .ob-step-list li strong { color: var(--text); }
+    .ob-copy-field {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .ob-copy-text { flex: 1; font-size: 13px; font-weight: 600; color: var(--accent); font-family: monospace; }
+    .ob-copy-btn {
+      background: var(--accent-dim);
+      border: 1px solid rgba(225,29,72,.2);
+      border-radius: 7px;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .ob-alert {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .ob-alert-info { background: var(--blue-dim); border: 1px solid rgba(59,130,246,.2); color: #93c5fd; }
+    .ob-alert-success { background: var(--green-dim); border: 1px solid rgba(34,197,94,.2); color: #86efac; }
+    .ob-alert-warn { background: var(--yellow-dim); border: 1px solid rgba(234,179,8,.2); color: #fde047; }
+
+    /* ── PLATFORM SELECTOR ── */
+    .platform-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .platform-btn {
+      background: var(--elevated);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+      font-size: 12px;
+      color: var(--text2);
+    }
+    .platform-btn .p-icon { font-size: 24px; display: block; margin-bottom: 4px; }
+    .platform-btn:hover { border-color: var(--accent); }
+    .platform-btn.selected { border-color: var(--accent); background: var(--accent-dim); color: var(--text); }
+
+    /* ── CMS INSTRUCTIONS ── */
+    .cms-instructions { display: none; }
+    .cms-instructions.active { display: block; animation: stepIn .2s ease; }
+
+    /* ── CHECKLIST ── */
+    .ob-checklist { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .ob-check-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .ob-check-item.checked { border-color: var(--green); background: var(--green-dim); }
+    .ob-check-box {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+      transition: all .15s;
+    }
+    .ob-check-item.checked .ob-check-box { background: var(--green); border-color: var(--green); }
+    .ob-check-label { font-size: 13.5px; font-weight: 500; flex: 1; }
+    .ob-check-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    /* ── GOAL CARDS ── */
+    .goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .goal-card {
+      background: var(--elevated);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+    }
+    .goal-card:hover { border-color: var(--accent); }
+    .goal-card.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .goal-icon { font-size: 24px; margin-bottom: 5px; }
+    .goal-label { font-size: 12px; font-weight: 600; }
+
+    /* ── BOTTOM NAV ── */
+    .ob-bottom {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 12px 20px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      display: flex;
+      gap: 10px;
+      z-index: 50;
+    }
+    .ob-btn-back {
+      flex: 0 0 auto;
+      padding: 14px 20px;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text2);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .ob-btn-next {
+      flex: 1;
+      padding: 14px 24px;
+      background: var(--accent);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .15s, transform .1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .ob-btn-next:hover { background: var(--accent-hover); }
+    .ob-btn-next:active { transform: scale(0.98); }
+    .ob-btn-next:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── SUCCESS SCREEN ── */
+    .ob-success {
+      text-align: center;
+      padding: 40px 20px 120px;
+    }
+    .ob-success-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      animation: popIn .5s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .ob-success-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      margin-bottom: 8px;
+    }
+    .ob-success-sub { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 28px; }
+    .timeline-cards { display: flex; flex-direction: column; gap: 10px; text-align: left; margin-bottom: 24px; }
+    .tl-card {
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .tl-dot { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .tl-day { font-size: 10px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 2px; }
+    .tl-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .tl-desc { font-size: 12px; color: var(--text2); }
+
+    .ob-dashboard-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: none;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .ob-secondary-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text2);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    /* ── LINK ── */
+    .ob-link { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+    /* ── DIVIDER ── */
+    .ob-divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:400px) {
+      .ob-row { grid-template-columns: 1fr; }
+      .goal-grid { grid-template-columns: 1fr 1fr; }
+      .platform-grid { grid-template-columns: repeat(3,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="ob-header">
+  <div class="ob-logo">💎</div>
+  <div>
+    <div class="ob-brand">Diamond<span>Pages.ai</span></div>
+  </div>
+  <div class="ob-header-right" id="header-step-label">Step 1 of 7</div>
+</header>
+
+<!-- PROGRESS -->
+<div class="ob-progress">
+  <div class="ob-progress-top">
+    <span class="ob-progress-label" id="progress-label">Getting Started</span>
+    <span class="ob-progress-pct" id="progress-pct">14%</span>
+  </div>
+  <div class="ob-progress-bar"><div class="ob-progress-fill" id="progress-fill" style="width:14%"></div></div>
+  <div class="ob-steps-dots" id="steps-dots"></div>
+</div>
+
+<!-- BODY -->
+<div class="ob-body">
+
+  <!-- ═══════════════ STEP 1 — TIER ═══════════════ -->
+  <div class="ob-step active" id="step-1">
+    <div class="ob-step-icon" style="background:var(--accent-dim);">🎯</div>
+    <div class="ob-step-num">Step 1 of 7</div>
+    <div class="ob-step-title">Welcome! Let's confirm your plan.</div>
+    <div class="ob-step-desc">Select the plan you signed up for. This tells us exactly what to set up for you — nothing more, nothing less.</div>
+
+    <div class="tier-grid">
+      <label class="tier-card" onclick="selectTier('starter',this)">
+        <input type="radio" name="tier" value="starter">
+        <div class="tier-card-top">
+          <span class="tier-name">Starter</span>
+          <span class="tier-price">$397/mo</span>
+        </div>
+        <div class="tier-desc">New businesses getting started with local visibility.</div>
+        <div class="tier-features">
+          <span class="tier-tag">GBP Setup</span>
+          <span class="tier-tag">Citations</span>
+          <span class="tier-tag">Basic SEO</span>
+          <span class="tier-tag">Reviews</span>
+          <span class="tier-tag">8 Social Posts</span>
+        </div>
+      </label>
+
+      <label class="tier-card" onclick="selectTier('growth',this)" style="position:relative;">
+        <div class="tier-popular">★ Most Popular</div>
+        <input type="radio" name="tier" value="growth">
+        <div class="tier-card-top">
+          <span class="tier-name">Growth</span>
+          <span class="tier-price">$997/mo</span>
+        </div>
+        <div class="tier-desc">Established businesses ready to own their map pack.</div>
+        <div class="tier-features">
+          <span class="tier-tag">Everything in Starter</span>
+          <span class="tier-tag">Full Local SEO</span>
+          <span class="tier-tag">GEO / AI Search</span>
+          <span class="tier-tag">4 Blog Posts/mo</span>
+          <span class="tier-tag">Link Building</span>
+          <span class="tier-tag">Live Dashboard</span>
+        </div>
+      </label>
+
+      <label class="tier-card" onclick="selectTier('pro',this)">
+        <input type="radio" name="tier" value="pro">
+        <div class="tier-card-top">
+          <span class="tier-name">Pro</span>
+          <span class="tier-price">$1,997/mo</span>
+        </div>
+        <div class="tier-desc">Aggressive growth — ads, multiple locations, fastest results.</div>
+        <div class="tier-features">
+          <span class="tier-tag">Everything in Growth</span>
+          <span class="tier-tag">Google Ads</span>
+          <span class="tier-tag">Meta Ads</span>
+          <span class="tier-tag">Up to 3 Locations</span>
+          <span class="tier-tag">Weekly Calls</span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 2 — BUSINESS INFO ═══════════════ -->
+  <div class="ob-step" id="step-2">
+    <div class="ob-step-icon" style="background:var(--blue-dim);">🏢</div>
+    <div class="ob-step-num">Step 2 of 7</div>
+    <div class="ob-step-title">Tell us about your business.</div>
+    <div class="ob-step-desc">This information goes everywhere — your Google listing, directories, website, and more. Make sure it's exactly how you want customers to find you.</div>
+
+    <div class="ob-field">
+      <label class="ob-label">Business Name *</label>
+      <input class="ob-input" id="biz-name" type="text" placeholder="e.g. Sakura Garden Restaurant" autocomplete="organization">
+    </div>
+    <div class="ob-row">
+      <div class="ob-field">
+        <label class="ob-label">Phone Number *</label>
+        <input class="ob-input" id="biz-phone" type="tel" placeholder="(555) 555-5555" autocomplete="tel">
+      </div>
+      <div class="ob-field">
+        <label class="ob-label">Business Type *</label>
+        <select class="ob-select" id="biz-vertical">
+          <option value="">Select your type…</option>
+          <option>Restaurant / Café</option>
+          <option>Barbershop / Salon</option>
+          <option>Plumber / HVAC</option>
+          <option>Electrician / Contractor</option>
+          <option>Real Estate Agent</option>
+          <option>Dentist / Med Spa</option>
+          <option>Lawyer / Accountant</option>
+          <option>Auto Services</option>
+          <option>Landscaping / Lawn Care</option>
+          <option>Pet Services / Vet</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="ob-field">
+      <label class="ob-label">Street Address *</label>
+      <input class="ob-input" id="biz-address" type="text" placeholder="123 Main Street" autocomplete="street-address">
+    </div>
+    <div class="ob-row">
+      <div class="ob-field">
+        <label class="ob-label">City *</label>
+        <input class="ob-input" id="biz-city" type="text" placeholder="Fort Lauderdale" autocomplete="address-level2">
+      </div>
+      <div class="ob-field">
+        <label class="ob-label">State / ZIP *</label>
+        <input class="ob-input" id="biz-state" type="text" placeholder="FL 33301" autocomplete="postal-code">
+      </div>
+    </div>
+    <div class="ob-field">
+      <label class="ob-label">Website URL</label>
+      <input class="ob-input" id="biz-website" type="url" placeholder="https://yourbusiness.com" autocomplete="url">
+    </div>
+    <div class="ob-field">
+      <label class="ob-label">Your Name *</label>
+      <input class="ob-input" id="owner-name" type="text" placeholder="First and last name" autocomplete="name">
+    </div>
+    <div class="ob-field">
+      <label class="ob-label">Your Email *</label>
+      <input class="ob-input" id="owner-email" type="email" placeholder="you@yourbusiness.com" autocomplete="email">
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 3 — GBP ACCESS ═══════════════ -->
+  <div class="ob-step" id="step-3">
+    <div class="ob-step-icon" style="background:rgba(66,133,244,0.15);">📍</div>
+    <div class="ob-step-num">Step 3 of 7 — Most Important</div>
+    <div class="ob-step-title">Give us access to your Google Business Profile.</div>
+    <div class="ob-step-desc">This is step #1 for ranking on Google Maps. Without this, we can't optimize your listing. It takes 2 minutes and you stay in full control — we're just a Manager, not an Owner.</div>
+
+    <div class="ob-alert ob-alert-info">
+      💡 <strong>You're adding us as a Manager</strong> — not an owner. You keep full control and can remove us anytime.
+    </div>
+
+    <div class="ob-instruction">
+      <div class="ob-instruction-header">
+        <span style="font-size:18px;">📱</span>
+        <span>Step-by-Step Instructions</span>
+      </div>
+      <div class="ob-instruction-body">
+        <ol class="ob-step-list">
+          <li>
+            <div class="ob-step-num-circle">1</div>
+            <div>Go to <a class="ob-link" href="https://business.google.com" target="_blank">business.google.com</a> and sign in with the Google account that owns your listing.</div>
+          </li>
+          <li>
+            <div class="ob-step-num-circle">2</div>
+            <div>Click on your business name, then click the <strong>three dots menu (⋮)</strong> → <strong>"Business Profile Settings"</strong></div>
+          </li>
+          <li>
+            <div class="ob-step-num-circle">3</div>
+            <div>Click <strong>"Managers"</strong> then <strong>"Add"</strong> (the person+ icon in the top right)</div>
+          </li>
+          <li>
+            <div class="ob-step-num-circle">4</div>
+            <div>Paste this email address — set role to <strong>"Manager"</strong> — then click <strong>Invite</strong>:
+              <div class="ob-copy-field">
+                <span class="ob-copy-text">gbp@diamondpages.ai</span>
+                <button class="ob-copy-btn" onclick="copyText('gbp@diamondpages.ai',this)">Copy</button>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="ob-step-num-circle">5</div>
+            <div>Done! We'll receive the invite and accept it within a few hours. Check the box below once you've sent it.</div>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="ob-checklist">
+      <div class="ob-check-item" onclick="toggleCheck(this)">
+        <div class="ob-check-box">✓</div>
+        <div>
+          <div class="ob-check-label">I've sent the Manager invite to gbp@diamondpages.ai</div>
+          <div class="ob-check-sub">Required to continue</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ob-alert ob-alert-warn">
+      ⚠️ <strong>Can't find your GBP?</strong> If you haven't claimed your listing yet, <a class="ob-link" href="https://business.google.com/create" target="_blank">claim it here first</a> — it takes about 5 minutes. Or reply to your welcome email and Lucy will help you.
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 4 — WEBSITE ACCESS ═══════════════ -->
+  <div class="ob-step" id="step-4">
+    <div class="ob-step-icon" style="background:var(--purple-dim);">🌐</div>
+    <div class="ob-step-num">Step 4 of 7</div>
+    <div class="ob-step-title">Let us into your website.</div>
+    <div class="ob-step-desc">We need editor access to fix on-page SEO, add schema markup, and improve page speed. Select your platform below for exact instructions.</div>
+
+    <div class="ob-field">
+      <label class="ob-label">What platform is your website on?</label>
+      <div class="platform-grid">
+        <div class="platform-btn" onclick="selectPlatform('wordpress',this)"><span class="p-icon">🔵</span>WordPress</div>
+        <div class="platform-btn" onclick="selectPlatform('wix',this)"><span class="p-icon">⬛</span>Wix</div>
+        <div class="platform-btn" onclick="selectPlatform('squarespace',this)"><span class="p-icon">⬜</span>Squarespace</div>
+        <div class="platform-btn" onclick="selectPlatform('shopify',this)"><span class="p-icon">🟢</span>Shopify</div>
+        <div class="platform-btn" onclick="selectPlatform('godaddy',this)"><span class="p-icon">🟢</span>GoDaddy</div>
+        <div class="platform-btn" onclick="selectPlatform('other',this)"><span class="p-icon">🔧</span>Other</div>
+      </div>
+    </div>
+
+    <div id="cms-wordpress" class="cms-instructions ob-instruction">
+      <div class="ob-instruction-header"><span style="font-size:18px;">🔵</span><span>WordPress Instructions</span></div>
+      <div class="ob-instruction-body">
+        <ol class="ob-step-list">
+          <li><div class="ob-step-num-circle">1</div><div>Log in to your WordPress dashboard at <strong>yoursite.com/wp-admin</strong></div></li>
+          <li><div class="ob-step-num-circle">2</div><div>Go to <strong>Users → Add New</strong></div></li>
+          <li><div class="ob-step-num-circle">3</div><div>Enter this email and set role to <strong>"Editor"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div></div></li>
+          <li><div class="ob-step-num-circle">4</div><div>Click <strong>Add New User</strong>. Done!</div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="cms-wix" class="cms-instructions ob-instruction">
+      <div class="ob-instruction-header"><span style="font-size:18px;">⬛</span><span>Wix Instructions</span></div>
+      <div class="ob-instruction-body">
+        <ol class="ob-step-list">
+          <li><div class="ob-step-num-circle">1</div><div>Go to your <strong>Wix Dashboard</strong> and click <strong>Settings</strong></div></li>
+          <li><div class="ob-step-num-circle">2</div><div>Click <strong>Roles & Permissions</strong> → <strong>Invite People</strong></div></li>
+          <li><div class="ob-step-num-circle">3</div><div>Invite this email as <strong>"Co-owner"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div></div></li>
+          <li><div class="ob-step-num-circle">4</div><div>Click <strong>Send Invite</strong>. Done!</div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="cms-squarespace" class="cms-instructions ob-instruction">
+      <div class="ob-instruction-header"><span style="font-size:18px;">⬜</span><span>Squarespace Instructions</span></div>
+      <div class="ob-instruction-body">
+        <ol class="ob-step-list">
+          <li><div class="ob-step-num-circle">1</div><div>Go to <strong>Settings → Permissions & Ownership → Invite Contributor</strong></div></li>
+          <li><div class="ob-step-num-circle">2</div><div>Enter this email and set to <strong>"Administrator"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div></div></li>
+          <li><div class="ob-step-num-circle">3</div><div>Click <strong>Send Invitation</strong>. Done!</div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="cms-shopify" class="cms-instructions ob-instruction">
+      <div class="ob-instruction-header"><span style="font-size:18px;">🟢</span><span>Shopify Instructions</span></div>
+      <div class="ob-instruction-body">
+        <ol class="ob-step-list">
+          <li><div class="ob-step-num-circle">1</div><div>From your Shopify Admin, go to <strong>Settings → Users and Permissions</strong></div></li>
+          <li><div class="ob-step-num-circle">2</div><div>Click <strong>Add Staff</strong></div></li>
+          <li><div class="ob-step-num-circle">3</div><div>Enter this email and enable <strong>all permissions</strong>:<div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div></div></li>
+          <li><div class="ob-step-num-circle">4</div><div>Click <strong>Send Invite</strong>. Done!</div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="cms-godaddy" class="cms-instructions ob-instruction">
+      <div class="ob-instruction-header"><span style="font-size:18px;">🟢</span><span>GoDaddy Website Builder</span></div>
+      <div class="ob-instruction-body">
+        <ol class="ob-step-list">
+          <li><div class="ob-step-num-circle">1</div><div>Log into your GoDaddy account and go to <strong>My Products</strong></div></li>
+          <li><div class="ob-step-num-circle">2</div><div>Find your website and click <strong>Manage</strong></div></li>
+          <li><div class="ob-step-num-circle">3</div><div>Email us your site login details securely — we'll reply with a secure link:<div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="cms-other" class="cms-instructions ob-instruction">
+      <div class="ob-instruction-header"><span style="font-size:18px;">🔧</span><span>Other Platform</span></div>
+      <div class="ob-instruction-body">
+        <div style="font-size:13.5px;color:var(--text2);line-height:1.6;">No problem! Email your platform name and website login to <a class="ob-link" href="mailto:seo@diamondpages.ai">seo@diamondpages.ai</a> and our team will walk you through it in under 10 minutes.</div>
+      </div>
+    </div>
+
+    <div id="no-website-option" style="margin-top:8px;">
+      <div class="ob-check-item" onclick="toggleCheck(this)" id="no-website-check">
+        <div class="ob-check-box">✓</div>
+        <div>
+          <div class="ob-check-label">I don't have a website yet</div>
+          <div class="ob-check-sub">We'll note this and include a website recommendation in your strategy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 5 — ANALYTICS ═══════════════ -->
+  <div class="ob-step" id="step-5">
+    <div class="ob-step-icon" style="background:var(--yellow-dim);">📊</div>
+    <div class="ob-step-num">Step 5 of 7</div>
+    <div class="ob-step-title">Connect Google Analytics &amp; Search Console.</div>
+    <div class="ob-step-desc">These free Google tools show us exactly how people find your website. We use them to track keyword rankings, fix crawl errors, and prove our results to you.</div>
+
+    <div class="ob-instruction">
+      <div class="ob-instruction-header"><span style="font-size:18px;">📈</span><span>Google Search Console (5 min)</span></div>
+      <div class="ob-instruction-body">
+        <ol class="ob-step-list">
+          <li><div class="ob-step-num-circle">1</div><div>Go to <a class="ob-link" href="https://search.google.com/search-console" target="_blank">search.google.com/search-console</a></div></li>
+          <li><div class="ob-step-num-circle">2</div><div>Select your property (or add your website if it's not there yet)</div></li>
+          <li><div class="ob-step-num-circle">3</div><div>Click <strong>Settings → Users and Permissions → Add User</strong></div></li>
+          <li><div class="ob-step-num-circle">4</div><div>Add this email as <strong>"Full"</strong> permission:<div class="ob-copy-field"><span class="ob-copy-text">analytics@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('analytics@diamondpages.ai',this)">Copy</button></div></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="ob-instruction">
+      <div class="ob-instruction-header"><span style="font-size:18px;">📉</span><span>Google Analytics (3 min)</span></div>
+      <div class="ob-instruction-body">
+        <ol class="ob-step-list">
+          <li><div class="ob-step-num-circle">1</div><div>Go to <a class="ob-link" href="https://analytics.google.com" target="_blank">analytics.google.com</a></div></li>
+          <li><div class="ob-step-num-circle">2</div><div>Click <strong>Admin (⚙)</strong> → Under "Account", click <strong>"Account Access Management"</strong></div></li>
+          <li><div class="ob-step-num-circle">3</div><div>Click <strong>+ Add Users</strong> — paste the email, set to <strong>"Editor"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">analytics@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('analytics@diamondpages.ai',this)">Copy</button></div></div></li>
+          <li><div class="ob-step-num-circle">4</div><div>Click <strong>Add</strong>. Done!</div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="ob-alert ob-alert-info">
+      💡 <strong>Don't have Google Analytics?</strong> No worries — we'll set it up for you as part of your onboarding.
+    </div>
+
+    <div class="ob-checklist">
+      <div class="ob-check-item" onclick="toggleCheck(this)">
+        <div class="ob-check-box">✓</div>
+        <div>
+          <div class="ob-check-label">I've added access to Search Console</div>
+          <div class="ob-check-sub">Or I don't have it set up yet</div>
+        </div>
+      </div>
+      <div class="ob-check-item" onclick="toggleCheck(this)">
+        <div class="ob-check-box">✓</div>
+        <div>
+          <div class="ob-check-label">I've added access to Google Analytics</div>
+          <div class="ob-check-sub">Or I don't have it set up yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 6 — SOCIAL / ADS ═══════════════ -->
+  <div class="ob-step" id="step-6">
+    <div class="ob-step-icon" style="background:var(--purple-dim);">📱</div>
+    <div class="ob-step-num">Step 6 of 7</div>
+    <div class="ob-step-title">Social media &amp; ads access.</div>
+    <div class="ob-step-desc">We'll post content to your Facebook and Instagram to support your SEO rankings. Pro plan clients also need ads access so Felix can run your campaigns.</div>
+
+    <div class="ob-instruction">
+      <div class="ob-instruction-header"><span style="font-size:18px;">👥</span><span>Facebook Business Manager</span></div>
+      <div class="ob-instruction-body">
+        <ol class="ob-step-list">
+          <li><div class="ob-step-num-circle">1</div><div>Go to <a class="ob-link" href="https://business.facebook.com" target="_blank">business.facebook.com</a></div></li>
+          <li><div class="ob-step-num-circle">2</div><div>Click <strong>Business Settings → Pages → Add People</strong></div></li>
+          <li><div class="ob-step-num-circle">3</div><div>Add this email with <strong>"Content Creator"</strong> role (or "Admin" for Pro):<div class="ob-copy-field"><span class="ob-copy-text">social@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('social@diamondpages.ai',this)">Copy</button></div></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="pro-ads-section" style="display:none;">
+      <div class="ob-divider"></div>
+      <div class="ob-alert ob-alert-info">🎯 <strong>Pro Plan — Ads Access Required</strong><br>Felix needs access to run your Google Ads and Meta Ads campaigns.</div>
+
+      <div class="ob-instruction">
+        <div class="ob-instruction-header"><span style="font-size:18px;">🎯</span><span>Google Ads Manager Access</span></div>
+        <div class="ob-instruction-body">
+          <ol class="ob-step-list">
+            <li><div class="ob-step-num-circle">1</div><div>Go to <a class="ob-link" href="https://ads.google.com" target="_blank">ads.google.com</a> → click the tools icon ⚙ → <strong>Account Access</strong></div></li>
+            <li><div class="ob-step-num-circle">2</div><div>Click <strong>+ New User</strong> — set access level to <strong>"Standard"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">ads@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('ads@diamondpages.ai',this)">Copy</button></div></div></li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="ob-instruction">
+        <div class="ob-instruction-header"><span style="font-size:18px;">📣</span><span>Meta Ads Manager Access</span></div>
+        <div class="ob-instruction-body">
+          <ol class="ob-step-list">
+            <li><div class="ob-step-num-circle">1</div><div>Go to <strong>Business Settings → Ad Accounts → Add People</strong></div></li>
+            <li><div class="ob-step-num-circle">2</div><div>Add this email as <strong>"Advertiser"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">ads@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('ads@diamondpages.ai',this)">Copy</button></div></div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="ob-checklist">
+      <div class="ob-check-item" onclick="toggleCheck(this)">
+        <div class="ob-check-box">✓</div>
+        <div>
+          <div class="ob-check-label">I've added social@diamondpages.ai to my Facebook Page</div>
+          <div class="ob-check-sub">Required for social media posting</div>
+        </div>
+      </div>
+      <div class="ob-check-item" onclick="toggleCheck(this)">
+        <div class="ob-check-box">✓</div>
+        <div>
+          <div class="ob-check-label">My Instagram is connected to my Facebook Business Page</div>
+          <div class="ob-check-sub">Required for Instagram posting</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STEP 7 — GOALS ═══════════════ -->
+  <div class="ob-step" id="step-7">
+    <div class="ob-step-icon" style="background:var(--green-dim);">🎯</div>
+    <div class="ob-step-num">Step 7 of 7 — Almost Done!</div>
+    <div class="ob-step-title">Last 3 questions, we promise.</div>
+    <div class="ob-step-desc">These answers go straight to your strategy. Be as specific as possible — the more we know, the faster we get results.</div>
+
+    <div class="ob-field">
+      <label class="ob-label">What's your #1 goal right now?</label>
+      <div class="goal-grid">
+        <div class="goal-card" onclick="selectGoal(this)"><div class="goal-icon">📞</div><div class="goal-label">More phone calls</div></div>
+        <div class="goal-card" onclick="selectGoal(this)"><div class="goal-icon">📍</div><div class="goal-label">Rank #1 on Maps</div></div>
+        <div class="goal-card" onclick="selectGoal(this)"><div class="goal-icon">⭐</div><div class="goal-label">More reviews</div></div>
+        <div class="goal-card" onclick="selectGoal(this)"><div class="goal-icon">🌐</div><div class="goal-label">More website traffic</div></div>
+        <div class="goal-card" onclick="selectGoal(this)"><div class="goal-icon">🤖</div><div class="goal-label">Show up in AI search</div></div>
+        <div class="goal-card" onclick="selectGoal(this)"><div class="goal-icon">📣</div><div class="goal-label">Run ads that convert</div></div>
+      </div>
+    </div>
+
+    <div class="ob-field">
+      <label class="ob-label">Who is your biggest local competitor?</label>
+      <input class="ob-input" id="competitor-name" type="text" placeholder="e.g. Joe's Plumbing, Smith Law Firm…">
+    </div>
+
+    <div class="ob-field">
+      <label class="ob-label">Anything else we should know?</label>
+      <textarea class="ob-textarea" id="extra-notes" placeholder="Seasonal slow periods, upcoming promotions, recent challenges, anything at all…"></textarea>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SUCCESS ═══════════════ -->
+  <div class="ob-step" id="step-success">
+    <div class="ob-success">
+      <div class="ob-success-icon">🎉</div>
+      <div class="ob-success-title">You're all set, <span id="success-name">there</span>!</div>
+      <div class="ob-success-sub">Welcome to DiamondPages.ai. Your team is already on it — here's what happens next over the next 7 days.</div>
+
+      <div class="timeline-cards">
+        <div class="tl-card">
+          <div class="tl-dot" style="background:var(--accent-dim);">🎬</div>
+          <div>
+            <div class="tl-day">Today</div>
+            <div class="tl-title">Welcome email + dashboard access</div>
+            <div class="tl-desc">Lucy will send your login and confirm everything is received.</div>
+          </div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-dot" style="background:var(--blue-dim);">🔍</div>
+          <div>
+            <div class="tl-day">Day 1–2</div>
+            <div class="tl-title">Marcus runs your full audit</div>
+            <div class="tl-desc">GBP health check, keyword research, competitor analysis, technical fixes list.</div>
+          </div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-dot" style="background:var(--yellow-dim);">📊</div>
+          <div>
+            <div class="tl-day">Day 2</div>
+            <div class="tl-title">Your live dashboard goes live</div>
+            <div class="tl-desc">Real-time rankings, GBP data, and your DiamondPages Score™ — all in one place.</div>
+          </div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-dot" style="background:var(--orange-dim,rgba(249,115,22,.12));">✍️</div>
+          <div>
+            <div class="tl-day">Day 3–4</div>
+            <div class="tl-title">Tanya builds your content calendar</div>
+            <div class="tl-desc">90-day blog, social, and GEO content plan customized to your vertical and market.</div>
+          </div>
+        </div>
+        <div class="tl-card">
+          <div class="tl-dot" style="background:var(--green-dim);">🚀</div>
+          <div>
+            <div class="tl-day">Day 5–7</div>
+            <div class="tl-title">Implementation begins</div>
+            <div class="tl-desc">GBP optimized, citations submitted, on-page fixes live. The clock starts on your 90-day roadmap.</div>
+          </div>
+        </div>
+      </div>
+
+      <a href="client-demo.html" class="ob-dashboard-btn">View Your Dashboard →</a>
+      <a href="mailto:hello@diamondpages.ai" class="ob-secondary-btn">Questions? Email Lucy</a>
+    </div>
+  </div>
+
+</div><!-- /ob-body -->
+
+<!-- BOTTOM BUTTONS -->
+<div class="ob-bottom" id="ob-bottom">
+  <button class="ob-btn-back" id="btn-back" onclick="prevStep()" style="display:none;">← Back</button>
+  <button class="ob-btn-next" id="btn-next" onclick="nextStep()">Continue →</button>
+</div>
+
+<script>
+  const TOTAL_STEPS = 7;
+  let currentStep = 1;
+  let selectedTier = null;
+  let selectedGoal = null;
+
+  const stepLabels = ['Your Plan', 'Business Info', 'Google Business Profile', 'Website Access', 'Analytics', 'Social & Ads', 'Your Goals'];
+
+  // ── DOTS ──
+  function buildDots() {
+    const container = document.getElementById('steps-dots');
+    container.innerHTML = '';
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+      const d = document.createElement('div');
+      d.className = 'ob-dot';
+      if (i < currentStep) d.classList.add('done');
+      if (i === currentStep) d.classList.add('active');
+      container.appendChild(d);
+    }
+  }
+
+  // ── PROGRESS UPDATE ──
+  function updateProgress() {
+    const pct = Math.round((currentStep / TOTAL_STEPS) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+    document.getElementById('progress-label').textContent = stepLabels[currentStep - 1];
+    document.getElementById('header-step-label').textContent = `Step ${currentStep} of ${TOTAL_STEPS}`;
+    buildDots();
+
+    const backBtn = document.getElementById('btn-back');
+    backBtn.style.display = currentStep > 1 ? 'block' : 'none';
+
+    const nextBtn = document.getElementById('btn-next');
+    if (currentStep === TOTAL_STEPS) {
+      nextBtn.textContent = '🚀 Complete Setup';
+    } else {
+      nextBtn.innerHTML = 'Continue →';
+    }
+  }
+
+  // ── NAV ──
+  function showStep(n) {
+    document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-' + n).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    updateProgress();
+  }
+
+  function nextStep() {
+    if (!validateStep(currentStep)) return;
+    if (currentStep === TOTAL_STEPS) {
+      finishOnboarding();
+      return;
+    }
+    currentStep++;
+    showStep(currentStep);
+  }
+
+  function prevStep() {
+    if (currentStep > 1) {
+      currentStep--;
+      showStep(currentStep);
+    }
+  }
+
+  // ── VALIDATION ──
+  function validateStep(step) {
+    if (step === 1) {
+      if (!selectedTier) {
+        shake(document.querySelector('.tier-grid'));
+        return false;
+      }
+    }
+    if (step === 2) {
+      const name = document.getElementById('biz-name').value.trim();
+      const phone = document.getElementById('biz-phone').value.trim();
+      const vert = document.getElementById('biz-vertical').value;
+      const email = document.getElementById('owner-email').value.trim();
+      if (!name || !phone || !vert || !email) {
+        shake(document.getElementById('step-2'));
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function shake(el) {
+    el.style.animation = 'none';
+    setTimeout(() => {
+      el.style.animation = 'shakeX .4s ease';
+    }, 10);
+  }
+
+  // ── TIER SELECT ──
+  function selectTier(tier, el) {
+    selectedTier = tier;
+    document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    // Show/hide pro ads section
+    if (tier === 'pro') {
+      document.getElementById('pro-ads-section').style.display = 'block';
+    } else {
+      document.getElementById('pro-ads-section').style.display = 'none';
+    }
+  }
+
+  // ── GOAL SELECT ──
+  function selectGoal(el) {
+    document.querySelectorAll('.goal-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedGoal = el.querySelector('.goal-label').textContent;
+  }
+
+  // ── PLATFORM SELECT ──
+  function selectPlatform(platform, btn) {
+    document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.querySelectorAll('.cms-instructions').forEach(c => c.classList.remove('active'));
+    const inst = document.getElementById('cms-' + platform);
+    if (inst) inst.classList.add('active');
+  }
+
+  // ── CHECK ITEMS ──
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+  }
+
+  // ── COPY ──
+  function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      btn.style.background = 'var(--green-dim)';
+      btn.style.color = 'var(--green)';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  // ── FINISH ──
+  function finishOnboarding() {
+    const name = document.getElementById('owner-name').value.trim().split(' ')[0] || 'there';
+    document.getElementById('success-name').textContent = name;
+
+    // Hide progress + bottom bar
+    document.getElementById('ob-bottom').style.display = 'none';
+    document.querySelector('.ob-progress').style.display = 'none';
+    document.getElementById('header-step-label').textContent = 'Setup Complete ✓';
+
+    // Show success
+    document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-success').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Log to console (replace with actual API call / Klaviyo event)
+    console.log('Onboarding complete:', {
+      tier: selectedTier,
+      bizName: document.getElementById('biz-name').value,
+      ownerEmail: document.getElementById('owner-email').value,
+      goal: selectedGoal,
+      competitor: document.getElementById('competitor-name').value,
+      notes: document.getElementById('extra-notes').value
+    });
+  }
+
+  // ── INIT ──
+  updateProgress();
+</script>
+
+<style>
+  @keyframes shakeX {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+</style>
+</body>
+</html>
