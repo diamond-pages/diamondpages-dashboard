@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DiamondPages.ai — Internal Dashboard</title>
+  <style>
+    :root {
+      --bg: #09090b;
+      --surface: #111113;
+      --elevated: #18181b;
+      --border: rgba(255,255,255,0.07);
+      --text: #f4f4f5;
+      --muted: #71717a;
+      --subtle: #3f3f46;
+      --accent: #6366f1;
+      --accent-dim: rgba(99,102,241,0.12);
+      --green: #22c55e;
+      --green-dim: rgba(34,197,94,0.12);
+      --yellow: #eab308;
+      --yellow-dim: rgba(234,179,8,0.12);
+      --red: #ef4444;
+      --red-dim: rgba(239,68,68,0.12);
+      --blue: #3b82f6;
+      --blue-dim: rgba(59,130,246,0.12);
+      --purple: #a855f7;
+      --purple-dim: rgba(168,85,247,0.12);
+      --orange: #f97316;
+      --orange-dim: rgba(249,115,22,0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px;
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 10;
+    }
+
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-mark {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+
+    .logo-text {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 1px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-section {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 8px 8px 4px;
+      margin-top: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13.5px;
+      color: var(--muted);
+      transition: all 0.15s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      background: var(--elevated);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      margin-right: 6px;
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    /* MAIN */
+    .main {
+      margin-left: 240px;
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .page-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .page-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    /* PAGES */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+
+    /* GRID */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 99px;
+    }
+
+    .badge-green { background: var(--green-dim); color: var(--green); }
+    .badge-yellow { background: var(--yellow-dim); color: var(--yellow); }
+    .badge-red { background: var(--red-dim); color: var(--red); }
+    .badge-blue { background: var(--blue-dim); color: var(--blue); }
+    .badge-purple { background: var(--purple-dim); color: var(--purple); }
+    .badge-orange { background: var(--orange-dim); color: var(--orange); }
+    .badge-accent { background: var(--accent-dim); color: var(--accent); }
+    .badge-muted { background: rgba(113,113,122,0.15); color: var(--muted); }
+
+    /* ═══════════════════════════════
+       AGENT STACK PAGE
+    ═══════════════════════════════ */
+
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .agent-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      transition: border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .agent-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+
+    .agent-card.lucy::before { background: linear-gradient(90deg, #6366f1, #a855f7); }
+    .agent-card.tanya::before { background: linear-gradient(90deg, #ec4899, #f97316); }
+    .agent-card.marcus::before { background: linear-gradient(90deg, #3b82f6, #22c55e); }
+    .agent-card.diana::before { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+    .agent-card.felix::before { background: linear-gradient(90deg, #10b981, #3b82f6); }
+
+    .agent-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .agent-avatar {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .lucy .agent-avatar { background: linear-gradient(135deg, #6366f1, #a855f7); }
+    .tanya .agent-avatar { background: linear-gradient(135deg, #ec4899, #f97316); }
+    .marcus .agent-avatar { background: linear-gradient(135deg, #3b82f6, #22c55e); }
+    .diana .agent-avatar { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+    .felix .agent-avatar { background: linear-gradient(135deg, #10b981, #3b82f6); }
+
+    .agent-info { flex: 1; }
+
+    .agent-name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 2px;
+    }
+
+    .agent-role {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .agent-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--green);
+      margin-top: 4px;
+    }
+
+    .agent-section {
+      margin-bottom: 14px;
+    }
+
+    .agent-section-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .duty-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .duty-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12.5px;
+      color: #a1a1aa;
+      line-height: 1.4;
+    }
+
+    .duty-list li::before {
+      content: '→';
+      color: var(--subtle);
+      flex-shrink: 0;
+      margin-top: 0px;
+    }
+
+    .tools-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .tool-tag {
+      font-size: 10.5px;
+      padding: 2px 8px;
+      border-radius: 5px;
+      background: var(--elevated);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .reports-to {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--muted);
+      padding: 8px 12px;
+      background: var(--elevated);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    /* ═══════════════════════════════
+       OPS & DEV TASKS PAGE
+    ═══════════════════════════════ */
+
+    .tasks-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .tasks-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .task-columns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .task-col {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .task-col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .task-col-title {
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .task-col-count {
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--elevated);
+      padding: 2px 7px;
+      border-radius: 99px;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .task-item {
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .task-item:hover {
+      border-color: var(--subtle);
+    }
+
+    .task-item-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .task-title {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .task-owner {
+      font-size: 10.5px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .task-priority {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    .priority-high { background: var(--red); box-shadow: 0 0 5px var(--red); }
+    .priority-med { background: var(--yellow); }
+    .priority-low { background: var(--muted); }
+
+    /* OVERVIEW PAGE */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+    }
+
+    .agency-hero {
+      background: linear-gradient(135deg, var(--accent-dim), var(--purple-dim));
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .agency-name {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff, #a1a1aa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .agency-tagline {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .agency-stats {
+      display: flex;
+      gap: 24px;
+    }
+
+    .agency-stat {
+      text-align: left;
+    }
+
+    .agency-stat-val {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .agency-stat-lbl {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .team-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .team-member {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--elevated);
+      border-radius: 9px;
+      border: 1px solid var(--border);
+    }
+
+    .member-ava {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .member-name { font-size: 13px; font-weight: 600; }
+    .member-role { font-size: 11px; color: var(--muted); }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .section-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .add-task-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.15s;
+    }
+
+    .add-task-btn:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">💎</div>
+      <div>
+        <div class="logo-text">DiamondPages.ai</div>
+        <div class="logo-sub">Internal Dashboard</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <span class="nav-section">Main</span>
+    <button class="nav-item active" onclick="showPage('overview', this)">
+      <span class="icon">🏠</span> Overview
+    </button>
+
+    <span class="nav-section">Agency</span>
+    <button class="nav-item" onclick="showPage('agents', this)">
+      <span class="icon">🤖</span> Agent Stack
+    </button>
+    <button class="nav-item" onclick="showPage('ops', this)">
+      <span class="icon">⚙️</span> Ops & Dev Tasks
+    </button>
+
+    <span class="nav-section">Coming Soon</span>
+    <button class="nav-item" onclick="showPage('clients', this)">
+      <span class="icon">👥</span> Clients
+    </button>
+    <button class="nav-item" onclick="showPage('pipeline', this)">
+      <span class="icon">📊</span> Pipeline
+    </button>
+    <button class="nav-item" onclick="showPage('reporting', this)">
+      <span class="icon">📈</span> Reporting
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <span class="status-dot"></span> Lucy — Online
+    <br><span style="font-size:10px;display:block;margin-top:4px;">OpenClaw · v1.0</span>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <span class="page-title" id="topbar-title">Overview</span>
+    <span class="page-sub" id="topbar-date"></span>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══════════════════════ OVERVIEW PAGE ═══════════════════════ -->
+    <div class="page active" id="page-overview">
+
+      <div class="agency-hero">
+        <div class="agency-name">DiamondPages.ai</div>
+        <div class="agency-tagline">AI-Native Local Digital Marketing Agency · South Florida</div>
+        <div class="agency-stats">
+          <div class="agency-stat">
+            <div class="agency-stat-val">5</div>
+            <div class="agency-stat-lbl">Active Agents</div>
+          </div>
+          <div class="agency-stat">
+            <div class="agency-stat-val">3</div>
+            <div class="agency-stat-lbl">Service Tiers</div>
+          </div>
+          <div class="agency-stat">
+            <div class="agency-stat-val">80%+</div>
+            <div class="agency-stat-lbl">Gross Margin</div>
+          </div>
+          <div class="agency-stat">
+            <div class="agency-stat-val">$0</div>
+            <div class="agency-stat-lbl">Active MRR</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="card-title">Leadership</div>
+          <div class="team-list">
+            <div class="team-member">
+              <div class="member-ava" style="background:linear-gradient(135deg,#6366f1,#a855f7)">👤</div>
+              <div>
+                <div class="member-name">Nicolas Gonzalez</div>
+                <div class="member-role">Co-Owner · Vision, Sales, Client Relations</div>
+              </div>
+            </div>
+            <div class="team-member">
+              <div class="member-ava" style="background:linear-gradient(135deg,#3b82f6,#22c55e)">👤</div>
+              <div>
+                <div class="member-name">Christopher Petrillo</div>
+                <div class="member-role">Co-Owner · Operations, Finance, Partnerships</div>
+              </div>
+            </div>
+            <div class="team-member">
+              <div class="member-ava" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">👤</div>
+              <div>
+                <div class="member-name">Yen Piñero</div>
+                <div class="member-role">CTO · OpenClaw, Infra, API Integrations</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Service Tiers</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--elevated);border-radius:9px;border:1px solid var(--border)">
+              <div>
+                <div style="font-size:13px;font-weight:600;">Starter</div>
+                <div style="font-size:11px;color:var(--muted)">GBP + Citations + Basic SEO</div>
+              </div>
+              <div style="font-size:16px;font-weight:700;color:var(--green)">$397<span style="font-size:11px;font-weight:400;color:var(--muted)">/mo</span></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--accent-dim);border-radius:9px;border:1px solid rgba(99,102,241,0.2)">
+              <div>
+                <div style="font-size:13px;font-weight:600;">Growth <span style="font-size:10px;color:var(--accent)">★ Most Popular</span></div>
+                <div style="font-size:11px;color:var(--muted)">Full Local SEO + GEO + Content</div>
+              </div>
+              <div style="font-size:16px;font-weight:700;color:var(--accent)">$997<span style="font-size:11px;font-weight:400;color:var(--muted)">/mo</span></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--elevated);border-radius:9px;border:1px solid var(--border)">
+              <div>
+                <div style="font-size:13px;font-weight:600;">Pro</div>
+                <div style="font-size:11px;color:var(--muted)">Everything + PPC + Meta + Multi-loc</div>
+              </div>
+              <div style="font-size:16px;font-weight:700;color:var(--orange)">$1,997<span style="font-size:11px;font-weight:400;color:var(--muted)">/mo</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Tech Stack</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span class="badge badge-blue">HubSpot CRM</span>
+          <span class="badge badge-purple">Klaviyo</span>
+          <span class="badge badge-orange">Semrush</span>
+          <span class="badge badge-green">Google APIs</span>
+          <span class="badge badge-blue">Google Ads</span>
+          <span class="badge badge-accent">Meta Ads</span>
+          <span class="badge badge-muted">DiamondPages Dashboard</span>
+          <span class="badge badge-muted">Onboarding Wizard</span>
+          <span class="badge badge-purple">OpenClaw</span>
+          <span class="badge badge-muted">Anthropic Claude</span>
+          <span class="badge badge-muted">Ollama (local)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ AGENTS PAGE ═══════════════════════ -->
+    <div class="page" id="page-agents">
+      <h2>Agent Stack</h2>
+      <p class="section-desc">Five AI agents powering DiamondPages.ai operations on OpenClaw.</p>
+
+      <div class="agent-grid">
+
+        <!-- LUCY -->
+        <div class="agent-card lucy">
+          <div class="agent-header">
+            <div class="agent-avatar">🎬</div>
+            <div class="agent-info">
+              <div class="agent-name">Lucy</div>
+              <div class="agent-role">Lead Orchestrator · Sales & Client Success</div>
+              <div class="agent-status"><span class="status-dot"></span> Online · Main Agent</div>
+            </div>
+            <span class="badge badge-accent">MAIN</span>
+          </div>
+
+          <div class="agent-section">
+            <div class="agent-section-label">Core Duties</div>
+            <ul class="duty-list">
+              <li>Command layer — all agents report to Lucy</li>
+              <li>Classify + route every incoming task</li>
+              <li>Quality-check all deliverables before client delivery</li>
+              <li>Own the full sales cycle — lead to closed won</li>
+              <li>Client onboarding, retention & upsell</li>
+              <li>Weekly ops rhythm + Friday summary to owners</li>
+              <li>All escalations and decision authority (±20% pricing)</li>
+            </ul>
+          </div>
+
+          <div class="agent-section">
+            <div class="agent-section-label">Tools</div>
+            <div class="tools-row">
+              <span class="tool-tag">HubSpot</span>
+              <span class="tool-tag">Klaviyo</span>
+              <span class="tool-tag">Semrush</span>
+              <span class="tool-tag">Google APIs</span>
+            </div>
+          </div>
+
+          <div class="reports-to">
+            ↑ Reports to: <strong>Nicolas Gonzalez & Christopher Petrillo</strong>
+          </div>
+        </div>
+
+        <!-- TANYA -->
+        <div class="agent-card tanya">
+          <div class="agent-header">
+            <div class="agent-avatar">✍️</div>
+            <div class="agent-info">
+              <div class="agent-name">Tanya</div>
+              <div class="agent-role">Head of Marketing & Content</div>
+              <div class="agent-status" style="color:var(--yellow)">⏳ Pending Deploy</div>
+            </div>
+            <span class="badge badge-yellow">PENDING</span>
+          </div>
+
+          <div class="agent-section">
+            <div class="agent-section-label">Core Duties</div>
+            <ul class="duty-list">
+              <li>90-day content calendar per new client (72hr)</li>
+              <li>Blog posts — 4–6/month, GEO-optimized</li>
+              <li>Social media — 12–16 posts/month (FB + IG)</li>
+              <li>GEO content — engineered for ChatGPT/Gemini citations</li>
+              <li>Email + SMS copy via Klaviyo flows</li>
+              <li>Review responses (5-star, 3-star, and below)</li>
+              <li>GBP posts (coordinates with Marcus)</li>
+            </ul>
+          </div>
+
+          <div class="agent-section">
+            <div class="agent-section-label">Tools</div>
+            <div class="tools-row">
+              <span class="tool-tag">Klaviyo</span>
+              <span class="tool-tag">Semrush</span>
+              <span class="tool-tag">GBP API</span>
+              <span class="tool-tag">DiamondPages Dashboard</span>
+            </div>
+          </div>
+
+          <div class="reports-to">↑ Reports to: <strong>Lucy</strong></div>
+        </div>
+
+        <!-- MARCUS -->
+        <div class="agent-card marcus">
+          <div class="agent-header">
+            <div class="agent-avatar">🔍</div>
+            <div class="agent-info">
+              <div class="agent-name">Marcus</div>
+              <div class="agent-role">Head of SEO & Technical</div>
+              <div class="agent-status" style="color:var(--yellow)">⏳ Pending Deploy</div>
+            </div>
+            <span class="badge badge-yellow">PENDING</span>
+          </div>
+
+          <div class="agent-section">
+            <div class="agent-section-label">Core Duties</div>
+            <ul class="duty-list">
+              <li>Full technical audit within 24hr of onboarding</li>
+              <li>Google Business Profile management (weekly)</li>
+              <li>Local citation building (50+ Month 1, 100+ Month 3)</li>
+              <li>Link building — 5–15 quality backlinks/month</li>
+              <li>On-page SEO, schema markup, technical fixes</li>
+              <li>Keyword strategy — delivers to Tanya within 48hr</li>
+              <li>Rank tracking via Semrush → feeds Diana every Monday</li>
+            </ul>
+          </div>
+
+          <div class="agent-section">
+            <div class="agent-section-label">Tools</div>
+            <div class="tools-row">
+              <span class="tool-tag">Semrush</span>
+              <span class="tool-tag">GBP API</span>
+              <span class="tool-tag">Search Console</span>
+              <span class="tool-tag">Analytics</span>
+            </div>
+          </div>
+
+          <div class="reports-to">↑ Reports to: <strong>Lucy</strong></div>
+        </div>
+
+        <!-- DIANA -->
+        <div class="agent-card diana">
+          <div class="agent-header">
+            <div class="agent-avatar">📊</div>
+            <div class="agent-info">
+              <div class="agent-name">Diana</div>
+              <div class="agent-role">Head of Operations & Reporting</div>
+              <div class="agent-status" style="color:var(--yellow)">⏳ Pending Deploy</div>
+            </div>
+            <span class="badge badge-yellow">PENDING</span>
+          </div>
+
+          <div class="agent-section">
+            <div class="agent-section-label">Core Duties</div>
+            <ul class="duty-list">
+              <li>Weekly client reports via Klaviyo (Monday 8am)</li>
+              <li>DiamondPages Score™ — composite 100-pt client metric</li>
+              <li>Client dashboard setup within 48hr of close</li>
+              <li>Monthly QBR packet prep (due day 23)</li>
+              <li>Task delivery verification every Friday</li>
+              <li>Onboarding checklist completion tracking</li>
+              <li>Friday owners brief to Lucy (Friday 3pm)</li>
+            </ul>
+          </div>
+
+          <div class="agent-section">
+            <div class="agent-section-label">Tools</div>
+            <div class="tools-row">
+              <span class="tool-tag">HubSpot</span>
+              <span class="tool-tag">Klaviyo</span>
+              <span class="tool-tag">Semrush</span>
+              <span class="tool-tag">GBP API</span>
+              <span class="tool-tag">Analytics</span>
+            </div>
+          </div>
+
+          <div class="reports-to">↑ Reports to: <strong>Lucy</strong></div>
+        </div>
+
+        <!-- FELIX -->
+        <div class="agent-card felix">
+          <div class="agent-header">
+            <div class="agent-avatar">📣</div>
+            <div class="agent-info">
+              <div class="agent-name">Felix</div>
+              <div class="agent-role">Head of Paid Ads & Growth</div>
+              <div class="agent-status" style="color:var(--yellow)">⏳ Pending Deploy</div>
+            </div>
+            <span class="badge badge-yellow">PENDING</span>
+          </div>
+
+          <div class="agent-section">
+            <div class="agent-section-label">Core Duties</div>
+            <ul class="duty-list">
+              <li>Google Ads management for all Pro clients</li>
+              <li>Meta Ads (Facebook + Instagram) campaigns</li>
+              <li>DiamondPages.ai own lead gen (CPL target &lt; $50)</li>
+              <li>Referral partner program management</li>
+              <li>White-label partner program (activates at 50 clients)</li>
+              <li>ROAS tracking — 4×+ target for home services</li>
+              <li>Ad metrics to Diana every Monday 7am</li>
+            </ul>
+          </div>
+
+          <div class="agent-section">
+            <div class="agent-section-label">Tools</div>
+            <div class="tools-row">
+              <span class="tool-tag">Google Ads</span>
+              <span class="tool-tag">Meta Ads</span>
+              <span class="tool-tag">Semrush</span>
+              <span class="tool-tag">HubSpot</span>
+              <span class="tool-tag">Analytics</span>
+            </div>
+          </div>
+
+          <div class="reports-to">↑ Reports to: <strong>Lucy</strong></div>
+        </div>
+
+      </div>
+
+      <!-- Chain of Command -->
+      <div style="margin-top:20px;">
+        <div class="card">
+          <div class="card-title">Chain of Command</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;">
+            <span style="padding:6px 14px;background:var(--elevated);border-radius:7px;border:1px solid var(--border)">Nicolas & Christopher</span>
+            <span style="color:var(--muted)">↓</span>
+            <span style="padding:6px 14px;background:var(--accent-dim);border-radius:7px;border:1px solid rgba(99,102,241,0.25);color:var(--accent);font-weight:600">Lucy</span>
+            <span style="color:var(--muted)">↓</span>
+            <span style="padding:6px 14px;background:var(--elevated);border-radius:7px;border:1px solid var(--border)">Tanya</span>
+            <span style="padding:6px 14px;background:var(--elevated);border-radius:7px;border:1px solid var(--border)">Marcus</span>
+            <span style="padding:6px 14px;background:var(--elevated);border-radius:7px;border:1px solid var(--border)">Diana</span>
+            <span style="padding:6px 14px;background:var(--elevated);border-radius:7px;border:1px solid var(--border)">Felix</span>
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--muted)">CTO Yen Piñero handles all infrastructure, API integrations, and OpenClaw platform issues — escalated directly from any agent.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ OPS & DEV TASKS PAGE ═══════════════════════ -->
+    <div class="page" id="page-ops">
+      <div class="tasks-header">
+        <div>
+          <h2>Ops & Dev Tasks</h2>
+          <p class="section-desc">Infrastructure, deployment, and integration tasks for DiamondPages.ai.</p>
+        </div>
+        <button class="add-task-btn">+ Add Task</button>
+      </div>
+
+      <div class="tasks-stats">
+        <div class="stat-card">
+          <div class="stat-label">Total Tasks</div>
+          <div class="stat-value">14</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label" style="color:var(--green)">Completed</div>
+          <div class="stat-value" style="color:var(--green)">2</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label" style="color:var(--yellow)">In Progress</div>
+          <div class="stat-value" style="color:var(--yellow)">3</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label" style="color:var(--muted)">Pending</div>
+          <div class="stat-value" style="color:var(--muted)">9</div>
+        </div>
+      </div>
+
+      <div class="task-columns">
+
+        <!-- DONE -->
+        <div class="task-col">
+          <div class="task-col-header">
+            <div class="task-col-title">
+              <span style="color:var(--green)">●</span> Done
+            </div>
+            <span class="task-col-count">2</span>
+          </div>
+          <div class="task-list">
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">GitHub CLI authenticated</div>
+                <span class="task-priority priority-high"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-green">✓ Complete</span>
+                <span class="task-owner">👤 Lucy</span>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Google OAuth credentials created (openclaw-lucy project)</div>
+                <span class="task-priority priority-high"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-green">✓ Complete</span>
+                <span class="task-owner">👤 Nicolas</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- IN PROGRESS -->
+        <div class="task-col">
+          <div class="task-col-header">
+            <div class="task-col-title">
+              <span style="color:var(--yellow)">●</span> In Progress
+            </div>
+            <span class="task-col-count">3</span>
+          </div>
+          <div class="task-list">
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Approve gog keychain access on Mac mini</div>
+                <span class="task-priority priority-high"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-yellow">⏳ Blocked</span>
+                <span class="task-owner">👤 Nicolas (on-site)</span>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Deploy agent stack: Tanya, Marcus, Diana, Felix</div>
+                <span class="task-priority priority-high"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-yellow">⏳ In Progress</span>
+                <span class="task-owner">👤 Yen / Lucy</span>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Build DiamondPages internal dashboard</div>
+                <span class="task-priority priority-med"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-blue">🔧 Building</span>
+                <span class="task-owner">👤 Lucy</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PENDING -->
+        <div class="task-col">
+          <div class="task-col-header">
+            <div class="task-col-title">
+              <span style="color:var(--muted)">●</span> Pending
+            </div>
+            <span class="task-col-count">9</span>
+          </div>
+          <div class="task-list">
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Wire HubSpot API key → Lucy, Diana</div>
+                <span class="task-priority priority-high"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-muted">Pending</span>
+                <span class="task-owner">👤 Yen</span>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Wire Klaviyo private key → Lucy, Diana, Tanya</div>
+                <span class="task-priority priority-high"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-muted">Pending</span>
+                <span class="task-owner">👤 Yen</span>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Wire Semrush API key → Marcus, Felix</div>
+                <span class="task-priority priority-high"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-muted">Pending</span>
+                <span class="task-owner">👤 Yen</span>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Wire Google Ads credentials → Felix</div>
+                <span class="task-priority priority-med"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-muted">Pending</span>
+                <span class="task-owner">👤 Yen</span>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Wire Meta Ads credentials → Felix</div>
+                <span class="task-priority priority-med"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-muted">Pending</span>
+                <span class="task-owner">👤 Yen</span>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Wire GBP API key → Marcus, Diana</div>
+                <span class="task-priority priority-med"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-muted">Pending</span>
+                <span class="task-owner">👤 Yen</span>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Build Klaviyo flows (7 flows per master prompt)</div>
+                <span class="task-priority priority-med"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-muted">Pending</span>
+                <span class="task-owner">👤 Tanya / Diana</span>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Set up HubSpot pipeline — 7 stages</div>
+                <span class="task-priority priority-med"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-muted">Pending</span>
+                <span class="task-owner">👤 Diana / Lucy</span>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-item-top">
+                <div class="task-title">Update Lucy identity files (IDENTITY.md, USER.md) with DiamondPages context</div>
+                <span class="task-priority priority-low"></span>
+              </div>
+              <div class="task-meta">
+                <span class="badge badge-muted">Pending</span>
+                <span class="task-owner">👤 Lucy</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STUB PAGES -->
+    <div class="page" id="page-clients">
+      <h2>Clients</h2>
+      <p class="section-desc">Active client management — coming soon.</p>
+      <div class="card" style="margin-top:20px;text-align:center;padding:48px;">
+        <div style="font-size:40px;margin-bottom:12px;">👥</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:6px;">No clients yet</div>
+        <div style="font-size:13px;color:var(--muted)">Client dashboard activates when HubSpot is connected and first deal is closed won.</div>
+      </div>
+    </div>
+
+    <div class="page" id="page-pipeline">
+      <h2>Pipeline</h2>
+      <p class="section-desc">HubSpot deal pipeline — coming soon.</p>
+      <div class="card" style="margin-top:20px;text-align:center;padding:48px;">
+        <div style="font-size:40px;margin-bottom:12px;">📊</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:6px;">Pipeline not connected</div>
+        <div style="font-size:13px;color:var(--muted)">Requires HubSpot API key. Wire credentials to activate.</div>
+      </div>
+    </div>
+
+    <div class="page" id="page-reporting">
+      <h2>Reporting</h2>
+      <p class="section-desc">Client performance reporting — coming soon.</p>
+      <div class="card" style="margin-top:20px;text-align:center;padding:48px;">
+        <div style="font-size:40px;margin-bottom:12px;">📈</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:6px;">Reporting not active</div>
+        <div style="font-size:13px;color:var(--muted)">Requires Semrush + GBP API + active clients. Coming in Phase 2.</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  // Set date
+  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  const titles = {
+    overview: 'Overview',
+    agents: 'Agent Stack',
+    ops: 'Ops & Dev Tasks',
+    clients: 'Clients',
+    pipeline: 'Pipeline',
+    reporting: 'Reporting'
+  };
+
+  function showPage(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    btn.classList.add('active');
+    document.getElementById('topbar-title').textContent = titles[id];
+  }
+</script>
+</body>
+</html>
