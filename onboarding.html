@@ -1157,14 +1157,59 @@
     document.getElementById('step-success').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Log to console (replace with actual API call / Klaviyo event)
-    console.log('Onboarding complete:', {
-      tier: selectedTier,
-      bizName: document.getElementById('biz-name').value,
-      ownerEmail: document.getElementById('owner-email').value,
-      goal: selectedGoal,
-      competitor: document.getElementById('competitor-name').value,
-      notes: document.getElementById('extra-notes').value
+    // Fire audit + create HubSpot lead
+    const bizName   = document.getElementById('biz-name').value.trim();
+    const bizPhone  = document.getElementById('biz-phone').value.trim();
+    const bizCity   = document.getElementById('biz-city').value.trim();
+    const bizState  = document.getElementById('biz-state').value.trim();
+    const bizWeb    = document.getElementById('biz-website').value.trim();
+    const bizVert   = document.getElementById('biz-vertical').value;
+    const ownerName = document.getElementById('owner-name').value.trim();
+    const ownerEmail= document.getElementById('owner-email').value.trim();
+    const competitor= document.getElementById('competitor-name').value.trim();
+    const notes     = document.getElementById('extra-notes').value.trim();
+    const city      = bizCity || bizState || 'Fort Lauderdale';
+    const vertical  = bizVert.split('/')[0].trim().toLowerCase();
+
+    // Show audit running message on success screen
+    const auditNote = document.createElement('div');
+    auditNote.id = 'audit-status';
+    auditNote.style.cssText = 'margin:16px 0;padding:12px 16px;background:var(--blue-dim);border:1px solid rgba(2,132,199,.2);border-radius:10px;font-size:13px;color:var(--text2);text-align:center;';
+    auditNote.innerHTML = '⏳ Running your free Google audit — results will be emailed to <strong>' + ownerEmail + '</strong> within 60 seconds.';
+    document.querySelector('.ob-success').insertBefore(auditNote, document.querySelector('.timeline-cards'));
+
+    // Call audit API
+    fetch('http://localhost:3847/api/audit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        businessName: bizName,
+        vertical,
+        city,
+        website: bizWeb || null,
+        ownerName,
+        phone: bizPhone || null,
+        email: ownerEmail,
+        tier: selectedTier,
+        topCompetitor: competitor,
+        notes,
+        goal: selectedGoal
+      })
+    })
+    .then(r => r.json())
+    .then(data => {
+      const el = document.getElementById('audit-status');
+      if (data.success) {
+        el.style.background = 'var(--green-dim)';
+        el.style.border = '1px solid rgba(22,163,74,.2)';
+        el.innerHTML = '✅ Audit complete! Your report (Score: <strong>' + data.score + '/100</strong>) is on its way to <strong>' + ownerEmail + '</strong>.';
+      } else {
+        el.innerHTML = '⚠️ Audit queued — your report will arrive within a few minutes.';
+      }
+    })
+    .catch(() => {
+      const el = document.getElementById('audit-status');
+      if (el) el.innerHTML = '📧 Report on the way — check your inbox in a few minutes.';
     });
   }
 
