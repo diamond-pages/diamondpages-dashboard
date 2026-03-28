@@ -497,7 +497,7 @@
     const stepInterval = animateSteps();
 
     try {
-      const res = await fetch('/api/audit', {
+      const res = await fetch('https://api.diamondpages.ai/api/audit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
