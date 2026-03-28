@@ -1179,7 +1179,7 @@
     document.querySelector('.ob-success').insertBefore(auditNote, document.querySelector('.timeline-cards'));
 
     // Call audit API
-    fetch('http://localhost:3847/api/audit', {
+    fetch('https://api.diamondpages.ai/api/audit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
