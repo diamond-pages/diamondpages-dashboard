@@ -1,25 +1,43 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Welcome to DiamondPages.ai — Let's Get You Set Up</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#09090b">
+  <meta name="theme-color" content="#ffffff" id="theme-color-meta">
   <style>
+    /* shared colors */
     :root {
       --accent: #e11d48;
-      --accent-dim: rgba(225,29,72,0.12);
+      --accent-dim: rgba(225,29,72,0.1);
       --accent-hover: #be123c;
-      --green: #22c55e;
-      --green-dim: rgba(34,197,94,0.12);
-      --blue: #3b82f6;
-      --blue-dim: rgba(59,130,246,0.12);
-      --yellow: #eab308;
-      --yellow-dim: rgba(234,179,8,0.12);
-      --purple: #a855f7;
-      --orange: #f97316;
+      --green: #16a34a;
+      --green-dim: rgba(22,163,74,0.1);
+      --blue: #2563eb;
+      --blue-dim: rgba(37,99,235,0.1);
+      --yellow: #ca8a04;
+      --yellow-dim: rgba(202,138,4,0.1);
+      --purple: #9333ea;
+      --orange: #ea580c;
+      --radius: 16px;
+    }
+
+    /* light theme (default) */
+    :root[data-theme="light"] {
+      --bg: #f8f8f9;
+      --surface: #ffffff;
+      --elevated: #f1f1f3;
+      --border: rgba(0,0,0,0.08);
+      --text: #0f0f10;
+      --text2: #52525b;
+      --muted: #71717a;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    /* dark theme */
+    :root[data-theme="dark"] {
       --bg: #09090b;
       --surface: #111113;
       --elevated: #18181b;
@@ -27,8 +45,13 @@
       --text: #f4f4f5;
       --text2: #a1a1aa;
       --muted: #71717a;
-      --radius: 16px;
       --shadow: 0 8px 32px rgba(0,0,0,0.4);
+      --green: #22c55e;
+      --green-dim: rgba(34,197,94,0.12);
+      --blue: #3b82f6;
+      --blue-dim: rgba(59,130,246,0.12);
+      --yellow: #eab308;
+      --yellow-dim: rgba(234,179,8,0.12);
     }
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
     body {
@@ -485,7 +508,10 @@
   <div>
     <div class="ob-brand">Diamond<span>Pages.ai</span></div>
   </div>
-  <div class="ob-header-right" id="header-step-label">Step 1 of 7</div>
+  <div class="ob-header-right" style="display:flex;align-items:center;gap:10px;">
+    <button onclick="toggleTheme()" id="theme-btn" title="Toggle theme" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:14px;cursor:pointer;color:var(--muted);line-height:1;">☀️</button>
+    <span id="header-step-label" style="font-size:12px;color:var(--muted);">Step 1 of 7</span>
+  </div>
 </header>
 
 <!-- PROGRESS -->
@@ -634,37 +660,33 @@
       💡 <strong>You're adding us as a Manager</strong> — not an owner. You keep full control and can remove us anytime.
     </div>
 
+    <div class="ob-alert ob-alert-info" style="margin-bottom:12px;">
+      🔗 <strong>Tap the button below</strong> — it opens Google's user management page directly. Sign in if asked, then follow the 2 steps.
+    </div>
+
+    <a href="https://business.google.com/locations" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;padding:14px;border-radius:12px;text-decoration:none;margin-bottom:16px;">
+      📍 Open Google Business Profile →
+    </a>
+
     <div class="ob-instruction">
       <div class="ob-instruction-header">
         <span style="font-size:18px;">📱</span>
-        <span>Step-by-Step Instructions</span>
+        <span>Once you're in — 2 steps</span>
       </div>
       <div class="ob-instruction-body">
         <ol class="ob-step-list">
           <li>
             <div class="ob-step-num-circle">1</div>
-            <div>Go to <a class="ob-link" href="https://business.google.com" target="_blank">business.google.com</a> and sign in with the Google account that owns your listing.</div>
+            <div>Click on your business → <strong>three dots menu (⋮)</strong> → <strong>"Business Profile Settings"</strong> → <strong>"Managers"</strong> → <strong>"Add"</strong></div>
           </li>
           <li>
             <div class="ob-step-num-circle">2</div>
-            <div>Click on your business name, then click the <strong>three dots menu (⋮)</strong> → <strong>"Business Profile Settings"</strong></div>
-          </li>
-          <li>
-            <div class="ob-step-num-circle">3</div>
-            <div>Click <strong>"Managers"</strong> then <strong>"Add"</strong> (the person+ icon in the top right)</div>
-          </li>
-          <li>
-            <div class="ob-step-num-circle">4</div>
-            <div>Paste this email address — set role to <strong>"Manager"</strong> — then click <strong>Invite</strong>:
+            <div>Paste this email, set role to <strong>"Manager"</strong>, click <strong>Invite</strong>:
               <div class="ob-copy-field">
                 <span class="ob-copy-text">gbp@diamondpages.ai</span>
                 <button class="ob-copy-btn" onclick="copyText('gbp@diamondpages.ai',this)">Copy</button>
               </div>
             </div>
-          </li>
-          <li>
-            <div class="ob-step-num-circle">5</div>
-            <div>Done! We'll receive the invite and accept it within a few hours. Check the box below once you've sent it.</div>
           </li>
         </ol>
       </div>
@@ -705,67 +727,55 @@
     </div>
 
     <div id="cms-wordpress" class="cms-instructions ob-instruction">
-      <div class="ob-instruction-header"><span style="font-size:18px;">🔵</span><span>WordPress Instructions</span></div>
+      <div class="ob-instruction-header"><span style="font-size:18px;">🔵</span><span>WordPress</span></div>
       <div class="ob-instruction-body">
-        <ol class="ob-step-list">
-          <li><div class="ob-step-num-circle">1</div><div>Log in to your WordPress dashboard at <strong>yoursite.com/wp-admin</strong></div></li>
-          <li><div class="ob-step-num-circle">2</div><div>Go to <strong>Users → Add New</strong></div></li>
-          <li><div class="ob-step-num-circle">3</div><div>Enter this email and set role to <strong>"Editor"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div></div></li>
-          <li><div class="ob-step-num-circle">4</div><div>Click <strong>Add New User</strong>. Done!</div></li>
-        </ol>
+        <a href="#" onclick="var d=document.getElementById('biz-website');var base=d&&d.value?d.value.replace(/\/+$/,''):'https://yoursite.com';window.open(base+'/wp-admin/user-new.php','_blank');return false;" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:12px;border-radius:10px;text-decoration:none;margin-bottom:12px;">🔵 Open WordPress → Add New User →</a>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Add this email, set role to <strong>Editor</strong>, click Add New User:</div>
+        <div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div>
       </div>
     </div>
 
     <div id="cms-wix" class="cms-instructions ob-instruction">
-      <div class="ob-instruction-header"><span style="font-size:18px;">⬛</span><span>Wix Instructions</span></div>
+      <div class="ob-instruction-header"><span style="font-size:18px;">⬛</span><span>Wix</span></div>
       <div class="ob-instruction-body">
-        <ol class="ob-step-list">
-          <li><div class="ob-step-num-circle">1</div><div>Go to your <strong>Wix Dashboard</strong> and click <strong>Settings</strong></div></li>
-          <li><div class="ob-step-num-circle">2</div><div>Click <strong>Roles & Permissions</strong> → <strong>Invite People</strong></div></li>
-          <li><div class="ob-step-num-circle">3</div><div>Invite this email as <strong>"Co-owner"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div></div></li>
-          <li><div class="ob-step-num-circle">4</div><div>Click <strong>Send Invite</strong>. Done!</div></li>
-        </ol>
+        <a href="https://manage.wix.com/account/access-manager" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:12px;border-radius:10px;text-decoration:none;margin-bottom:12px;">⬛ Open Wix Access Manager →</a>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Click <strong>Invite People</strong>, add this email as <strong>Co-owner</strong>:</div>
+        <div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div>
       </div>
     </div>
 
     <div id="cms-squarespace" class="cms-instructions ob-instruction">
-      <div class="ob-instruction-header"><span style="font-size:18px;">⬜</span><span>Squarespace Instructions</span></div>
+      <div class="ob-instruction-header"><span style="font-size:18px;">⬜</span><span>Squarespace</span></div>
       <div class="ob-instruction-body">
-        <ol class="ob-step-list">
-          <li><div class="ob-step-num-circle">1</div><div>Go to <strong>Settings → Permissions & Ownership → Invite Contributor</strong></div></li>
-          <li><div class="ob-step-num-circle">2</div><div>Enter this email and set to <strong>"Administrator"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div></div></li>
-          <li><div class="ob-step-num-circle">3</div><div>Click <strong>Send Invitation</strong>. Done!</div></li>
-        </ol>
+        <a href="https://account.squarespace.com/permissions" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:12px;border-radius:10px;text-decoration:none;margin-bottom:12px;">⬜ Open Squarespace Permissions →</a>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Click <strong>Invite Contributor</strong>, set to <strong>Administrator</strong>:</div>
+        <div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div>
       </div>
     </div>
 
     <div id="cms-shopify" class="cms-instructions ob-instruction">
-      <div class="ob-instruction-header"><span style="font-size:18px;">🟢</span><span>Shopify Instructions</span></div>
+      <div class="ob-instruction-header"><span style="font-size:18px;">🟢</span><span>Shopify</span></div>
       <div class="ob-instruction-body">
-        <ol class="ob-step-list">
-          <li><div class="ob-step-num-circle">1</div><div>From your Shopify Admin, go to <strong>Settings → Users and Permissions</strong></div></li>
-          <li><div class="ob-step-num-circle">2</div><div>Click <strong>Add Staff</strong></div></li>
-          <li><div class="ob-step-num-circle">3</div><div>Enter this email and enable <strong>all permissions</strong>:<div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div></div></li>
-          <li><div class="ob-step-num-circle">4</div><div>Click <strong>Send Invite</strong>. Done!</div></li>
-        </ol>
+        <a href="https://admin.shopify.com/settings/account/staff/new" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:12px;border-radius:10px;text-decoration:none;margin-bottom:12px;">🟢 Open Shopify → Add Staff →</a>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Add this email with all permissions enabled:</div>
+        <div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div>
       </div>
     </div>
 
     <div id="cms-godaddy" class="cms-instructions ob-instruction">
-      <div class="ob-instruction-header"><span style="font-size:18px;">🟢</span><span>GoDaddy Website Builder</span></div>
+      <div class="ob-instruction-header"><span style="font-size:18px;">🟢</span><span>GoDaddy</span></div>
       <div class="ob-instruction-body">
-        <ol class="ob-step-list">
-          <li><div class="ob-step-num-circle">1</div><div>Log into your GoDaddy account and go to <strong>My Products</strong></div></li>
-          <li><div class="ob-step-num-circle">2</div><div>Find your website and click <strong>Manage</strong></div></li>
-          <li><div class="ob-step-num-circle">3</div><div>Email us your site login details securely — we'll reply with a secure link:<div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div></div></li>
-        </ol>
+        <a href="https://account.godaddy.com/access" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:12px;border-radius:10px;text-decoration:none;margin-bottom:12px;">🟢 Open GoDaddy Access Manager →</a>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Click <strong>Grant Access</strong>, add as <strong>Delegate</strong>:</div>
+        <div class="ob-copy-field"><span class="ob-copy-text">seo@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('seo@diamondpages.ai',this)">Copy</button></div>
       </div>
     </div>
 
     <div id="cms-other" class="cms-instructions ob-instruction">
       <div class="ob-instruction-header"><span style="font-size:18px;">🔧</span><span>Other Platform</span></div>
       <div class="ob-instruction-body">
-        <div style="font-size:13.5px;color:var(--text2);line-height:1.6;">No problem! Email your platform name and website login to <a class="ob-link" href="mailto:seo@diamondpages.ai">seo@diamondpages.ai</a> and our team will walk you through it in under 10 minutes.</div>
+        <a href="mailto:seo@diamondpages.ai?subject=Website%20Access%20Setup&body=Hi%20Lucy%2C%0A%0AMy%20website%20platform%20is%3A%20%5Bplatform%20name%5D%0AMy%20website%20URL%20is%3A%20%5Burl%5D%0A%0APlease%20help%20me%20set%20up%20access." style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:12px;border-radius:10px;text-decoration:none;margin-bottom:12px;">📧 Email Lucy — Pre-filled, Just Hit Send →</a>
+        <div style="font-size:13px;color:var(--text2);">Our team will walk you through it in under 10 minutes.</div>
       </div>
     </div>
 
@@ -788,26 +798,21 @@
     <div class="ob-step-desc">These free Google tools show us exactly how people find your website. We use them to track keyword rankings, fix crawl errors, and prove our results to you.</div>
 
     <div class="ob-instruction">
-      <div class="ob-instruction-header"><span style="font-size:18px;">📈</span><span>Google Search Console (5 min)</span></div>
+      <div class="ob-instruction-header"><span style="font-size:18px;">📈</span><span>Google Search Console</span></div>
       <div class="ob-instruction-body">
-        <ol class="ob-step-list">
-          <li><div class="ob-step-num-circle">1</div><div>Go to <a class="ob-link" href="https://search.google.com/search-console" target="_blank">search.google.com/search-console</a></div></li>
-          <li><div class="ob-step-num-circle">2</div><div>Select your property (or add your website if it's not there yet)</div></li>
-          <li><div class="ob-step-num-circle">3</div><div>Click <strong>Settings → Users and Permissions → Add User</strong></div></li>
-          <li><div class="ob-step-num-circle">4</div><div>Add this email as <strong>"Full"</strong> permission:<div class="ob-copy-field"><span class="ob-copy-text">analytics@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('analytics@diamondpages.ai',this)">Copy</button></div></div></li>
-        </ol>
+        <a href="https://search.google.com/search-console/users" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:12px;border-radius:10px;text-decoration:none;margin-bottom:12px;">📈 Open Search Console → Add User →</a>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Select your property, click <strong>+ Add User</strong>, set permission to <strong>Full</strong>:</div>
+        <div class="ob-copy-field"><span class="ob-copy-text">analytics@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('analytics@diamondpages.ai',this)">Copy</button></div>
       </div>
     </div>
 
     <div class="ob-instruction">
-      <div class="ob-instruction-header"><span style="font-size:18px;">📉</span><span>Google Analytics (3 min)</span></div>
+      <div class="ob-instruction-header"><span style="font-size:18px;">📉</span><span>Google Analytics</span></div>
       <div class="ob-instruction-body">
-        <ol class="ob-step-list">
-          <li><div class="ob-step-num-circle">1</div><div>Go to <a class="ob-link" href="https://analytics.google.com" target="_blank">analytics.google.com</a></div></li>
-          <li><div class="ob-step-num-circle">2</div><div>Click <strong>Admin (⚙)</strong> → Under "Account", click <strong>"Account Access Management"</strong></div></li>
-          <li><div class="ob-step-num-circle">3</div><div>Click <strong>+ Add Users</strong> — paste the email, set to <strong>"Editor"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">analytics@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('analytics@diamondpages.ai',this)">Copy</button></div></div></li>
-          <li><div class="ob-step-num-circle">4</div><div>Click <strong>Add</strong>. Done!</div></li>
-        </ol>
+        <a href="https://analytics.google.com/analytics/web/#/a/p/accountusermanagement" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:12px;border-radius:10px;text-decoration:none;margin-bottom:12px;">📉 Open Analytics → Account Access →</a>
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:8px;">If that link doesn't go directly there: Admin ⚙ → Account Access Management → + Add Users</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Add as <strong>Editor</strong>:</div>
+        <div class="ob-copy-field"><span class="ob-copy-text">analytics@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('analytics@diamondpages.ai',this)">Copy</button></div>
       </div>
     </div>
 
@@ -841,13 +846,11 @@
     <div class="ob-step-desc">We'll post content to your Facebook and Instagram to support your SEO rankings. Pro plan clients also need ads access so Felix can run your campaigns.</div>
 
     <div class="ob-instruction">
-      <div class="ob-instruction-header"><span style="font-size:18px;">👥</span><span>Facebook Business Manager</span></div>
+      <div class="ob-instruction-header"><span style="font-size:18px;">👥</span><span>Facebook Page Access</span></div>
       <div class="ob-instruction-body">
-        <ol class="ob-step-list">
-          <li><div class="ob-step-num-circle">1</div><div>Go to <a class="ob-link" href="https://business.facebook.com" target="_blank">business.facebook.com</a></div></li>
-          <li><div class="ob-step-num-circle">2</div><div>Click <strong>Business Settings → Pages → Add People</strong></div></li>
-          <li><div class="ob-step-num-circle">3</div><div>Add this email with <strong>"Content Creator"</strong> role (or "Admin" for Pro):<div class="ob-copy-field"><span class="ob-copy-text">social@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('social@diamondpages.ai',this)">Copy</button></div></div></li>
-        </ol>
+        <a href="https://business.facebook.com/settings/pages" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:12px;border-radius:10px;text-decoration:none;margin-bottom:12px;">👥 Open Meta Business → Pages →</a>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Select your Page → <strong>Add People</strong> → set role to <strong>Content Creator</strong>:</div>
+        <div class="ob-copy-field"><span class="ob-copy-text">social@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('social@diamondpages.ai',this)">Copy</button></div>
       </div>
     </div>
 
@@ -856,22 +859,20 @@
       <div class="ob-alert ob-alert-info">🎯 <strong>Pro Plan — Ads Access Required</strong><br>Felix needs access to run your Google Ads and Meta Ads campaigns.</div>
 
       <div class="ob-instruction">
-        <div class="ob-instruction-header"><span style="font-size:18px;">🎯</span><span>Google Ads Manager Access</span></div>
+        <div class="ob-instruction-header"><span style="font-size:18px;">🎯</span><span>Google Ads</span></div>
         <div class="ob-instruction-body">
-          <ol class="ob-step-list">
-            <li><div class="ob-step-num-circle">1</div><div>Go to <a class="ob-link" href="https://ads.google.com" target="_blank">ads.google.com</a> → click the tools icon ⚙ → <strong>Account Access</strong></div></li>
-            <li><div class="ob-step-num-circle">2</div><div>Click <strong>+ New User</strong> — set access level to <strong>"Standard"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">ads@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('ads@diamondpages.ai',this)">Copy</button></div></div></li>
-          </ol>
+          <a href="https://ads.google.com/aw/access/userroles/list" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:12px;border-radius:10px;text-decoration:none;margin-bottom:12px;">🎯 Open Google Ads → User Access →</a>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Click <strong>+ New User</strong>, set level to <strong>Standard</strong>:</div>
+          <div class="ob-copy-field"><span class="ob-copy-text">ads@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('ads@diamondpages.ai',this)">Copy</button></div>
         </div>
       </div>
 
       <div class="ob-instruction">
-        <div class="ob-instruction-header"><span style="font-size:18px;">📣</span><span>Meta Ads Manager Access</span></div>
+        <div class="ob-instruction-header"><span style="font-size:18px;">📣</span><span>Meta Ads Manager</span></div>
         <div class="ob-instruction-body">
-          <ol class="ob-step-list">
-            <li><div class="ob-step-num-circle">1</div><div>Go to <strong>Business Settings → Ad Accounts → Add People</strong></div></li>
-            <li><div class="ob-step-num-circle">2</div><div>Add this email as <strong>"Advertiser"</strong>:<div class="ob-copy-field"><span class="ob-copy-text">ads@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('ads@diamondpages.ai',this)">Copy</button></div></div></li>
-          </ol>
+          <a href="https://business.facebook.com/settings/ad-accounts" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:12px;border-radius:10px;text-decoration:none;margin-bottom:12px;">📣 Open Meta Business → Ad Accounts →</a>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">Select your ad account → <strong>Add People</strong> → set as <strong>Advertiser</strong>:</div>
+          <div class="ob-copy-field"><span class="ob-copy-text">ads@diamondpages.ai</span><button class="ob-copy-btn" onclick="copyText('ads@diamondpages.ai',this)">Copy</button></div>
         </div>
       </div>
     </div>
@@ -988,6 +989,17 @@
 </div>
 
 <script>
+  // ── THEME ──
+  function toggleTheme() {
+    const html = document.documentElement;
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    const btn = document.getElementById('theme-btn');
+    btn.textContent = next === 'dark' ? '☀️' : '🌙';
+    const meta = document.getElementById('theme-color-meta');
+    if (meta) meta.setAttribute('content', next === 'dark' ? '#09090b' : '#ffffff');
+  }
+
   const TOTAL_STEPS = 7;
   let currentStep = 1;
   let selectedTier = null;
