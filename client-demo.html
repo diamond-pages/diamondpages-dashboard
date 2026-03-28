@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sakura Garden — DiamondPages.ai Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* ═══════════════ THEME VARS ═══════════════ */
+    :root[data-theme="dark"] {
+      --bg: #09090b;
+      --surface: #111113;
+      --elevated: #18181b;
+      --border: rgba(255,255,255,0.07);
+      --text: #f4f4f5;
+      --text2: #a1a1aa;
+      --muted: #71717a;
+      --subtle: #3f3f46;
+      --card-shadow: 0 4px 24px rgba(0,0,0,0.3);
+      --input-bg: #18181b;
+    }
+    :root[data-theme="light"] {
+      --bg: #f4f4f5;
+      --surface: #ffffff;
+      --elevated: #f9f9fa;
+      --border: rgba(0,0,0,0.08);
+      --text: #09090b;
+      --text2: #52525b;
+      --muted: #71717a;
+      --subtle: #d4d4d8;
+      --card-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      --input-bg: #f4f4f5;
+    }
+
+    /* ═══════════════ SHARED ═══════════════ */
+    :root {
+      --accent: #e11d48;       /* rose-600 — Japanese red */
+      --accent2: #f43f5e;
+      --accent-dim: rgba(225,29,72,0.1);
+      --green: #22c55e;
+      --green-dim: rgba(34,197,94,0.1);
+      --yellow: #eab308;
+      --yellow-dim: rgba(234,179,8,0.1);
+      --blue: #3b82f6;
+      --blue-dim: rgba(59,130,246,0.1);
+      --purple: #a855f7;
+      --purple-dim: rgba(168,85,247,0.1);
+      --orange: #f97316;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background .2s, color .2s;
+    }
+
+    /* ═══════════════ TOPBAR ═══════════════ */
+    .topbar {
+      height: 60px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--card-shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--accent), #fb7185);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+    }
+
+    .brand-name { font-size: 15px; font-weight: 700; letter-spacing: -.02em; }
+    .brand-sub  { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+    .topbar-sep {
+      width: 1px; height: 28px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+
+    .client-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text2);
+    }
+
+    .topbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .score-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 99px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .tier-pill {
+      background: var(--accent-dim);
+      border: 1px solid rgba(225,29,72,0.2);
+      border-radius: 99px;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .theme-toggle {
+      width: 40px; height: 22px;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      cursor: pointer;
+      position: relative;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      transition: transform .2s;
+    }
+
+    [data-theme="light"] .theme-toggle::after {
+      transform: translateX(18px);
+    }
+
+    .theme-label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ═══════════════ NAV TABS ═══════════════ */
+    .nav-tabs {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      display: flex;
+      gap: 2px;
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all .15s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ═══════════════ CONTENT ═══════════════ */
+    .content { padding: 24px 28px; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ═══════════════ SECTION HEADER ═══════════════ */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+    }
+
+    .report-date {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ═══════════════ CARDS ═══════════════ */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    /* ═══════════════ GRIDS ═══════════════ */
+    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 20px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .grid-21 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 20px; }
+
+    /* ═══════════════ KPI CARDS ═══════════════ */
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      margin-bottom: 6px;
+    }
+
+    .kpi-delta {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .delta-up { color: var(--green); }
+    .delta-down { color: var(--accent); }
+
+    /* ═══════════════ BADGES ═══════════════ */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600;
+      padding: 3px 9px; border-radius: 99px;
+    }
+    .badge-green  { background: var(--green-dim);  color: var(--green); }
+    .badge-red    { background: var(--accent-dim); color: var(--accent); }
+    .badge-yellow { background: var(--yellow-dim); color: var(--yellow); }
+    .badge-blue   { background: var(--blue-dim);   color: var(--blue); }
+    .badge-purple { background: var(--purple-dim); color: var(--purple); }
+    .badge-muted  { background: rgba(113,113,122,.12); color: var(--muted); }
+
+    /* ═══════════════ RANK TABLE ═══════════════ */
+    .rank-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .rank-table th { padding: 9px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); border-bottom: 1px solid var(--border); }
+    .rank-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    .rank-table tr:last-child td { border-bottom: none; }
+
+    .rank-pos {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 7px;
+      font-size: 13px; font-weight: 800;
+    }
+
+    .pos-1  { background: rgba(234,179,8,.15); color: var(--yellow); }
+    .pos-2  { background: rgba(161,161,170,.12); color: #a1a1aa; }
+    .pos-3  { background: rgba(249,115,22,.12); color: var(--orange); }
+    .pos-top{ background: var(--green-dim); color: var(--green); }
+    .pos-mid{ background: var(--blue-dim); color: var(--blue); }
+    .pos-low{ background: var(--accent-dim); color: var(--accent); }
+
+    .rank-arrow-up   { color: var(--green); font-size: 11px; }
+    .rank-arrow-down { color: var(--accent); font-size: 11px; }
+    .rank-arrow-same { color: var(--muted); font-size: 11px; }
+
+    /* ═══════════════ REVIEW ITEMS ═══════════════ */
+    .review-item {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .review-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .review-stars { color: var(--yellow); font-size: 13px; margin-bottom: 4px; }
+    .review-text  { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 6px; }
+    .review-meta  { font-size: 11px; color: var(--muted); }
+
+    .review-response {
+      margin-top: 8px;
+      padding: 10px 14px;
+      background: var(--elevated);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    /* ═══════════════ SERVICE CHECKLIST ═══════════════ */
+    .service-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .service-item:last-child { border-bottom: none; }
+
+    .service-left { display: flex; align-items: center; gap: 12px; }
+    .service-icon {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .service-name  { font-size: 13px; font-weight: 600; }
+    .service-desc  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    /* ═══════════════ GBP STATS ═══════════════ */
+    .gbp-grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 12px;
+    }
+
+    .gbp-stat {
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .gbp-val { font-size: 24px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 3px; }
+    .gbp-lbl { font-size: 11px; color: var(--muted); }
+
+    /* ═══════════════ PROGRESS BAR ═══════════════ */
+    .progress-wrap { margin-bottom: 14px; }
+    .progress-top { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+    .progress-bar-bg { height: 6px; background: var(--elevated); border-radius: 99px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 99px; transition: width .6s ease; }
+
+    /* ═══════════════ CITATION LIST ═══════════════ */
+    .cit-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12.5px;
+    }
+    .cit-item:last-child { border-bottom: none; }
+
+    /* Hero banner */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--accent-dim), rgba(251,113,133,.06));
+      border: 1px solid rgba(225,29,72,.15);
+      border-radius: 14px;
+      padding: 22px 26px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hero-left h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      margin-bottom: 3px;
+    }
+
+    .hero-left p { font-size: 13px; color: var(--text2); }
+
+    .hero-score {
+      text-align: center;
+    }
+
+    .score-ring {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: conic-gradient(var(--green) 0% 78%, var(--elevated) 78% 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+
+    .score-inner {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    .score-label { font-size: 10px; color: var(--muted); margin-top: 5px; text-align: center; }
+
+    @media(max-width:768px) {
+      .grid-4 { grid-template-columns: repeat(2,1fr); }
+      .grid-3 { grid-template-columns: 1fr 1fr; }
+      .grid-2, .grid-21 { grid-template-columns: 1fr; }
+      .content { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">🌸</div>
+    <div>
+      <div class="brand-name">Sakura Garden</div>
+      <div class="brand-sub">Japanese Restaurant · Fort Lauderdale, FL</div>
+    </div>
+  </div>
+  <div class="topbar-sep"></div>
+  <div class="client-name" style="font-size:12px;color:var(--muted);">Powered by <strong style="color:var(--accent);">DiamondPages.ai</strong></div>
+
+  <div class="topbar-right">
+    <div class="score-pill">⬆ 78/100 Score</div>
+    <div class="tier-pill">Growth Plan · $997/mo</div>
+    <div style="display:flex;align-items:center;gap:7px;">
+      <span class="theme-label" id="theme-label">Dark</span>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"></button>
+    </div>
+  </div>
+</header>
+
+<!-- NAV TABS -->
+<nav class="nav-tabs">
+  <button class="tab active" onclick="showTab('overview',this)">📊 Overview</button>
+  <button class="tab" onclick="showTab('rankings',this)">🔍 Rankings</button>
+  <button class="tab" onclick="showTab('gbp',this)">📍 Google Business</button>
+  <button class="tab" onclick="showTab('reviews',this)">⭐ Reviews</button>
+  <button class="tab" onclick="showTab('content',this)">✍️ Content</button>
+  <button class="tab" onclick="showTab('services',this)">🛠 Services</button>
+  <button class="tab" onclick="showTab('traffic',this)">📈 Traffic</button>
+</nav>
+
+<div class="content">
+
+  <!-- ══════════════════════════ OVERVIEW ══════════════════════════ -->
+  <div class="page active" id="tab-overview">
+
+    <div class="hero-banner">
+      <div class="hero-left">
+        <h1>🌸 Sakura Garden</h1>
+        <p>Weekly Performance Report · Week of March 24, 2026 · Fort Lauderdale, FL</p>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+          <span class="badge badge-green">↑ Rankings improving</span>
+          <span class="badge badge-blue">3 new reviews</span>
+          <span class="badge badge-yellow">Month 2 of service</span>
+        </div>
+      </div>
+      <div class="hero-score">
+        <div class="score-ring"><div class="score-inner">78</div></div>
+        <div class="score-label">DiamondPages<br>Score™</div>
+      </div>
+    </div>
+
+    <div class="grid-4">
+      <div class="kpi">
+        <div class="kpi-label">Map Pack Position</div>
+        <div class="kpi-value" style="color:var(--green);">#2</div>
+        <div class="kpi-delta delta-up">↑ Was #7 last month</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">GBP Phone Calls</div>
+        <div class="kpi-value">143</div>
+        <div class="kpi-delta delta-up">↑ +38% vs last week</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Google Review Rating</div>
+        <div class="kpi-value" style="color:var(--yellow);">4.8 ⭐</div>
+        <div class="kpi-delta delta-up">↑ +0.2 this month</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">New Reviews (30d)</div>
+        <div class="kpi-value">14</div>
+        <div class="kpi-delta delta-up">↑ +9 vs prior 30d</div>
+      </div>
+    </div>
+
+    <div class="grid-21">
+      <div class="card">
+        <div class="card-label">Weekly GBP Activity</div>
+        <canvas id="chart-gbp-week" height="90"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-label">DiamondPages Score™ Breakdown</div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:4px;">
+          <div class="progress-wrap">
+            <div class="progress-top"><span style="font-size:12px;">GBP Completeness</span><span style="font-weight:700;">15/15</span></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:100%;background:var(--green);"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-top"><span style="font-size:12px;">Map Pack Position</span><span style="font-weight:700;">16/20</span></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:80%;background:var(--blue);"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-top"><span style="font-size:12px;">Review Rating (4.5+)</span><span style="font-weight:700;">15/15</span></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:100%;background:var(--green);"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-top"><span style="font-size:12px;">Review Velocity</span><span style="font-weight:700;">8/10</span></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:80%;background:var(--yellow);"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-top"><span style="font-size:12px;">Citation Consistency</span><span style="font-weight:700;">9/10</span></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:90%;background:var(--blue);"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-top"><span style="font-size:12px;">Keywords in Top 10</span><span style="font-weight:700;">10/15</span></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:67%;background:var(--orange);"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-top"><span style="font-size:12px;">GEO Visibility</span><span style="font-weight:700;">5/10</span></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:50%;background:var(--purple);"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-top"><span style="font-size:12px;">Page Speed</span><span style="font-weight:700;">0/5</span></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:0%;background:var(--accent);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-label">This Week — Completed</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--green);">✓</span> 2 GBP posts published</div>
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--green);">✓</span> 1 blog post published</div>
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--green);">✓</span> 8 citations built (67 total)</div>
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--green);">✓</span> 3 reviews responded to</div>
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--green);">✓</span> 2 backlinks secured</div>
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--green);">✓</span> 12 social posts scheduled</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Next Week — Planned</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--blue);">→</span> 2 more GBP posts</div>
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--blue);">→</span> 1 blog: "Best Sushi in Fort Lauderdale"</div>
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--blue);">→</span> 10 more citations (target 77)</div>
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--blue);">→</span> GEO FAQ page: "Best Japanese Restaurant"</div>
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--blue);">→</span> Page speed optimization (score fix)</div>
+          <div style="display:flex;gap:8px;font-size:13px;"><span style="color:var(--blue);">→</span> Review request SMS blast</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Your Competitors</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+            <span>Nobu Fort Lauderdale</span><span class="badge badge-red">#1 Map Pack</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+            <span style="color:var(--green);font-weight:600;">🌸 Sakura Garden</span><span class="badge badge-green">#2 Map Pack ↑</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+            <span>Tokyo Bay</span><span class="badge badge-muted">#3 Map Pack</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+            <span>Matsuri Japanese</span><span class="badge badge-muted">#4 Map Pack</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+            <span>Sushi Rock Café</span><span class="badge badge-muted">#5 Map Pack</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ RANKINGS ══════════════════════════ -->
+  <div class="page" id="tab-rankings">
+    <div class="section-header">
+      <div class="section-title">Keyword Rankings</div>
+      <div class="report-date">Tracked via Semrush · Updated weekly</div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="kpi"><div class="kpi-label">Keywords Top 3</div><div class="kpi-value" style="color:var(--green);">4</div><div class="kpi-delta delta-up">↑ +2 this month</div></div>
+      <div class="kpi"><div class="kpi-label">Keywords Top 10</div><div class="kpi-value">11</div><div class="kpi-delta delta-up">↑ +4 this month</div></div>
+      <div class="kpi"><div class="kpi-label">Keywords Tracked</div><div class="kpi-value">24</div><div class="kpi-delta">Tier 1–3 targets</div></div>
+      <div class="kpi"><div class="kpi-label">Domain Authority</div><div class="kpi-value">22</div><div class="kpi-delta delta-up">↑ +3 since start</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-label">Ranking History — Primary Keywords</div>
+      <canvas id="chart-rankings" height="80"></canvas>
+    </div>
+
+    <div class="card">
+      <div class="card-label">All Tracked Keywords</div>
+      <table class="rank-table">
+        <thead>
+          <tr>
+            <th>Keyword</th>
+            <th>Current Rank</th>
+            <th>Last Week</th>
+            <th>Change</th>
+            <th>Tier</th>
+            <th>Monthly Searches</th>
+          </tr>
+        </thead>
+        <tbody id="kw-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ GBP ══════════════════════════ -->
+  <div class="page" id="tab-gbp">
+    <div class="section-header">
+      <div class="section-title">Google Business Profile</div>
+      <div class="report-date">Last 30 days · via GBP API</div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="kpi"><div class="kpi-label">Profile Views</div><div class="kpi-value">2,847</div><div class="kpi-delta delta-up">↑ +22% vs last month</div></div>
+      <div class="kpi"><div class="kpi-label">Phone Calls</div><div class="kpi-value">143</div><div class="kpi-delta delta-up">↑ +38%</div></div>
+      <div class="kpi"><div class="kpi-label">Direction Requests</div><div class="kpi-value">89</div><div class="kpi-delta delta-up">↑ +14%</div></div>
+      <div class="kpi"><div class="kpi-label">Website Clicks</div><div class="kpi-value">312</div><div class="kpi-delta delta-up">↑ +27%</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-label">GBP Health Checklist</div>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-top:4px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>Business Name + Address + Phone</span><span class="badge badge-green">✓ Verified</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>Categories (Primary + 5 secondary)</span><span class="badge badge-green">✓ Optimized</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>Business Description</span><span class="badge badge-green">✓ Keyword-rich</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>Photos (min 20 recommended)</span><span class="badge badge-yellow">31 photos</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>Weekly GBP Posts</span><span class="badge badge-green">✓ Active</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>Services Listed</span><span class="badge badge-green">✓ 12 services</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>Q&A Section</span><span class="badge badge-green">✓ 8 answered</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>Menu Link</span><span class="badge badge-green">✓ Linked</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>Booking Link</span><span class="badge badge-green">✓ OpenTable</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>Holiday Hours</span><span class="badge badge-yellow">⚠ Update needed</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">GBP Monthly Trend</div>
+        <canvas id="chart-gbp-trend" height="180"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Recent GBP Posts</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+        <div style="padding:14px;background:var(--elevated);border-radius:10px;border:1px solid var(--border);">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">March 26, 2026 · By Tanya</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px;">🌸 Spring Omakase Menu Now Available!</div>
+          <div style="font-size:12.5px;color:var(--text2);">Experience our chef's curated 9-course spring omakase featuring seasonal ingredients flown in from Tsukiji Market. Reservations available Thursday–Sunday. Limited seats nightly.</div>
+        </div>
+        <div style="padding:14px;background:var(--elevated);border-radius:10px;border:1px solid var(--border);">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">March 22, 2026 · By Tanya</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px;">⭐ Thank You for 4.8 Stars on Google!</div>
+          <div style="font-size:12.5px;color:var(--text2);">We're honored to be rated one of the top Japanese restaurants in Fort Lauderdale. Every review helps local food lovers find us — and we read every single one.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ REVIEWS ══════════════════════════ -->
+  <div class="page" id="tab-reviews">
+    <div class="section-header">
+      <div class="section-title">Reviews & Reputation</div>
+      <div class="report-date">Google Business Profile · Updated daily</div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="kpi"><div class="kpi-label">Overall Rating</div><div class="kpi-value" style="color:var(--yellow);">4.8 ⭐</div><div class="kpi-delta delta-up">↑ +0.2 since onboarding</div></div>
+      <div class="kpi"><div class="kpi-label">Total Reviews</div><div class="kpi-value">187</div><div class="kpi-delta delta-up">↑ +14 this month</div></div>
+      <div class="kpi"><div class="kpi-label">Response Rate</div><div class="kpi-value" style="color:var(--green);">100%</div><div class="kpi-delta">All reviews responded to</div></div>
+      <div class="kpi"><div class="kpi-label">Avg Response Time</div><div class="kpi-value">18h</div><div class="kpi-delta delta-up">Target: &lt; 24h ✓</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-label">Rating Distribution</div>
+        <canvas id="chart-reviews" height="130"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-label">Review Velocity — Last 6 Months</div>
+        <canvas id="chart-review-velocity" height="130"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Latest Reviews</div>
+      <div id="reviews-list"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ CONTENT ══════════════════════════ -->
+  <div class="page" id="tab-content">
+    <div class="section-header">
+      <div class="section-title">Content & GEO</div>
+      <div class="report-date">Blog · Social · GEO · Email — Month 2 of 3</div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="kpi"><div class="kpi-label">Blog Posts Published</div><div class="kpi-value">6</div><div class="kpi-delta">4 more planned</div></div>
+      <div class="kpi"><div class="kpi-label">Social Posts Live</div><div class="kpi-value">24</div><div class="kpi-delta delta-up">↑ On track for 12/mo</div></div>
+      <div class="kpi"><div class="kpi-label">GEO Pages Built</div><div class="kpi-value">3</div><div class="kpi-delta delta-up">↑ AI citations appearing</div></div>
+      <div class="kpi"><div class="kpi-label">Email Open Rate</div><div class="kpi-value" style="color:var(--green);">46%</div><div class="kpi-delta delta-up">↑ Vs 40% target</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-label">Published Blog Posts</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+          <div style="padding:12px 14px;background:var(--elevated);border-radius:9px;border-left:3px solid var(--accent);">
+            <div style="font-size:13px;font-weight:600;">Best Japanese Restaurant in Fort Lauderdale: What Makes Sakura Garden Stand Out</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px;">March 20 · 1,240 words · GEO-optimized · 312 views</div>
+          </div>
+          <div style="padding:12px 14px;background:var(--elevated);border-radius:9px;border-left:3px solid var(--blue);">
+            <div style="font-size:13px;font-weight:600;">Omakase vs À La Carte: A Guide for First-Time Japanese Dining in Broward County</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px;">March 14 · 1,080 words · 198 views</div>
+          </div>
+          <div style="padding:12px 14px;background:var(--elevated);border-radius:9px;border-left:3px solid var(--green);">
+            <div style="font-size:13px;font-weight:600;">Top 5 Signs of an Authentic Japanese Restaurant (Fort Lauderdale Edition)</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px;">March 7 · 920 words · 241 views</div>
+          </div>
+          <div style="padding:12px 14px;background:var(--elevated);border-radius:9px;border-left:3px solid var(--purple);">
+            <div style="font-size:13px;font-weight:600;">Private Dining in Fort Lauderdale: Sakura Garden's Tatami Room Experience</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px;">Feb 28 · 870 words · 189 views</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">GEO — AI Engine Visibility</div>
+        <div style="margin-bottom:14px;padding:12px 14px;background:var(--green-dim);border:1px solid rgba(34,197,94,.2);border-radius:9px;">
+          <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;">🤖 AI Citation Detected</div>
+          <div style="font-size:12px;color:var(--text2);">Sakura Garden appeared in a ChatGPT response to "best Japanese restaurant Fort Lauderdale" on March 21, 2026.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-top:4px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span>ChatGPT Visibility</span><span class="badge badge-green">Cited</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span>Gemini Visibility</span><span class="badge badge-yellow">In Progress</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span>Perplexity Visibility</span><span class="badge badge-yellow">In Progress</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span>Google AI Overviews</span><span class="badge badge-muted">Pending</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span>GEO Entity Pages Built</span><span class="badge badge-blue">3 of 5</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span>FAQ Pages Published</span><span class="badge badge-blue">2 of 4</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Content Calendar — April 2026</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px;">
+        <div style="background:var(--elevated);border-radius:9px;padding:12px;border-left:3px solid var(--accent);">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Blog</div>
+          <div style="font-size:12.5px;font-weight:600;">Best Sushi in Fort Lauderdale 2026</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">Due Apr 4 · Tanya</div>
+        </div>
+        <div style="background:var(--elevated);border-radius:9px;padding:12px;border-left:3px solid var(--purple);">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">GEO</div>
+          <div style="font-size:12.5px;font-weight:600;">"Who is the best Japanese restaurant in Broward?" FAQ page</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">Due Apr 6 · Tanya</div>
+        </div>
+        <div style="background:var(--elevated);border-radius:9px;padding:12px;border-left:3px solid var(--blue);">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Email</div>
+          <div style="font-size:12.5px;font-weight:600;">Spring Omakase announcement to past diners</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">Due Apr 10 · Diana</div>
+        </div>
+        <div style="background:var(--elevated);border-radius:9px;padding:12px;border-left:3px solid var(--green);">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Social</div>
+          <div style="font-size:12.5px;font-weight:600;">12 posts scheduled (FB + IG)</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">Week of Apr 7 · Tanya</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ SERVICES ══════════════════════════ -->
+  <div class="page" id="tab-services">
+    <div class="section-header">
+      <div class="section-title">Active Services</div>
+      <div class="report-date">Growth Plan · $997/mo · Month 2 of service</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-label">Included in Your Plan</div>
+        <div id="services-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Add-Ons Available</div>
+        <div id="addons-list"></div>
+        <div style="margin-top:16px;padding:14px;background:var(--accent-dim);border-radius:10px;border:1px solid rgba(225,29,72,.2);">
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">Upgrade Opportunity</div>
+          <div style="font-size:12px;color:var(--text2);">Based on your review velocity and ranking growth, you're a strong candidate for the <strong>Pro Plan</strong> — adding Google Ads to capture your map pack traffic. Estimated ROI: 4–6× ad spend within 60 days.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Citations Built</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+          <span style="font-size:22px;font-weight:800;">67</span>
+          <span style="font-size:13px;color:var(--muted);margin-left:6px;">of 100 target</span>
+        </div>
+        <span class="badge badge-blue">Month 2 — on track</span>
+      </div>
+      <div class="progress-bar-bg" style="margin-bottom:16px;height:8px;">
+        <div class="progress-bar-fill" style="width:67%;background:linear-gradient(90deg,var(--blue),var(--purple));"></div>
+      </div>
+      <div id="citations-list" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ TRAFFIC ══════════════════════════ -->
+  <div class="page" id="tab-traffic">
+    <div class="section-header">
+      <div class="section-title">Website Traffic</div>
+      <div class="report-date">Google Analytics · Last 30 days</div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="kpi"><div class="kpi-label">Total Sessions</div><div class="kpi-value">3,412</div><div class="kpi-delta delta-up">↑ +29% vs last month</div></div>
+      <div class="kpi"><div class="kpi-label">Organic Search</div><div class="kpi-value">1,847</div><div class="kpi-delta delta-up">↑ +41% vs last month</div></div>
+      <div class="kpi"><div class="kpi-label">Avg Session Duration</div><div class="kpi-value">2:43</div><div class="kpi-delta delta-up">↑ +18 secs</div></div>
+      <div class="kpi"><div class="kpi-label">Bounce Rate</div><div class="kpi-value" style="color:var(--green);">38%</div><div class="kpi-delta delta-up">↓ -6% (better)</div></div>
+    </div>
+
+    <div class="grid-21">
+      <div class="card">
+        <div class="card-label">Traffic Over Time — Last 12 Weeks</div>
+        <canvas id="chart-traffic" height="90"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-label">Traffic Sources</div>
+        <canvas id="chart-sources" height="160"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Top Landing Pages</div>
+      <table class="rank-table">
+        <thead><tr><th>Page</th><th>Sessions</th><th>Avg Time</th><th>Bounce Rate</th></tr></thead>
+        <tbody>
+          <tr><td>Homepage</td><td>1,240</td><td>2:12</td><td style="color:var(--yellow);">44%</td></tr>
+          <tr><td>/menu</td><td>892</td><td>3:18</td><td style="color:var(--green);">29%</td></tr>
+          <tr><td>/reservations</td><td>541</td><td>1:54</td><td style="color:var(--green);">22%</td></tr>
+          <tr><td>/blog/best-japanese-restaurant-fort-lauderdale</td><td>312</td><td>4:02</td><td style="color:var(--green);">31%</td></tr>
+          <tr><td>/private-dining</td><td>189</td><td>2:44</td><td style="color:var(--yellow);">41%</td></tr>
+          <tr><td>/blog/omakase-guide-broward-county</td><td>198</td><td>3:51</td><td style="color:var(--green);">27%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<script>
+  // ═══════════════ THEME ═══════════════
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-label').textContent = next === 'dark' ? 'Dark' : 'Light';
+    rebuildCharts();
+  }
+
+  // ═══════════════ TABS ═══════════════
+  function showTab(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ═══════════════ CHART HELPERS ═══════════════
+  const charts = {};
+  function isDark() { return document.documentElement.getAttribute('data-theme') === 'dark'; }
+  function gridColor() { return isDark() ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'; }
+  function tickColor() { return isDark() ? '#71717a' : '#a1a1aa'; }
+  function textColor() { return isDark() ? '#a1a1aa' : '#52525b'; }
+
+  function mkChart(id, config) {
+    if (charts[id]) charts[id].destroy();
+    charts[id] = new Chart(document.getElementById(id), config);
+  }
+
+  function rebuildCharts() {
+    buildCharts();
+  }
+
+  // ═══════════════ KEYWORDS TABLE ═══════════════
+  const keywords = [
+    { kw: 'japanese restaurant fort lauderdale', cur: 2, prev: 5, tier: 1, vol: 1600 },
+    { kw: 'sushi fort lauderdale', cur: 3, prev: 8, tier: 1, vol: 2400 },
+    { kw: 'japanese food near me broward', cur: 4, prev: 12, tier: 1, vol: 880 },
+    { kw: 'omakase fort lauderdale', cur: 1, prev: 3, tier: 1, vol: 320 },
+    { kw: 'best sushi broward county', cur: 5, prev: 9, tier: 2, vol: 590 },
+    { kw: 'japanese restaurant near me', cur: 7, prev: 14, tier: 2, vol: 3200 },
+    { kw: 'sushi delivery fort lauderdale', cur: 6, prev: 11, tier: 2, vol: 720 },
+    { kw: 'private dining fort lauderdale', cur: 8, prev: 17, tier: 2, vol: 210 },
+    { kw: 'ramen fort lauderdale', cur: 9, prev: 22, tier: 2, vol: 480 },
+    { kw: 'japanese steakhouse broward', cur: 11, prev: 28, tier: 2, vol: 390 },
+    { kw: 'best japanese food south florida', cur: 14, prev: 31, tier: 3, vol: 260 },
+    { kw: 'authentic japanese restaurant florida', cur: 18, prev: 35, tier: 3, vol: 140 },
+  ];
+
+  function posClass(p) {
+    if (p === 1) return 'pos-1';
+    if (p === 2) return 'pos-2';
+    if (p === 3) return 'pos-3';
+    if (p <= 5)  return 'pos-top';
+    if (p <= 10) return 'pos-mid';
+    return 'pos-low';
+  }
+
+  function buildKeywords() {
+    const tbody = document.getElementById('kw-tbody');
+    tbody.innerHTML = keywords.map(k => {
+      const diff = k.prev - k.cur;
+      const arrow = diff > 0
+        ? `<span class="rank-arrow-up">↑ +${diff}</span>`
+        : diff < 0
+          ? `<span class="rank-arrow-down">↓ ${diff}</span>`
+          : `<span class="rank-arrow-same">→</span>`;
+      const tierBadge = k.tier === 1
+        ? `<span class="badge badge-red">Tier 1</span>`
+        : k.tier === 2
+          ? `<span class="badge badge-blue">Tier 2</span>`
+          : `<span class="badge badge-muted">Tier 3</span>`;
+      return `<tr>
+        <td style="font-weight:500;">${k.kw}</td>
+        <td><span class="rank-pos ${posClass(k.cur)}">${k.cur}</span></td>
+        <td style="color:var(--muted);">${k.prev}</td>
+        <td>${arrow}</td>
+        <td>${tierBadge}</td>
+        <td style="color:var(--muted);">${k.vol.toLocaleString()}/mo</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ═══════════════ REVIEWS ═══════════════
+  const reviewsData = [
+    { stars: 5, text: 'Absolutely the best sushi I have had in Fort Lauderdale. The omakase was a 10/10 experience — every course was thoughtfully plated and the sake pairing was perfect. Will be back monthly.', author: 'Jennifer M.', date: 'March 25, 2026', response: 'Thank you so much, Jennifer! Chef Hiroshi takes great pride in the omakase experience, and it means the world to hear it resonated with you. We would love to see you next month — ask for the seasonal sake menu!' },
+    { stars: 5, text: 'Came for my anniversary dinner and Sakura Garden delivered beyond expectations. The tatami room is gorgeous. Service was attentive without being intrusive. The black cod miso is the best dish I have eaten all year.', author: 'Marcus T.', date: 'March 22, 2026', response: 'Happy anniversary, Marcus! We are so glad you chose us for such a special occasion. The black cod miso is a house favorite for good reason. Come back for your next anniversary — we will take good care of you.' },
+    { stars: 4, text: 'Great food and atmosphere. Only minor note is the wait for a table was about 20 minutes despite having a reservation. But once seated everything was flawless.', author: 'Priya K.', date: 'March 19, 2026', response: 'Priya, thank you for the kind words and for being honest about the wait. We have been fully booked most evenings this spring and are working on improving our seating flow. Your feedback helps us get better — see you again soon!' },
+    { stars: 5, text: 'We do a team dinner here every quarter. It never disappoints. The group omakase for 8 people was flawlessly executed. Highly recommend for corporate dining in Fort Lauderdale.', author: 'Daniel R.', date: 'March 15, 2026', response: 'Daniel, we love seeing your team every quarter! Thank you for trusting us with your corporate dinners. We look forward to the next one — reach out directly and we will reserve the tatami room for you.' },
+  ];
+
+  function buildReviews() {
+    document.getElementById('reviews-list').innerHTML = reviewsData.map(r => `
+      <div class="review-item">
+        <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+        <div class="review-text">"${r.text}"</div>
+        <div class="review-meta">— ${r.author} · ${r.date}</div>
+        <div class="review-response"><strong style="color:var(--accent);">Sakura Garden replied:</strong> ${r.response}</div>
+      </div>
+    `).join('');
+  }
+
+  // ═══════════════ SERVICES ═══════════════
+  const services = [
+    { icon: '📍', bg: '#e11d4820', name: 'Google Business Profile Management', desc: 'Weekly posts, Q&A, photos, optimization', status: 'Active' },
+    { icon: '📁', bg: '#3b82f620', name: 'Local Citation Building', desc: '67 of 100 directories submitted', status: 'In Progress' },
+    { icon: '🔍', bg: '#22c55e20', name: 'Full Local SEO Campaign', desc: 'Map pack + organic rank building', status: 'Active' },
+    { icon: '📊', bg: '#a855f720', name: 'Competitor Gap Analysis', desc: 'Monthly audit of top 5 competitors', status: 'Active' },
+    { icon: '✍️', bg: '#f9731620', name: 'AI Blog Content (4/mo)', desc: 'GEO-optimized, local keyword targeted', status: 'Active' },
+    { icon: '🤖', bg: '#6366f120', name: 'GEO — AI Search Optimization', desc: 'ChatGPT, Gemini, Perplexity visibility', status: 'Active' },
+    { icon: '🔗', bg: '#eab30820', name: 'Link Building (5–8/mo)', desc: '12 quality backlinks built to date', status: 'Active' },
+    { icon: '📱', bg: '#e11d4820', name: 'Social Media (12 posts/mo)', desc: 'Facebook + Instagram calendar', status: 'Active' },
+    { icon: '📞', bg: '#22c55e20', name: 'Bi-Weekly Strategy Calls', desc: 'With Lucy — every other Wednesday', status: 'Active' },
+    { icon: '📈', bg: '#3b82f620', name: 'Live Reporting Dashboard', desc: 'Real-time rankings, GBP, traffic data', status: 'This page ✓' },
+  ];
+
+  const addons = [
+    { icon: '📧', bg: '#a855f720', name: 'Email + SMS Marketing', desc: 'Klaviyo flows, campaigns, automations', price: '+$297/mo', active: false },
+    { icon: '🌐', bg: '#f9731620', name: 'Website Rebuild', desc: 'SEO-optimized, fast, mobile-first', price: '$1,200–$3,500', active: false },
+    { icon: '📣', bg: '#6366f120', name: 'Google Ads (PPC)', desc: 'Capture high-intent search traffic', price: 'Pro Plan', active: false },
+    { icon: '👥', bg: '#eab30820', name: 'Meta Ads (FB + IG)', desc: 'Local awareness + lead gen campaigns', price: 'Pro Plan', active: false },
+  ];
+
+  function buildServices() {
+    document.getElementById('services-list').innerHTML = services.map(s => `
+      <div class="service-item">
+        <div class="service-left">
+          <div class="service-icon" style="background:${s.bg};">${s.icon}</div>
+          <div>
+            <div class="service-name">${s.name}</div>
+            <div class="service-desc">${s.desc}</div>
+          </div>
+        </div>
+        <span class="badge badge-green">✓ ${s.status}</span>
+      </div>
+    `).join('');
+
+    document.getElementById('addons-list').innerHTML = addons.map(a => `
+      <div class="service-item">
+        <div class="service-left">
+          <div class="service-icon" style="background:${a.bg};">${a.icon}</div>
+          <div>
+            <div class="service-name">${a.name}</div>
+            <div class="service-desc">${a.desc}</div>
+          </div>
+        </div>
+        <span class="badge badge-yellow">${a.price}</span>
+      </div>
+    `).join('');
+  }
+
+  // ═══════════════ CITATIONS ═══════════════
+  const citations = [
+    'Google', 'Bing Places', 'Apple Maps', 'Yelp', 'Facebook', 'TripAdvisor',
+    'OpenTable', 'Zomato', 'Foursquare', 'MapQuest', 'YellowPages', 'BBB',
+    'Superpages', 'Whitepages', 'Merchant Circle', 'Local.com', 'Chamber FL',
+    'Manta', 'EZLocal', 'CitySearch', 'InfoUSA', 'Thumbtack', 'Nextdoor',
+    'Waze', 'Uber Eats listing', 'DoorDash listing', 'Grubhub listing',
+    'Eatery24', 'MenuPages', 'Zagat', 'DineOut', 'Restaurant.com',
+    'TasteDive', 'Fork', 'Gayot', 'Opentable', 'Resy',
+    'HappyCow', 'Allmenus', 'BestPlaces.net', 'VirtualTourist', 'Gogobot',
+    'OAT', 'ChamberDirectory', 'LocalStack', 'BizBuySell', 'CityOf.com',
+    'StickyWiki', 'InsiderPages', 'Loc8NearMe', 'MagicYellow', 'USDirectory',
+    'DiscoverOurTown', 'LocalDatabase', 'GetFave', 'Brownbook', 'Hotfrog',
+    'eLocal', 'FindUsLocal', 'TopRatedLocal', 'PlanetRate', 'SortFix',
+    'Citysearch', 'Cylex', 'nSphere', 'iBegin', 'Spoke',
+    'LocalEdge', 'Lacartes', 'ShowMeLocal',
+  ];
+
+  function buildCitations() {
+    document.getElementById('citations-list').innerHTML = citations.slice(0,67).map((c, i) => `
+      <div style="background:var(--elevated);border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:11px;display:flex;align-items:center;gap:5px;">
+        <span style="color:var(--green);font-size:10px;">✓</span>${c}
+      </div>
+    `).join('');
+  }
+
+  // ═══════════════ CHARTS ═══════════════
+  function buildCharts() {
+    const gc = gridColor();
+    const tc = tickColor();
+
+    // GBP weekly
+    mkChart('chart-gbp-week', {
+      type: 'bar',
+      data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets: [
+          { label: 'Profile Views', data: [312,298,341,405,489,612,390], backgroundColor: 'rgba(225,29,72,0.5)', borderColor: '#e11d48', borderWidth: 1, borderRadius: 4 },
+          { label: 'Phone Calls', data: [12,9,14,18,24,38,28], backgroundColor: 'rgba(34,197,94,0.5)', borderColor: '#22c55e', borderWidth: 1, borderRadius: 4, yAxisID: 'y2' },
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { labels: { color: tc, font: { size: 11 } } } }, scales: { x: { ticks: { color: tc }, grid: { color: gc } }, y: { ticks: { color: tc }, grid: { color: gc } }, y2: { position: 'right', ticks: { color: tc }, grid: { display: false } } } }
+    });
+
+    // Rankings history
+    mkChart('chart-rankings', {
+      type: 'line',
+      data: {
+        labels: ['Week 1','Week 2','Week 3','Week 4','Week 5','Week 6','Week 7','Week 8'],
+        datasets: [
+          { label: 'Japanese restaurant FTL', data: [14,11,9,7,5,4,3,2], borderColor: '#e11d48', backgroundColor: 'rgba(225,29,72,0.08)', tension: 0.4, fill: true, pointRadius: 4 },
+          { label: 'Sushi Fort Lauderdale', data: [18,15,12,10,8,6,4,3], borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.06)', tension: 0.4, fill: true, pointRadius: 4 },
+          { label: 'Omakase Fort Lauderdale', data: [8,6,5,4,3,2,1,1], borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.06)', tension: 0.4, fill: true, pointRadius: 4 },
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: tc, font: { size: 11 } } } },
+        scales: {
+          x: { ticks: { color: tc }, grid: { color: gc } },
+          y: { reverse: true, min: 1, max: 20, ticks: { color: tc, callback: v => '#'+v }, grid: { color: gc } }
+        }
+      }
+    });
+
+    // GBP trend
+    mkChart('chart-gbp-trend', {
+      type: 'line',
+      data: {
+        labels: ['Jan','Feb','Mar','Apr (proj)'],
+        datasets: [
+          { label: 'Views', data: [1200,1680,2847,3400], borderColor: '#e11d48', tension: 0.4, fill: false, pointRadius: 4 },
+          { label: 'Calls', data: [48,87,143,185], borderColor: '#22c55e', tension: 0.4, fill: false, pointRadius: 4 },
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { labels: { color: tc, font: { size: 11 } } } }, scales: { x: { ticks: { color: tc }, grid: { color: gc } }, y: { ticks: { color: tc }, grid: { color: gc } } } }
+    });
+
+    // Review distribution
+    mkChart('chart-reviews', {
+      type: 'bar',
+      indexAxis: 'y',
+      data: {
+        labels: ['5★','4★','3★','2★','1★'],
+        datasets: [{ data: [142,31,8,4,2], backgroundColor: ['#22c55e','#86efac','#eab308','#f97316','#e11d48'], borderRadius: 4 }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: tc }, grid: { color: gc } }, y: { ticks: { color: tc }, grid: { color: gc } } } }
+    });
+
+    // Review velocity
+    mkChart('chart-review-velocity', {
+      type: 'bar',
+      data: {
+        labels: ['Oct','Nov','Dec','Jan','Feb','Mar'],
+        datasets: [{ label: 'New Reviews', data: [2,3,5,4,8,14], backgroundColor: 'rgba(225,29,72,0.6)', borderColor: '#e11d48', borderWidth: 1, borderRadius: 4 }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: tc }, grid: { color: gc } }, y: { ticks: { color: tc }, grid: { color: gc } } } }
+    });
+
+    // Traffic chart
+    mkChart('chart-traffic', {
+      type: 'line',
+      data: {
+        labels: ['Wk1','Wk2','Wk3','Wk4','Wk5','Wk6','Wk7','Wk8','Wk9','Wk10','Wk11','Wk12'],
+        datasets: [
+          { label: 'Total Sessions', data: [620,680,710,790,840,920,980,1040,1120,1200,1310,1390], borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.08)', tension: 0.4, fill: true, pointRadius: 3 },
+          { label: 'Organic', data: [290,330,360,420,460,520,580,640,720,800,870,940], borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.06)', tension: 0.4, fill: true, pointRadius: 3 },
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { labels: { color: tc, font: { size: 11 } } } }, scales: { x: { ticks: { color: tc }, grid: { color: gc } }, y: { ticks: { color: tc }, grid: { color: gc } } } }
+    });
+
+    // Traffic sources doughnut
+    mkChart('chart-sources', {
+      type: 'doughnut',
+      data: {
+        labels: ['Organic Search','Direct','Google Maps','Social','Referral'],
+        datasets: [{ data: [54,22,12,8,4], backgroundColor: ['#22c55e','#3b82f6','#e11d48','#a855f7','#f97316'], borderWidth: 2, borderColor: isDark() ? '#111113' : '#ffffff' }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: tc, font: { size: 11 }, padding: 12 } } } }
+    });
+  }
+
+  // ═══════════════ INIT ═══════════════
+  document.addEventListener('DOMContentLoaded', () => {
+    buildKeywords();
+    buildReviews();
+    buildServices();
+    buildCitations();
+    buildCharts();
+  });
+</script>
+</body>
+</html>
