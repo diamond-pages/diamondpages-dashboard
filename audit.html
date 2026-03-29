@@ -1395,7 +1395,8 @@ async function submitAudit(e) {
     const res = await fetch('https://api.diamondpages.ai/api/audit', {
       signal: controller.signal,
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
       body: JSON.stringify({
         businessName: bizName,
         vertical: vertical.split('/')[0].trim().toLowerCase(),
