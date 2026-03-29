@@ -312,7 +312,8 @@
       }
 
       // Use live metrics if available
-      const m = data.liveMetrics || {};
+      const m = data.liveMetrics || data.metrics || {};
+      const rank = m.rank || (c.mapPackRank && typeof c.mapPackRank === 'number' ? c.mapPackRank : null);
       const rating = m.rating || c.rating || null;
       const reviews = m.reviewCount || c.reviewCount || null;
       const speed = m.pageSpeed?.mobile || null;
