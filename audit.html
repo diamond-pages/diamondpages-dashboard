@@ -1029,15 +1029,25 @@
 function animateSteps() {
   const steps = ['step-maps','step-gbp','step-competitors','step-speed','step-report','step-email'];
   let i = 0;
+  const loadingMessages = [
+    'Pulling your Google Maps ranking...',
+    'Analyzing your Google Business Profile...',
+    'Scanning your top competitors...',
+    'Testing your website speed...',
+    'Generating your Diamond Score™...',
+    'Preparing your personalized report...'
+  ];
   const interval = setInterval(() => {
     if (i > 0) document.getElementById(steps[i-1]).className = 'loading-step done';
     if (i < steps.length) {
       document.getElementById(steps[i]).className = 'loading-step active';
+      const subEl = document.querySelector('.loading-sub');
+      if (subEl && loadingMessages[i]) subEl.textContent = loadingMessages[i];
       i++;
     } else {
       clearInterval(interval);
     }
-  }, 1800);
+  }, 2800); // ~17s total, matches real audit time
   return interval;
 }
 
