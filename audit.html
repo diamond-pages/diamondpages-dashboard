@@ -825,9 +825,20 @@
 
         <div class="field">
           <label class="field-label">Website URL</label>
-          <input class="field-input" id="f-website" type="text" placeholder="yourbusiness.com or leave blank" 
-          onblur="if(this.value&&!this.value.startsWith('http'))this.value='https://'+this.value">
-          <div class="field-hint">We'll analyze your page speed and on-page SEO</div>
+          <input class="field-input" id="f-website" type="text" placeholder="yourbusiness.com" 
+            onblur="if(this.value&&this.value!=='none'&&!this.value.startsWith('http'))this.value='https://'+this.value"
+            id="f-website">
+          <div style="margin-top:6px;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);cursor:pointer;">
+              <input type="checkbox" id="f-no-website" onchange="
+                const inp=document.getElementById('f-website');
+                if(this.checked){inp.value='';inp.disabled=true;inp.placeholder='No website — we can build one for you';}
+                else{inp.disabled=false;inp.placeholder='yourbusiness.com';}
+              " style="width:14px;height:14px;accent-color:var(--teal);">
+              I don't have a website yet
+            </label>
+          </div>
+          <div class="field-hint">We'll analyze your page speed — or recommend a new site</div>
         </div>
 
         <div class="field-row">
@@ -1325,9 +1336,10 @@ async function submitAudit(e) {
   const bizName  = document.getElementById('f-biz').value.trim();
   const vertical = document.getElementById('f-vertical').value;
   const city     = document.getElementById('f-city').value.trim();
-  let website  = document.getElementById('f-website').value.trim();
+  const noWebsite = document.getElementById('f-no-website').checked;
+    let website = noWebsite ? null : document.getElementById('f-website').value.trim();
     if (website && !website.startsWith('http')) website = 'https://' + website;
-    if (!website) website = null;
+    if (!website || website === 'https://') website = null;
   const name     = document.getElementById('f-name').value.trim();
   const phone    = document.getElementById('f-phone').value.trim();
   const email    = document.getElementById('f-email').value.trim();
