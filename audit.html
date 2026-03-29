@@ -1092,12 +1092,27 @@ function renderResults(data, formData) {
   // Business name
   document.getElementById('r-biz-name').textContent = `${formData.businessName} · ${formData.city}`;
 
-  // Partial notice
+  // Partial notice — show friendly state, don't leave blanks
   if (data.partial) {
     const notice = document.getElementById('r-partial-notice');
     notice.style.display = 'inline-block';
-    document.getElementById('r-partial-email').textContent = formData.email;
-    return; // Don't render the rest if partial
+    document.getElementById('r-partial-email').textContent = typeof formData === 'string' ? formData : (formData.email || '');
+    
+    // Show a friendly score ring with "?" instead of blank
+    const scoreNum = document.getElementById('score-num');
+    const scoreTagline = document.getElementById('score-tagline');
+    if (scoreNum) scoreNum.textContent = '—';
+    if (scoreTagline) scoreTagline.textContent = 'Your full report is being prepared and will be emailed shortly.';
+    
+    // Set KPI placeholders
+    ['kpi-rank','kpi-rating','kpi-speed'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.textContent = '—'; el.style.fontSize = '22px'; }
+    });
+    const sub = document.getElementById('kpi-rank-sub');
+    if (sub) sub.textContent = 'Full results in your email';
+    
+    return;
   }
 
   // ── Score ──
