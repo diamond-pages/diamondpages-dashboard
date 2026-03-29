@@ -936,10 +936,16 @@
       </div>
     </div>
 
-    <!-- Service Area Rank Grid (mobile/both businesses) -->
-    <div id="rank-grid-section" style="display:none;" class="results-section">
-      <div class="results-section-title">📍 Your Service Area Rankings</div>
-      <div id="rank-grid-map" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 20px;box-shadow:0 2px 12px rgba(0,0,0,0.04);"></div>
+    <!-- Rank Heatmap -->
+    <div id="rank-heatmap-section" style="display:none;margin-bottom:20px;" class="results-section">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:12px;padding-top:32px;">📍 How You Rank Across Your Market</div>
+      <div id="rank-grid-bubbles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
+      <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:50%;background:#16a34a;"></div>Top 3</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:50%;background:#d97706;"></div>Top 7</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:50%;background:#dc2626;"></div>Ranking low</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:50%;background:#94a3b8;"></div>Not visible</div>
+      </div>
     </div>
 
     <!-- Competitors -->
@@ -1196,22 +1202,16 @@ function renderResults(data, formData) {
     ).join('');
   }
 
-  // ── Service Area Rank Grid ──
-  if (data.serviceType && data.serviceType !== 'location' && data.rankGrid && data.rankGrid.length > 0) {
-    document.getElementById('rank-grid-section').style.display = 'block';
-    const grid = data.rankGrid;
-    document.getElementById('rank-grid-map').innerHTML = grid.map(point => {
-      if (point.rank === null) {
-        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-          <span style="font-size:13px;">📍 ${point.city}</span>
-          <span style="font-size:12px;color:var(--muted);">Phase 2 — coming soon</span>
-        </div>`;
-      }
-      const color = point.rank <= 3 ? '#16a34a' : point.rank <= 7 ? '#d97706' : '#dc2626';
-      const emoji = point.rank <= 3 ? '🟢' : point.rank <= 7 ? '🟡' : '🔴';
-      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
-        <span style="font-size:13px;">${emoji} ${point.city}</span>
-        <span style="font-size:13px;font-weight:700;color:${color};">#${point.rank}</span>
+  // ── Rank Heatmap ──
+  if (data.rankGrid && data.rankGrid.length > 0) {
+    document.getElementById('rank-heatmap-section').style.display = 'block';
+    document.getElementById('rank-grid-bubbles').innerHTML = data.rankGrid.map(point => {
+      const rank = point.rank;
+      const color = rank <= 3 ? '#16a34a' : rank <= 7 ? '#d97706' : rank <= 15 ? '#dc2626' : '#94a3b8';
+      const display = rank <= 20 ? `#${rank}` : '?';
+      return `<div style="background:${color}22;border:1.5px solid ${color}44;border-radius:12px;padding:10px 8px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:${color};">${display}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.3;">${point.name}</div>
       </div>`;
     }).join('');
   }
