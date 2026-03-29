@@ -1578,14 +1578,18 @@
           `).join('')}
         </div>` : ''}
 
-        <div style="display:flex;gap:10px;margin-top:20px;">
+        <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;">
+          <button onclick="previewAuditReport('${auditId}')" 
+             style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;">
+            👁 Preview Their Report
+          </button>
           <a href="mailto:${b.email}?subject=Your DiamondPages.ai Audit Results&body=Hi ${b.ownerName?.split(' ')[0] || 'there'},%0A%0AI wanted to follow up on your free Google visibility audit..." 
-             style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:#fff;border-radius:10px;padding:12px;font-size:13px;font-weight:700;text-decoration:none;">
-            📧 Email ${b.ownerName?.split(' ')[0] || 'them'}
+             style="flex:1;min-width:120px;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--elevated);border:1px solid var(--border);color:var(--text2);border-radius:10px;padding:12px;font-size:13px;font-weight:700;text-decoration:none;">
+            📧 Email
           </a>
           ${b.phone ? `<a href="sms:${b.phone}&body=Hi ${b.ownerName?.split(' ')[0] || 'there'}, this is Lucy from DiamondPages.ai following up on your Google audit..." 
-             style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--elevated);border:1px solid var(--border);color:var(--text2);border-radius:10px;padding:12px;font-size:13px;font-weight:700;text-decoration:none;">
-            📱 Text them
+             style="flex:1;min-width:100px;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--elevated);border:1px solid var(--border);color:var(--text2);border-radius:10px;padding:12px;font-size:13px;font-weight:700;text-decoration:none;">
+            📱 Text
           </a>` : ''}
         </div>
       `;
@@ -1593,6 +1597,11 @@
     } catch(err) {
       alert('Error loading audit: ' + err.message);
     }
+  }
+
+  // ── Preview audit report (same view as prospect) ──
+  function previewAuditReport(auditId) {
+    window.open(`https://diamondpages.ai/audit.html?preview=${auditId}`, '_blank', 'width=430,height=860');
   }
 
   // Auto-load audits when page shown

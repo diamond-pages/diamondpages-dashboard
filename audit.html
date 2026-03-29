@@ -1337,6 +1337,53 @@ async function submitAudit(e) {
     alert('Something went wrong — please try again or email us at admin@diamondpages.ai');
   }
 }
+  // ── Admin preview mode — ?preview=auditId ──
+  (async function checkPreviewMode() {
+    const previewId = new URLSearchParams(window.location.search).get('preview');
+    if (!previewId) return;
+    
+    // Hide form, show loading
+    document.getElementById('form-card').style.display = 'none';
+    document.getElementById('loading').classList.add('active');
+    
+    try {
+      const res = await fetch(`https://api.diamondpages.ai/api/audit/${previewId}`);
+      const d = await res.json();
+      if (!d.audit) throw new Error('Not found');
+      
+      const a = d.audit;
+      const previewData = {
+        success: true,
+        score: a.scoring?.score,
+        rank: a.mapPack?.yourRank,
+        rating: a.gbp?.rating,
+        reviewCount: a.gbp?.reviewCount,
+        pageSpeed: a.pageSpeed,
+        issues: a.scoring?.issues,
+        wins: a.scoring?.wins,
+        quickWins: a.quickWins,
+        competitors: a.mapPack?.competitors,
+        topCompetitor: a.mapPack?.topCompetitor,
+        keyword: a.mapPack?.keyword,
+        business: a.business,
+        scoring: a.scoring,
+        rankGrid: a.rankGrid,
+        serviceType: a.serviceType
+      };
+      
+      document.getElementById('loading').classList.remove('active');
+      renderResults(previewData, a.business?.ownerName || 'Preview', a.business?.email || '');
+      
+      // Show admin banner
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#0d9488;color:#fff;text-align:center;padding:6px;font-size:12px;font-weight:600;z-index:999;';
+      banner.textContent = `👁 Admin Preview — ${a.business?.name} (${a.business?.city}) · Score: ${a.scoring?.score}/100`;
+      document.body.prepend(banner);
+    } catch(err) {
+      document.getElementById('loading').classList.remove('active');
+      document.getElementById('form-card').style.display = 'block';
+    }
+  })();
 </script>
 
 </body>
