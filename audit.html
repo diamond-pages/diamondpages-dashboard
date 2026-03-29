@@ -1423,8 +1423,17 @@ async function submitAudit(e) {
       document.getElementById('results-page').classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      renderResults(data, formData);
+      try {
+        renderResults(data, formData);
+      } catch(renderErr) {
+        console.error('[renderResults ERROR]', renderErr.message, renderErr.stack);
+        // Force fade in even if render failed
+      }
       fadeInSections();
+      // Force all sections visible as fallback
+      setTimeout(() => {
+        document.querySelectorAll('#results-page .results-section').forEach(s => s.classList.add('visible'));
+      }, 100);
 
     } else {
       throw new Error('Server error');
