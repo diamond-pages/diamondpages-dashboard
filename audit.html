@@ -1402,42 +1402,37 @@ async function submitAudit(e) {
         phone: phone || null,
         email,
         serviceType,
-        radius
+        radius,
+        noWebsite: noWebsite
       })
     });
 
     clearInterval(stepInterval);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    
+    const data = await res.json();
+    console.log('[AUDIT OK] score=' + data.score + ' partial=' + data.partial + ' rank=' + data.rank);
 
-    if (res.ok) {
-      const data = await res.json();
+    // Animate steps to done
+    ['step-maps','step-gbp','step-competitors','step-speed','step-report','step-email']
+      .forEach(id => { const el = document.getElementById(id); if (el) el.className = 'loading-step done'; });
 
-      // Mark all steps done
-      ['step-maps','step-gbp','step-competitors','step-speed','step-report','step-email']
-        .forEach(id => document.getElementById(id).className = 'loading-step done');
+    await new Promise(r => setTimeout(r, 600));
+    
+    // Transition: loading → results
+    document.getElementById('loading').classList.remove('active');
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('results-page').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      await new Promise(r => setTimeout(r, 600));
-      document.getElementById('loading').classList.remove('active');
+    // Render
+    try { renderResults(data, formData); }
+    catch(e) { console.error('[renderResults FAILED]', e.message, e.stack); }
+    
+    // Always make sections visible
+    fadeInSections();
+    setTimeout(() => document.querySelectorAll('#results-page .results-section').forEach(s => s.classList.add('visible')), 300);
 
-      // Hide form, show results
-      document.getElementById('form-section').style.display = 'none';
-      document.getElementById('results-page').classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      try {
-        renderResults(data, formData);
-      } catch(renderErr) {
-        console.error('[renderResults ERROR]', renderErr.message, renderErr.stack);
-        // Force fade in even if render failed
-      }
-      fadeInSections();
-      // Force all sections visible as fallback
-      setTimeout(() => {
-        document.querySelectorAll('#results-page .results-section').forEach(s => s.classList.add('visible'));
-      }, 100);
-
-    } else {
-      throw new Error('Server error');
-    }
   } catch (err) {
     clearInterval(stepInterval);
     document.getElementById('loading').classList.remove('active');
