@@ -210,20 +210,24 @@
 
         <div class="field">
           <label>How do you serve customers?</label>
-          <div class="radio-group">
-            <label class="radio-option">
-              <input type="radio" name="service-type" value="at-location" checked>
-              <span>At my location</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="service-type" value="go-to-them">
-              <span>I go to them</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="service-type" value="both">
-              <span>Both</span>
-            </label>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px;">
+            <div class="stype-card selected-stype" id="stype-location" onclick="selectStype('location')">
+              <div style="font-size:22px;margin-bottom:5px;">🏢</div>
+              <div style="font-size:12px;font-weight:700;color:#0f172a;">At my location</div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:2px;">Storefront or office</div>
+            </div>
+            <div class="stype-card" id="stype-mobile" onclick="selectStype('mobile')">
+              <div style="font-size:22px;margin-bottom:5px;">🚗</div>
+              <div style="font-size:12px;font-weight:700;color:#0f172a;">I go to them</div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:2px;">Mobile / service area</div>
+            </div>
+            <div class="stype-card" id="stype-both" onclick="selectStype('both')">
+              <div style="font-size:22px;margin-bottom:5px;">🔄</div>
+              <div style="font-size:12px;font-weight:700;color:#0f172a;">Both</div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:2px;">Location + service area</div>
+            </div>
           </div>
+          <input type="hidden" id="f-service-type" name="service-type" value="location">
         </div>
 
         <button type="submit" class="submit-btn">Get My Free Audit →</button>
