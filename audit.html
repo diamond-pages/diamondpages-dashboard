@@ -723,28 +723,10 @@
           <input class="field-input" id="f-biz" type="text" placeholder="e.g. Mike's Plumbing" autocomplete="organization" required>
         </div>
 
-        <div class="field-row">
-          <div class="field">
-            <label class="field-label">Business Type <span class="field-required">*</span></label>
-            <select class="field-select" id="f-vertical" required>
-              <option value="">Select type…</option>
-              <option>Restaurant / Café</option>
-              <option>Plumber / HVAC</option>
-              <option>Electrician / Contractor</option>
-              <option>Barbershop / Salon</option>
-              <option>Real Estate Agent</option>
-              <option>Dentist / Med Spa</option>
-              <option>Lawyer / Accountant</option>
-              <option>Auto Services</option>
-              <option>Landscaping / Lawn Care</option>
-              <option>Pet Services / Vet</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="field-label">City <span class="field-required">*</span></label>
-            <input class="field-input" id="f-city" type="text" placeholder="Fort Lauderdale" required>
-          </div>
+        <input type="hidden" id="f-vertical" value="other">
+        <div class="field">
+          <label class="field-label">City <span class="field-required">*</span></label>
+          <input class="field-input" id="f-city" type="text" placeholder="Fort Lauderdale" required>
         </div>
 
         <div class="field">
