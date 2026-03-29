@@ -373,10 +373,22 @@
       document.getElementById('dashboard').style.display = 'block';
 
     } catch(err) {
+      console.error('[Dashboard Error]', err.message, err.stack);
       document.getElementById('loading').style.display = 'none';
       document.getElementById('error-card').style.display = 'block';
     }
   }
+
+  // Safety net — force stop loading after 8s no matter what
+  setTimeout(function() {
+    var l = document.getElementById('loading');
+    var d = document.getElementById('dashboard');
+    var e = document.getElementById('error-card');
+    if (l && l.style.display !== 'none') {
+      l.style.display = 'none';
+      if (e) e.style.display = 'block';
+    }
+  }, 8000);
 
   loadDashboard();
 </script>
