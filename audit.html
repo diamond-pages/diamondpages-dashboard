@@ -948,6 +948,14 @@
       </div>
     </div>
 
+    <!-- AI Visibility -->
+    <div id="ai-visibility-section" style="display:none;margin-bottom:20px;" class="results-section">
+      <div class="results-section-title">🤖 AI Search Visibility</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Is your business cited when people ask ChatGPT or Perplexity for a local recommendation?</div>
+      <div id="ai-visibility-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;"></div>
+      <div id="ai-visibility-recommendations" style="display:none;"></div>
+    </div>
+
     <!-- Competitors -->
     <div class="competitor-section results-section" id="rs-competitors">
       <div class="section-title">Competitor Comparison</div>
@@ -1214,6 +1222,49 @@ function renderResults(data, formData) {
         <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.3;">${point.name}</div>
       </div>`;
     }).join('');
+  }
+
+  // ── AI Visibility ──
+  if (data.aiVisibility) {
+    const av = data.aiVisibility;
+    document.getElementById('ai-visibility-section').style.display = 'block';
+
+    const chatgpt = av.chatgpt || {};
+    const perplexity = av.perplexity || {};
+
+    const renderAICard = (name, icon, d) => {
+      if (!d.checked) {
+        return `<div style="background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;padding:14px;opacity:0.7;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--muted);">${icon} ${name}</div>
+          <div style="font-size:13px;color:var(--muted);">Not checked</div>
+          ${d.reason ? `<div style="font-size:10px;color:var(--muted);margin-top:4px;">${d.reason}</div>` : ''}
+        </div>`;
+      }
+      const color = d.mentioned ? '#16a34a' : '#dc2626';
+      const status = d.mentioned ? '✅ Cited!' : '❌ Not mentioned';
+      return `<div style="background:${d.mentioned ? 'rgba(22,163,74,0.08)' : 'rgba(220,38,38,0.06)'};border:1.5px solid ${color}33;border-radius:12px;padding:14px;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px;">${icon} ${name}</div>
+        <div style="font-size:18px;font-weight:900;color:${color};margin-bottom:4px;">${status}</div>
+        ${d.queries ? `<div style="font-size:10px;color:var(--muted);">${d.queries} queries checked</div>` : ''}
+        ${d.excerpt ? `<div style="font-size:11px;color:var(--muted);margin-top:6px;font-style:italic;">"${d.excerpt.slice(0,120)}…"</div>` : ''}
+      </div>`;
+    };
+
+    document.getElementById('ai-visibility-cards').innerHTML =
+      renderAICard('ChatGPT', '🤖', chatgpt) +
+      renderAICard('Perplexity', '🔍', perplexity);
+
+    // Show who WAS recommended if not us
+    const recs = [...(av.recommendations || []), ...(chatgpt.recommendations || [])].filter(Boolean);
+    const uniqueRecs = [...new Set(recs)].slice(0, 3);
+    if (uniqueRecs.length > 0 && !chatgpt.mentioned) {
+      const recsDiv = document.getElementById('ai-visibility-recommendations');
+      recsDiv.style.display = 'block';
+      recsDiv.innerHTML = `<div style="padding:12px 14px;background:var(--bg2);border-radius:10px;font-size:12px;color:var(--muted);">
+        <strong style="color:var(--text);">Who AI is recommending instead:</strong> ${uniqueRecs.join(', ')}
+        <div style="margin-top:4px;">Our GEO optimization gets <em>you</em> in these results.</div>
+      </div>`;
+    }
   }
 
   // ── Quick Wins ──

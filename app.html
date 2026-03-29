@@ -162,6 +162,11 @@
         <div class="kpi-val" id="kpi-speed">—</div>
         <div class="kpi-sub" id="kpi-speed-sub">Mobile score</div>
       </div>
+      <div class="kpi" id="kpi-ai" style="grid-column:span 2;display:none;">
+        <div class="kpi-label">🤖 AI Search Visibility</div>
+        <div id="kpi-ai-value" style="font-size:16px;font-weight:700;margin-bottom:4px;">Checking…</div>
+        <div id="kpi-ai-sub" class="kpi-sub"></div>
+      </div>
     </div>
 
     <!-- Competitors -->
@@ -324,6 +329,22 @@
       } else {
         document.getElementById('kpi-speed').textContent = '—';
         document.getElementById('kpi-speed-sub').textContent = 'No website linked';
+      }
+
+      // AI Visibility
+      const aiVis = m.aiVisibility || data.aiVisibility || null;
+      if (aiVis) {
+        const aiCard = document.getElementById('kpi-ai');
+        aiCard.style.display = 'block';
+        const cg = aiVis.chatgpt || {};
+        const px = aiVis.perplexity || {};
+        const parts = [];
+        if (cg.checked) parts.push(cg.mentioned ? '🤖 ChatGPT ✅' : '🤖 ChatGPT ❌');
+        if (px.checked) parts.push(px.mentioned ? '🔍 Perplexity ✅' : '🔍 Perplexity ❌');
+        const score = aiVis.score || 0;
+        document.getElementById('kpi-ai-value').textContent = parts.length ? parts.join('  ') : 'Not checked yet';
+        document.getElementById('kpi-ai-value').style.color = score >= 50 ? '#16a34a' : score > 0 ? '#d97706' : '#dc2626';
+        document.getElementById('kpi-ai-sub').textContent = score > 0 ? `AI Score: ${score}/100` : 'Not appearing in AI recommendations';
       }
 
       // Competitors
