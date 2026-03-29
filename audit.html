@@ -67,6 +67,9 @@
     .loading-step { font-size: 13px; color: #475569; background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 14px; transition: opacity .3s; }
     .loading-step.active { opacity: 1 !important; border-color: #0d9488; color: #0d9488; font-weight: 600; }
     .loading-step.done { opacity: 1 !important; color: #16a34a; border-color: #bbf7d0; }
+    .stype-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 12px 8px; text-align: center; transition: all .15s; -webkit-tap-highlight-color: transparent; }
+    .stype-card:hover { border-color: #0d9488; }
+    .selected-stype { border-color: #0d9488 !important; background: rgba(13,148,136,0.06) !important; }
     .loading-sub { font-size: 13px; color: #94a3b8; margin-top: 6px; }
 
     /* Partial */
@@ -347,6 +350,16 @@
     ws.disabled = this.checked;
     if (this.checked) ws.value = '';
   });
+
+  function selectStype(type) {
+    ['location','mobile','both'].forEach(t => {
+      const el = document.getElementById('stype-' + t);
+      if (el) el.classList.remove('selected-stype');
+    });
+    const el = document.getElementById('stype-' + type);
+    if (el) el.classList.add('selected-stype');
+    document.querySelector('input[name="service-type"][value="' + type + '"]').checked = true;
+  }
 
   document.getElementById('audit-form').addEventListener('submit', async function(e) {
     e.preventDefault();
