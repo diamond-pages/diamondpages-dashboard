@@ -1,396 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Dashboard — DiamondPages.ai</title>
-  <meta name="theme-color" content="#0d9488"/>
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DiamondPages Dashboard</title>
   <style>
-    :root {
-      --teal: #0d9488; --teal2: #14b8a6; --teal-dim: rgba(13,148,136,0.08);
-      --green: #16a34a; --green-dim: rgba(22,163,74,0.08);
-      --yellow: #d97706; --yellow-dim: rgba(217,119,6,0.1);
-      --red: #dc2626; --red-dim: rgba(220,38,38,0.08);
-      --bg: #f8fafc; --surface: #fff; --elevated: #f1f5f9;
-      --border: rgba(0,0,0,0.07); --text: #0f172a; --text2: #475569; --muted: #94a3b8;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; min-height: 100vh; }
 
-    /* ── HEADER ── */
-    .header {
-      background:var(--surface); border-bottom:1px solid var(--border);
-      padding:14px 20px; display:flex; align-items:center; justify-content:space-between;
-      position:sticky; top:0; z-index:50; box-shadow:0 1px 8px rgba(0,0,0,0.05);
-    }
-    .header-brand { display:flex; align-items:center; gap:9px; }
-    .brand-icon { width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg,var(--teal),var(--teal2)); display:flex; align-items:center; justify-content:center; font-size:16px; }
-    .brand-name { font-size:13px; font-weight:800; color:var(--text); }
-    .brand-name span { color:var(--teal); }
-    .header-biz { font-size:13px; font-weight:600; color:var(--text2); }
-    .tier-badge { font-size:10px; font-weight:700; background:var(--teal-dim); color:var(--teal); border:1px solid rgba(13,148,136,.2); border-radius:99px; padding:3px 10px; }
+    /* Loading */
+    #loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
+    .spinner { width: 40px; height: 40px; border: 3px solid #e2e8f0; border-top-color: #0d9488; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: #64748b; font-size: 15px; }
 
-    /* ── CONTENT ── */
-    .content { max-width:680px; margin:0 auto; padding:20px 16px 60px; }
+    /* Error */
+    #error-state { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 12px; padding: 24px; text-align: center; }
+    .error-icon { font-size: 48px; }
+    .error-title { font-size: 20px; font-weight: 600; color: #1e293b; }
+    .error-sub { font-size: 14px; color: #64748b; }
+    .error-link { color: #0d9488; text-decoration: none; }
 
-    /* ── LOADING ── */
-    .loading { text-align:center; padding:60px 20px; }
-    .spinner { width:44px; height:44px; border:3px solid var(--border); border-top-color:var(--teal); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 16px; }
-    @keyframes spin { to { transform:rotate(360deg); } }
-    .loading-text { font-size:14px; color:var(--muted); }
+    /* Dashboard */
+    #dashboard-state { display: none; max-width: 480px; margin: 0 auto; padding: 0 0 40px; }
 
-    /* ── SCORE RING ── */
-    .score-section { text-align:center; padding:28px 20px 20px; }
-    .score-ring-wrap { position:relative; width:120px; height:120px; margin:0 auto 14px; }
-    .score-ring-wrap svg { transform:rotate(-90deg); }
-    .score-bg { fill:none; stroke:var(--elevated); stroke-width:10; }
-    .score-fill { fill:none; stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset 1.2s ease; }
-    .score-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-    .score-num { font-size:28px; font-weight:900; letter-spacing:-.03em; }
-    .score-label-small { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-top:1px; }
-    .score-tagline { font-size:13px; color:var(--text2); max-width:300px; margin:0 auto; line-height:1.5; }
+    /* Header */
+    .header { background: #0d9488; color: white; padding: 20px 20px 24px; }
+    .header-logo { font-size: 13px; font-weight: 600; opacity: 0.85; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .header-biz { font-size: 20px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+    .tier-badge { display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.35); color: white; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase; }
 
-    /* ── KPIS ── */
-    .kpi-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; }
-    .kpi { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:0 1px 6px rgba(0,0,0,0.04); }
-    .kpi-label { font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:6px; font-weight:600; }
-    .kpi-val { font-size:24px; font-weight:800; letter-spacing:-.02em; margin-bottom:3px; }
-    .kpi-sub { font-size:11px; color:var(--muted); }
+    /* Cards */
+    .card { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin: 12px 16px 0; padding: 20px; }
+    .card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #94a3b8; margin-bottom: 14px; }
 
-    /* ── SECTION CARD ── */
-    .card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:12px; box-shadow:0 1px 6px rgba(0,0,0,0.04); }
-    .card-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:12px; }
+    /* Score */
+    .score-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .score-ring { transform: rotate(-90deg); }
+    .score-track { fill: none; stroke: #f1f5f9; stroke-width: 12; }
+    .score-fill { fill: none; stroke-width: 12; stroke-linecap: round; stroke-dasharray: 314; transition: none; }
+    .score-label { font-size: 32px; font-weight: 800; }
+    .score-tagline { font-size: 13px; color: #64748b; text-align: center; line-height: 1.5; max-width: 280px; }
 
-    /* ── COMPETITORS ── */
-    .comp-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
-    .comp-item:last-child { border-bottom:none; padding-bottom:0; }
-    .comp-rank { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0; }
-    .rank-1 { background:rgba(234,179,8,.15); color:#d97706; }
-    .rank-2 { background:rgba(148,163,184,.15); color:#64748b; }
-    .rank-3 { background:rgba(249,115,22,.12); color:#ea580c; }
-    .rank-you { background:var(--teal-dim); color:var(--teal); }
-    .comp-name { font-size:13px; font-weight:600; flex:1; }
-    .comp-meta { font-size:11px; color:var(--muted); }
+    /* KPIs */
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 16px 0; }
+    .kpi-card { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 14px 10px; text-align: center; }
+    .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #94a3b8; margin-bottom: 6px; }
+    .kpi-value { font-size: 22px; font-weight: 800; color: #1e293b; line-height: 1; }
+    .kpi-sub { font-size: 10px; color: #94a3b8; margin-top: 3px; }
 
-    /* ── TASK LIST ── */
-    .task-item { display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; }
-    .task-item:last-child { border-bottom:none; }
-    .task-check { color:var(--green); font-weight:700; flex-shrink:0; }
-    .task-arrow { color:var(--teal); font-weight:700; flex-shrink:0; }
+    /* Competitors */
+    .comp-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    .comp-row:last-child { border-bottom: none; }
+    .comp-name { color: #334155; }
+    .comp-rating { color: #94a3b8; font-size: 12px; }
 
-    /* ── CTA ── */
-    .cta-card { background:linear-gradient(135deg,rgba(13,148,136,.08),rgba(20,184,166,.04)); border:1px solid rgba(13,148,136,.15); border-radius:14px; padding:20px; text-align:center; margin-bottom:12px; }
-    .cta-title { font-size:15px; font-weight:700; margin-bottom:6px; }
-    .cta-sub { font-size:12px; color:var(--text2); margin-bottom:14px; }
-    .cta-btn { display:inline-block; background:var(--teal); color:#fff; border-radius:10px; padding:11px 24px; font-size:13px; font-weight:700; text-decoration:none; }
-    .lucy-note { font-size:12px; color:var(--muted); margin-top:12px; }
-    .lucy-note a { color:var(--teal); text-decoration:none; }
+    /* Tasks */
+    .task-list { list-style: none; }
+    .task-list li { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; font-size: 13px; color: #475569; }
+    .task-list li::before { content: '✓'; color: #0d9488; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .next-task-list li::before { content: '→'; color: #94a3b8; }
+    .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: #0d9488; margin-bottom: 8px; }
+    .next-section { margin-top: 16px; }
+    .next-label { color: #94a3b8; }
 
-    /* ── BADGE ── */
-    .badge { display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:600; padding:3px 8px; border-radius:99px; }
-    .badge-green { background:var(--green-dim); color:var(--green); }
-    .badge-yellow { background:var(--yellow-dim); color:var(--yellow); }
-    .badge-red { background:var(--red-dim); color:var(--red); }
-
-    @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-    .fade-in { animation:fadeUp .4s ease both; }
-
-    .error-card { text-align:center; padding:40px 20px; }
-    .error-icon { font-size:48px; margin-bottom:12px; }
-    .error-title { font-size:18px; font-weight:700; margin-bottom:6px; }
-    .error-sub { font-size:13px; color:var(--text2); }
+    /* Lucy CTA */
+    .cta-card { background: linear-gradient(135deg, #0d9488, #0f766e); color: white; border-radius: 12px; margin: 12px 16px 0; padding: 20px; text-align: center; }
+    .cta-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .cta-sub { font-size: 13px; opacity: 0.85; margin-bottom: 14px; }
+    .cta-btn { display: inline-block; background: white; color: #0d9488; font-weight: 700; font-size: 14px; padding: 10px 24px; border-radius: 8px; text-decoration: none; }
   </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="header-brand">
-    <div class="brand-icon">💎</div>
-    <div class="brand-name">Diamond<span>Pages</span>.ai</div>
-  </div>
-  <div style="display:flex;align-items:center;gap:8px;">
-    <div class="header-biz" id="header-biz">Loading...</div>
-    <div class="tier-badge" id="header-tier" style="display:none;"></div>
-  </div>
-</header>
-
-<div class="content">
-  <!-- LOADING -->
-  <div class="loading" id="loading">
+  <!-- Loading -->
+  <div id="loading-state">
     <div class="spinner"></div>
     <div class="loading-text">Loading your dashboard...</div>
   </div>
 
-  <!-- DASHBOARD (hidden until loaded) -->
-  <div id="dashboard" style="display:none;">
+  <!-- Error -->
+  <div id="error-state">
+    <div class="error-icon">💎</div>
+    <div class="error-title">Dashboard Not Found</div>
+    <div class="error-sub">We couldn't load your dashboard. Please contact us and we'll get you sorted.</div>
+    <div class="error-sub" style="margin-top:8px;">
+      Email: <a class="error-link" href="mailto:lucy@diamondpages.ai">lucy@diamondpages.ai</a>
+    </div>
+  </div>
 
-    <!-- Score Ring -->
-    <div class="score-section fade-in">
-      <div class="score-ring-wrap">
-        <svg width="120" height="120" viewBox="0 0 120 120">
-          <circle class="score-bg" cx="60" cy="60" r="50"/>
-          <circle class="score-fill" id="score-fill" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="314"/>
+  <!-- Dashboard -->
+  <div id="dashboard-state">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-logo">💎 DiamondPages.ai</div>
+      <div class="header-biz" id="biz-name">Loading...</div>
+      <div class="tier-badge" id="tier-badge">Growth</div>
+    </div>
+
+    <!-- Diamond Score -->
+    <div class="card">
+      <div class="card-title">Diamond Score</div>
+      <div class="score-wrap">
+        <svg width="120" height="120" viewBox="0 0 120 120" class="score-ring">
+          <circle class="score-track" cx="60" cy="60" r="50"></circle>
+          <circle class="score-fill" id="score-circle" cx="60" cy="60" r="50" stroke="#0d9488" stroke-dashoffset="314"></circle>
+          <text id="score-num" x="60" y="60" text-anchor="middle" dominant-baseline="central"
+            style="font-size:28px;font-weight:800;fill:#0d9488;transform:rotate(90deg);transform-origin:60px 60px;">
+            0
+          </text>
         </svg>
-        <div class="score-center">
-          <div class="score-num" id="score-num">—</div>
-          <div class="score-label-small">Diamond Score™</div>
-        </div>
+        <div class="score-tagline" id="score-tagline">Analyzing your visibility...</div>
       </div>
-      <div class="score-tagline" id="score-tagline"></div>
     </div>
 
     <!-- KPIs -->
-    <div class="kpi-grid fade-in">
-      <div class="kpi">
-        <div class="kpi-label">Google Maps Rank</div>
-        <div class="kpi-val" id="kpi-rank">—</div>
-        <div class="kpi-sub">Top 3 gets 80% of calls</div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Maps Rank</div>
+        <div class="kpi-value" id="kpi-rank">—</div>
+        <div class="kpi-sub">Local Pack</div>
       </div>
-      <div class="kpi">
-        <div class="kpi-label">Review Rating</div>
-        <div class="kpi-val" id="kpi-rating">—</div>
-        <div class="kpi-sub" id="kpi-rating-sub">Google reviews</div>
+      <div class="kpi-card">
+        <div class="kpi-label">Rating</div>
+        <div class="kpi-value" id="kpi-rating">—</div>
+        <div class="kpi-sub" id="kpi-reviews"></div>
       </div>
-      <div class="kpi">
-        <div class="kpi-label">Total Reviews</div>
-        <div class="kpi-val" id="kpi-reviews">—</div>
-        <div class="kpi-sub">On Google Business</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Website Speed</div>
-        <div class="kpi-val" id="kpi-speed">—</div>
-        <div class="kpi-sub" id="kpi-speed-sub">Mobile score</div>
-      </div>
-      <div class="kpi" id="kpi-ai" style="grid-column:span 2;display:none;">
-        <div class="kpi-label">🤖 AI Search Visibility</div>
-        <div id="kpi-ai-value" style="font-size:16px;font-weight:700;margin-bottom:4px;">Checking…</div>
-        <div id="kpi-ai-sub" class="kpi-sub"></div>
+      <div class="kpi-card">
+        <div class="kpi-label">Page Speed</div>
+        <div class="kpi-value" id="kpi-speed">—</div>
+        <div class="kpi-sub">Mobile</div>
       </div>
     </div>
 
     <!-- Competitors -->
-    <div class="card fade-in" id="comp-card" style="display:none;">
-      <div class="card-title">Your Market — Google Maps</div>
-      <div id="comp-list"></div>
+    <div class="card">
+      <div class="card-title">Competitor Snapshot</div>
+      <div id="competitors">
+        <div style="color:#94a3b8;font-size:13px;">Loading...</div>
+      </div>
     </div>
 
-    <!-- This Week -->
-    <div class="card fade-in">
-      <div class="card-title">✅ Completed This Week</div>
-      <div id="tasks-done"></div>
+    <!-- This Week / Next Week -->
+    <div class="card">
+      <div class="card-title">Your Growth Plan</div>
+
+      <div class="section-label">This Week</div>
+      <ul class="task-list">
+        <li>2 Google Business Profile posts published</li>
+        <li>Review responses (all new reviews addressed)</li>
+        <li>Citation audit &amp; 5 new directory submissions</li>
+        <li>Weekly performance report delivered</li>
+      </ul>
+
+      <div class="next-section">
+        <div class="section-label next-label">Next Week</div>
+        <ul class="task-list next-task-list">
+          <li>2 more GBP posts (seasonal &amp; service focus)</li>
+          <li>Blog post published to your website</li>
+          <li>Local link building outreach (3 targets)</li>
+          <li>Review request campaign sent to past customers</li>
+        </ul>
+      </div>
     </div>
 
-    <!-- Next Week -->
-    <div class="card fade-in">
-      <div class="card-title">📅 Coming Up Next Week</div>
-      <div id="tasks-next"></div>
-    </div>
-
-    <!-- CTA -->
-    <div class="cta-card fade-in">
-      <div class="cta-title">Questions or feedback?</div>
-      <div class="cta-sub">Lucy reads every message and responds within 30 minutes during business hours.</div>
-      <a href="mailto:lucy@diamondpages.ai" class="cta-btn">Message Lucy →</a>
-      <div class="lucy-note">Or email directly: <a href="mailto:lucy@diamondpages.ai">lucy@diamondpages.ai</a></div>
+    <!-- Lucy CTA -->
+    <div class="cta-card">
+      <div class="cta-title">Questions? I'm here.</div>
+      <div class="cta-sub">Your dedicated SEO strategist, Lucy, is always available.</div>
+      <a class="cta-btn" href="mailto:lucy@diamondpages.ai">✉ Message Lucy</a>
     </div>
 
   </div>
 
-  <!-- ERROR -->
-  <div id="error-card" class="error-card" style="display:none;">
-    <div class="error-icon">🔍</div>
-    <div class="error-title">Dashboard not found</div>
-    <div class="error-sub">Your dashboard link may have expired or the URL is incorrect.<br>Email us at <a href="mailto:lucy@diamondpages.ai" style="color:#0d9488">lucy@diamondpages.ai</a> and we'll resend your link.</div>
-  </div>
-</div>
-
-<script>
-  // Extract clientId from URL path
-  function getClientId() {
-    const path = window.location.pathname;
-    const parts = path.split('/').filter(Boolean);
-    // Check for /dp_xxxxx pattern
-    for (const p of parts) {
-      if (p.startsWith('dp_') || p.match(/^[a-z0-9]{8,}$/)) return p;
+  <script>
+    function getClientId() {
+      var parts = window.location.pathname.split('/').filter(function(p) { return p.length > 0; });
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].startsWith('dp_')) return parts[i];
+      }
+      return new URLSearchParams(window.location.search).get('id');
     }
-    // Check query param
-    return new URLSearchParams(window.location.search).get('id');
-  }
 
-  function scoreColor(s) {
-    if (s >= 71) return '#16a34a';
-    if (s >= 41) return '#d97706';
-    return '#dc2626';
-  }
+    var clientId = getClientId();
 
-  function scoreTagline(s) {
-    if (s >= 71) return "Strong foundation — we're pushing you to #1";
-    if (s >= 41) return "You're visible but leaving leads on the table — we're fixing that";
-    return "Significant opportunity — competitors are capturing calls that should be yours";
-  }
-
-  function animateScore(score) {
-    const circle = document.getElementById('score-fill');
-    const circumference = 314;
-    const offset = circumference - (score / 100) * circumference;
-    const color = scoreColor(score);
-    circle.style.stroke = color;
-    document.getElementById('score-num').style.color = color;
-    setTimeout(() => { circle.style.strokeDashoffset = offset; }, 100);
-  }
-
-  function renderWeeklyTasks(tier) {
-    const done = [
-      'GBP posts published (2 this week)',
-      'Review responses sent within 24 hours',
-      'Weekly ranking data updated',
-      tier === 'Growth' || tier === 'Pro' ? '4 citations submitted this week' : '2 citations submitted',
-      tier === 'Pro' ? 'Ad campaigns monitored & optimized' : null
-    ].filter(Boolean);
-
-    const next = [
-      '2 more GBP posts scheduled',
-      'Blog post in production',
-      'Citation building continuing',
-      tier === 'Growth' || tier === 'Pro' ? 'Link building outreach' : 'Review request campaign',
-      tier === 'Pro' ? 'Ad performance report' : null
-    ].filter(Boolean);
-
-    document.getElementById('tasks-done').innerHTML = done.map(t =>
-      `<div class="task-item"><span class="task-check">✓</span>${t}</div>`
-    ).join('');
-
-    document.getElementById('tasks-next').innerHTML = next.map(t =>
-      `<div class="task-item"><span class="task-arrow">→</span>${t}</div>`
-    ).join('');
-  }
-
-  async function loadDashboard() {
-    const clientId = getClientId();
     if (!clientId) {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('error-card').style.display = 'block';
-      return;
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('error-state').style.display = 'flex';
+    } else {
+      fetch('https://api.diamondpages.ai/api/client/' + clientId)
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          var c = data.client || data;
+          var m = data.metrics || {};
+
+          if (!c || !c.bizName) throw new Error('No client data');
+
+          // Header
+          document.getElementById('biz-name').textContent = c.bizName;
+          document.getElementById('tier-badge').textContent = c.tier || 'Growth';
+
+          // Score ring
+          var score = c.auditScore || 0;
+          var circ = 314;
+          var offset = circ - (score / 100) * circ;
+          var color = score <= 40 ? '#dc2626' : score <= 70 ? '#d97706' : '#16a34a';
+          document.getElementById('score-circle').style.stroke = color;
+          document.getElementById('score-circle').style.strokeDashoffset = offset;
+          document.getElementById('score-num').textContent = score;
+          document.getElementById('score-num').style.fill = color;
+          document.getElementById('score-tagline').textContent = score <= 40
+            ? 'Significant opportunity — competitors are capturing calls that should be yours'
+            : score <= 70
+            ? "You're visible but leaving leads on the table"
+            : "Strong foundation — let's push you to #1";
+
+          // KPIs
+          var rank = m.rank;
+          var rankEl = document.getElementById('kpi-rank');
+          if (typeof rank === 'number') {
+            rankEl.textContent = '#' + rank;
+            rankEl.style.color = rank <= 3 ? '#16a34a' : rank <= 7 ? '#d97706' : '#dc2626';
+          } else {
+            rankEl.textContent = 'N/A';
+          }
+
+          document.getElementById('kpi-rating').textContent = m.rating ? m.rating + ' ⭐' : '—';
+          document.getElementById('kpi-reviews').textContent = m.reviewCount ? '(' + m.reviewCount + ' reviews)' : '';
+
+          var speed = m.pageSpeed && m.pageSpeed.mobile;
+          document.getElementById('kpi-speed').textContent = speed ? speed + '/100' : '—';
+
+          // Competitors
+          var comps = m.competitors || [];
+          if (comps.length > 0) {
+            document.getElementById('competitors').innerHTML = comps.slice(0, 5).map(function(comp) {
+              return '<div class="comp-row">'
+                + '<span class="comp-name">#' + comp.rank + ' ' + comp.name + '</span>'
+                + '<span class="comp-rating">' + (comp.rating || '') + ' ★</span>'
+                + '</div>';
+            }).join('');
+          } else {
+            document.getElementById('competitors').innerHTML = '<div style="color:#94a3b8;font-size:13px;">No competitor data yet.</div>';
+          }
+
+          // Show dashboard
+          document.getElementById('loading-state').style.display = 'none';
+          document.getElementById('dashboard-state').style.display = 'block';
+        })
+        .catch(function(err) {
+          console.error('Dashboard error:', err);
+          document.getElementById('loading-state').style.display = 'none';
+          document.getElementById('error-state').style.display = 'flex';
+        });
     }
+  </script>
 
-    try {
-      const res = await fetch(`https://api.diamondpages.ai/api/client/${clientId}`);
-      const data = await res.json();
-
-      // Handle both response formats: { client: {...} } and direct { bizName, ... }
-      const c = data.client || (data.bizName ? data : null);
-      if (!c) {
-        throw new Error('Not found');
-      }
-
-      // Update header
-      document.getElementById('header-biz').textContent = c.bizName;
-      const tierEl = document.getElementById('header-tier');
-      tierEl.textContent = c.tier || 'Growth';
-      tierEl.style.display = 'inline-flex';
-      document.title = `${c.bizName} — DiamondPages.ai`;
-
-      // Score
-      const score = c.auditScore || 0;
-      document.getElementById('score-num').textContent = score;
-      document.getElementById('score-tagline').textContent = scoreTagline(score);
-      animateScore(score);
-
-      // KPIs
-      const rank = c.mapPackRank || 'Checking...';
-      const rankEl = document.getElementById('kpi-rank');
-      if (typeof rank === 'number' || (typeof rank === 'string' && rank.startsWith('#'))) {
-        rankEl.textContent = rank;
-        rankEl.style.color = '#16a34a';
-      } else if (rank === 'Not in top 20') {
-        rankEl.textContent = 'Not ranked';
-        rankEl.style.color = '#dc2626';
-        rankEl.style.fontSize = '16px';
-      } else {
-        rankEl.textContent = rank;
-      }
-
-      // Use live metrics if available
-      const m = data.liveMetrics || data.metrics || {};
-      const rank = m.rank || (c.mapPackRank && typeof c.mapPackRank === 'number' ? c.mapPackRank : null);
-      const rating = m.rating || c.rating || null;
-      const reviews = m.reviewCount || c.reviewCount || null;
-      const speed = m.pageSpeed?.mobile || null;
-
-      document.getElementById('kpi-rating').textContent = rating ? `${rating} ⭐` : '—';
-      document.getElementById('kpi-rating-sub').textContent = reviews ? `${reviews} reviews` : 'No rating yet';
-      document.getElementById('kpi-reviews').textContent = reviews || '—';
-
-      if (speed) {
-        const speedEl = document.getElementById('kpi-speed');
-        speedEl.textContent = speed;
-        speedEl.style.color = speed >= 80 ? '#16a34a' : speed >= 50 ? '#d97706' : '#dc2626';
-        document.getElementById('kpi-speed-sub').textContent = speed >= 80 ? '🟢 Fast' : speed >= 50 ? '🟡 Needs work' : '🔴 Slow';
-      } else {
-        document.getElementById('kpi-speed').textContent = '—';
-        document.getElementById('kpi-speed-sub').textContent = 'No website linked';
-      }
-
-      // AI Visibility
-      const aiVis = m.aiVisibility || data.aiVisibility || null;
-      if (aiVis) {
-        const aiCard = document.getElementById('kpi-ai');
-        aiCard.style.display = 'block';
-        const cg = aiVis.chatgpt || {};
-        const px = aiVis.perplexity || {};
-        const parts = [];
-        if (cg.checked) parts.push(cg.mentioned ? '🤖 ChatGPT ✅' : '🤖 ChatGPT ❌');
-        if (px.checked) parts.push(px.mentioned ? '🔍 Perplexity ✅' : '🔍 Perplexity ❌');
-        const score = aiVis.score || 0;
-        document.getElementById('kpi-ai-value').textContent = parts.length ? parts.join('  ') : 'Not checked yet';
-        document.getElementById('kpi-ai-value').style.color = score >= 50 ? '#16a34a' : score > 0 ? '#d97706' : '#dc2626';
-        document.getElementById('kpi-ai-sub').textContent = score > 0 ? `AI Score: ${score}/100` : 'Not appearing in AI recommendations';
-      }
-
-      // Competitors
-      const comps = m.competitors || [];
-      if (comps.length > 0) {
-        const compCard = document.getElementById('comp-card');
-        compCard.style.display = 'block';
-        const rankClasses = ['rank-1','rank-2','rank-3'];
-        document.getElementById('comp-list').innerHTML = comps.slice(0,3).map((comp, i) => `
-          <div class="comp-item">
-            <div class="comp-rank ${rankClasses[i] || ''}">#${comp.rank || i+1}</div>
-            <div>
-              <div class="comp-name">${comp.name}</div>
-              <div class="comp-meta">${comp.rating ? comp.rating+'★' : ''} ${comp.reviews ? '('+comp.reviews+' reviews)' : ''}</div>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      // Tasks
-      renderWeeklyTasks(c.tier);
-
-      // Show dashboard
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'block';
-
-    } catch(err) {
-      console.error('[Dashboard Error]', err.message, err.stack);
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('error-card').style.display = 'block';
-    }
-  }
-
-  // Safety net — force stop loading after 8s no matter what
-  setTimeout(function() {
-    var l = document.getElementById('loading');
-    var d = document.getElementById('dashboard');
-    var e = document.getElementById('error-card');
-    if (l && l.style.display !== 'none') {
-      l.style.display = 'none';
-      if (e) e.style.display = 'block';
-    }
-  }, 8000);
-
-  loadDashboard();
-</script>
 </body>
 </html>
