@@ -674,6 +674,60 @@
       font-style: italic;
     }
 
+    .service-type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .stype-btn {
+      background: var(--elevated);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+      font-family: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .stype-btn:hover { border-color: var(--teal); }
+    .stype-btn.selected { border-color: var(--teal); background: var(--teal-dim); }
+    .stype-icon { font-size: 22px; }
+    .stype-label { font-size: 12px; font-weight: 700; color: var(--text); }
+    .stype-sub { font-size: 10px; color: var(--muted); }
+
+    .radius-grid {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .radius-btn {
+      padding: 8px 16px;
+      border: 2px solid var(--border);
+      border-radius: 99px;
+      background: var(--elevated);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .radius-btn:hover { border-color: var(--teal); }
+    .radius-btn.selected { border-color: var(--teal); background: var(--teal-dim); color: var(--teal); }
+
+    .results-section-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--text);
+      margin-bottom: 14px;
+      padding-top: 32px;
+    }
+
     @media(max-width:600px) {
       .kpi-grid { grid-template-columns: 1fr; }
       .wins-issues-grid { grid-template-columns: 1fr; }
@@ -681,6 +735,7 @@
       .form-card { padding: 24px 20px; }
       .hero { padding: 40px 20px 32px; }
       .cta-section { padding: 28px 20px; }
+      .service-type-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -728,6 +783,42 @@
           <label class="field-label">City <span class="field-required">*</span></label>
           <input class="field-input" id="f-city" type="text" placeholder="Fort Lauderdale" required>
         </div>
+
+        <div class="field" id="service-type-field" style="margin-top:4px;">
+          <label class="field-label">How do you serve customers?</label>
+          <div class="service-type-grid" id="service-type-grid">
+            <button type="button" class="stype-btn selected" data-type="location" onclick="selectServiceType(this)">
+              <span class="stype-icon">🏢</span>
+              <span class="stype-label">At my location</span>
+              <span class="stype-sub">Storefront or office</span>
+            </button>
+            <button type="button" class="stype-btn" data-type="mobile" onclick="selectServiceType(this)">
+              <span class="stype-icon">🚗</span>
+              <span class="stype-label">I go to them</span>
+              <span class="stype-sub">Mobile or service area</span>
+            </button>
+            <button type="button" class="stype-btn" data-type="both" onclick="selectServiceType(this)">
+              <span class="stype-icon">🔄</span>
+              <span class="stype-label">Both</span>
+              <span class="stype-sub">Location + service area</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Radius selector — shows only for mobile/both -->
+        <div class="field" id="radius-field" style="display:none;">
+          <label class="field-label">Service radius</label>
+          <div class="radius-grid" id="radius-grid">
+            <button type="button" class="radius-btn" data-miles="5" onclick="selectRadius(this)">5 mi</button>
+            <button type="button" class="radius-btn" data-miles="10" onclick="selectRadius(this)">10 mi</button>
+            <button type="button" class="radius-btn selected" data-miles="15" onclick="selectRadius(this)">15 mi</button>
+            <button type="button" class="radius-btn" data-miles="25" onclick="selectRadius(this)">25 mi</button>
+            <button type="button" class="radius-btn" data-miles="50" onclick="selectRadius(this)">50 mi</button>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;">We'll show your rankings across your entire service area</div>
+        </div>
+        <input type="hidden" id="f-service-type" value="location">
+        <input type="hidden" id="f-radius" value="15">
 
         <div class="field">
           <label class="field-label">Website URL</label>
@@ -840,6 +931,12 @@
         <div class="kpi-value" id="kpi-speed">—</div>
         <div class="kpi-sub" id="kpi-speed-sub">Mobile score</div>
       </div>
+    </div>
+
+    <!-- Service Area Rank Grid (mobile/both businesses) -->
+    <div id="rank-grid-section" style="display:none;" class="results-section">
+      <div class="results-section-title">📍 Your Service Area Rankings</div>
+      <div id="rank-grid-map" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 20px;box-shadow:0 2px 12px rgba(0,0,0,0.04);"></div>
     </div>
 
     <!-- Competitors -->
@@ -1096,6 +1193,26 @@ function renderResults(data, formData) {
     ).join('');
   }
 
+  // ── Service Area Rank Grid ──
+  if (data.serviceType && data.serviceType !== 'location' && data.rankGrid && data.rankGrid.length > 0) {
+    document.getElementById('rank-grid-section').style.display = 'block';
+    const grid = data.rankGrid;
+    document.getElementById('rank-grid-map').innerHTML = grid.map(point => {
+      if (point.rank === null) {
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:13px;">📍 ${point.city}</span>
+          <span style="font-size:12px;color:var(--muted);">Phase 2 — coming soon</span>
+        </div>`;
+      }
+      const color = point.rank <= 3 ? '#16a34a' : point.rank <= 7 ? '#d97706' : '#dc2626';
+      const emoji = point.rank <= 3 ? '🟢' : point.rank <= 7 ? '🟡' : '🔴';
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+        <span style="font-size:13px;">${emoji} ${point.city}</span>
+        <span style="font-size:13px;font-weight:700;color:${color};">#${point.rank}</span>
+      </div>`;
+    }).join('');
+  }
+
   // ── Quick Wins ──
   const qwList = document.getElementById('quickwins-list');
   const qws = data.quickWins ?? [];
@@ -1130,6 +1247,22 @@ function fadeInSections() {
   });
 }
 
+// ── Service Type & Radius selectors ──
+function selectServiceType(btn) {
+  document.querySelectorAll('.stype-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const type = btn.getAttribute('data-type');
+  document.getElementById('f-service-type').value = type;
+  // Show/hide radius
+  document.getElementById('radius-field').style.display = (type === 'mobile' || type === 'both') ? 'block' : 'none';
+}
+
+function selectRadius(btn) {
+  document.querySelectorAll('.radius-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('f-radius').value = btn.getAttribute('data-miles');
+}
+
 // ── Submit ──
 async function submitAudit(e) {
   e.preventDefault();
@@ -1149,7 +1282,10 @@ async function submitAudit(e) {
   document.getElementById('submit-btn').disabled = true;
   const stepInterval = animateSteps();
 
-  const formData = { businessName: bizName, city, email, ownerName: name };
+  const serviceType = document.getElementById('f-service-type').value;
+  const radius = parseInt(document.getElementById('f-radius').value) || 15;
+
+  const formData = { businessName: bizName, city, email, ownerName: name, serviceType, radius };
 
   try {
     const res = await fetch('https://api.diamondpages.ai/api/audit', {
@@ -1162,7 +1298,9 @@ async function submitAudit(e) {
         website: website || null,
         ownerName: name,
         phone: phone || null,
-        email
+        email,
+        serviceType,
+        radius
       })
     });
 
