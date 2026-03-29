@@ -412,7 +412,7 @@
         })
       });
 
-      clearInterval(stepTimer);
+      if (stepTimer) clearInterval(stepTimer);
     if (!response.ok) throw new Error('Server error ' + response.status);
 
       var data = await response.json();
