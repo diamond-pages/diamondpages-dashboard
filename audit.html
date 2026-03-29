@@ -1390,7 +1390,10 @@ async function submitAudit(e) {
   const formData = { businessName: bizName, city, email, ownerName: name, serviceType, radius };
 
   try {
+    const controller = new AbortController();
+    const fetchTimeout = setTimeout(() => controller.abort(), 40000); // 40s browser timeout
     const res = await fetch('https://api.diamondpages.ai/api/audit', {
+      signal: controller.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1408,6 +1411,7 @@ async function submitAudit(e) {
     });
 
     clearInterval(stepInterval);
+    clearTimeout(fetchTimeout);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     
     const data = await res.json();
