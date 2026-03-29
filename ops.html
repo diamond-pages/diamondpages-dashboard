@@ -1479,8 +1479,8 @@
 
       document.getElementById('audits-tbody').innerHTML = audits.map(a => `
         <tr style="transition:background .1s;" onmouseover="this.style.background='var(--elevated)'" onmouseout="this.style.background=''">
-          <td style="${td}">
-            <div style="font-weight:600;">${a.bizName || '—'}</div>
+          <td style="${td}cursor:pointer;" onclick="viewAudit('${a.id}')">
+            <div style="font-weight:600;color:var(--accent);text-decoration:underline;text-underline-offset:2px;">${a.bizName || '—'}</div>
             <div style="font-size:11px;color:var(--muted);">${a.city || ''} ${a.vertical ? '· '+a.vertical : ''}</div>
           </td>
           <td style="${td}">
@@ -1503,6 +1503,95 @@
 
     } catch(err) {
       document.getElementById('audits-tbody').innerHTML = '<tr><td colspan="8" style="padding:40px;text-align:center;color:var(--red);">Error loading audits</td></tr>';
+    }
+  }
+
+  // ── View Audit Detail ──
+  async function viewAudit(auditId) {
+    try {
+      const res = await fetch(`https://api.diamondpages.ai/api/audit/${auditId}`);
+      const d = await res.json();
+      if (!d.audit) return;
+      const a = d.audit;
+      const b = a.business || {};
+      const s = a.scoring || {};
+      const m = a.mapPack || {};
+      const g = a.gbp || {};
+      const modal = document.getElementById('audit-modal');
+      const scoreColor = s.score >= 71 ? '#16a34a' : s.score >= 41 ? '#d97706' : '#dc2626';
+
+      document.getElementById('audit-modal-body').innerHTML = `
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;">
+          <div>
+            <div style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;">${b.name || '—'}</div>
+            <div style="font-size:13px;color:var(--muted);">${b.vertical || ''} · ${b.city || ''}</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:36px;font-weight:900;color:${scoreColor};">${s.score || '—'}</div>
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">Diamond Score™</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+          <div style="background:var(--elevated);border-radius:10px;padding:14px;">
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Contact</div>
+            <div style="font-size:13px;font-weight:600;">${b.ownerName || '—'}</div>
+            <div style="font-size:12px;color:var(--muted);">${b.email || ''}</div>
+            <div style="font-size:12px;color:var(--muted);">${b.phone || ''}</div>
+          </div>
+          <div style="background:var(--elevated);border-radius:10px;padding:14px;">
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Google Business</div>
+            <div style="font-size:13px;font-weight:600;">${g.rating ? g.rating+'★' : 'No rating'} <span style="color:var(--muted);font-size:11px;">(${g.reviewCount || 0} reviews)</span></div>
+            <div style="font-size:12px;color:var(--muted);">Maps rank: <strong>${typeof m.yourRank === 'number' ? '#'+m.yourRank : 'Not ranked'}</strong></div>
+            <div style="font-size:12px;color:var(--muted);">Keyword: ${m.keyword || '—'}</div>
+          </div>
+        </div>
+
+        ${s.issues?.length ? `
+        <div style="margin-bottom:16px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Issues Found</div>
+          ${s.issues.map(i => `<div style="display:flex;gap:8px;font-size:13px;color:var(--text2);margin-bottom:6px;"><span style="color:var(--red);">✗</span>${i}</div>`).join('')}
+        </div>` : ''}
+
+        ${a.quickWins?.length ? `
+        <div style="margin-bottom:16px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Quick Wins</div>
+          ${a.quickWins.slice(0,5).map(w => `
+            <div style="background:var(--elevated);border-radius:9px;padding:10px 12px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:${w.priority==='HIGH'?'rgba(239,68,68,.12)':'rgba(234,179,8,.12)'};color:${w.priority==='HIGH'?'#ef4444':'#d97706'};">${w.priority}</span>
+                <span style="font-size:13px;font-weight:600;">${w.action}</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);margin-top:4px;padding-left:52px;">${w.impact} · ${w.time}</div>
+            </div>
+          `).join('')}
+        </div>` : ''}
+
+        ${m.competitors?.length ? `
+        <div style="margin-bottom:16px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Top Competitors</div>
+          ${m.competitors.slice(0,3).map(c => `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+              <span style="font-size:13px;">#${c.rank} ${c.name}</span>
+              <span style="font-size:12px;color:var(--muted);">${c.rating ? c.rating+'★' : ''} (${c.reviews || 0} reviews)</span>
+            </div>
+          `).join('')}
+        </div>` : ''}
+
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          <a href="mailto:${b.email}?subject=Your DiamondPages.ai Audit Results&body=Hi ${b.ownerName?.split(' ')[0] || 'there'},%0A%0AI wanted to follow up on your free Google visibility audit..." 
+             style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:#fff;border-radius:10px;padding:12px;font-size:13px;font-weight:700;text-decoration:none;">
+            📧 Email ${b.ownerName?.split(' ')[0] || 'them'}
+          </a>
+          ${b.phone ? `<a href="sms:${b.phone}&body=Hi ${b.ownerName?.split(' ')[0] || 'there'}, this is Lucy from DiamondPages.ai following up on your Google audit..." 
+             style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--elevated);border:1px solid var(--border);color:var(--text2);border-radius:10px;padding:12px;font-size:13px;font-weight:700;text-decoration:none;">
+            📱 Text them
+          </a>` : ''}
+        </div>
+      `;
+      modal.style.display = 'flex';
+    } catch(err) {
+      alert('Error loading audit: ' + err.message);
     }
   }
 
@@ -1906,6 +1995,14 @@
   document.addEventListener('DOMContentLoaded', renderProjections);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" onload="renderProjections()"></script>
+<!-- AUDIT DETAIL MODAL -->
+<div id="audit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:24px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+    <button onclick="document.getElementById('audit-modal').style.display='none'" style="position:absolute;top:16px;right:16px;background:var(--elevated);border:1px solid var(--border);border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--muted);display:flex;align-items:center;justify-content:center;">✕</button>
+    <div id="audit-modal-body">Loading...</div>
+  </div>
+</div>
+
 </body>
 </html>
 <!-- cache-bust 2026032801 -->
