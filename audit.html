@@ -391,9 +391,29 @@
     }
     document.getElementById('form-error').style.display = 'none';
 
-    // Show loading
+    // Show loading with step animation
     document.getElementById('form-container').style.display = 'none';
     document.getElementById('loading-container').style.display = 'block';
+    
+    var stepTimer = null;
+    var stepIdx = 0;
+    var stepsArr = ['ls1','ls2','ls3','ls4','ls5'];
+    stepsArr.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { el.className = 'loading-step'; el.style.opacity = '0.4'; }
+    });
+    var el0 = document.getElementById('ls1');
+    if (el0) { el0.classList.add('active'); el0.style.opacity = '1'; }
+    
+    stepTimer = setInterval(function() {
+      if (stepIdx < stepsArr.length - 1) {
+        var prev = document.getElementById(stepsArr[stepIdx]);
+        if (prev) { prev.className = 'loading-step done'; prev.style.opacity = '1'; }
+        stepIdx++;
+        var next = document.getElementById(stepsArr[stepIdx]);
+        if (next) { next.className = 'loading-step active'; next.style.opacity = '1'; }
+      }
+    }, 3000);
 
     try {
       var response = await fetch('https://api.diamondpages.ai/api/audit', {
