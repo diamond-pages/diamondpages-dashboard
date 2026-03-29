@@ -249,3 +249,206 @@
         <div class="loading-step" id="ls5" style="opacity:.4;">💎 Calculating your Diamond Score™…</div>
       </div>
     </div>
+
+  </div><!-- /loading-container -->
+
+  <!-- PARTIAL STATE -->
+  <div id="partial-container" style="display:none;">
+    <div class="card" style="text-align:center;padding:40px 24px;">
+      <div style="font-size:48px;margin-bottom:16px;">📬</div>
+      <div style="font-size:22px;font-weight:800;margin-bottom:8px;">Report on its way!</div>
+      <div style="font-size:14px;color:#64748b;margin-bottom:16px;">Your full report is being emailed to <strong id="partial-email"></strong> — usually arrives within 2 minutes.</div>
+      <a href="https://calendly.com/lucy-diamondpages/30min" style="display:inline-block;background:#0d9488;color:white;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px;">Book a Free Call with Lucy →</a>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results-container" style="display:none;">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-size:11px;font-weight:700;color:#0d9488;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Your Free Google Visibility Report</div>
+      <div style="font-size:24px;font-weight:800;color:#0f172a;" id="r-biz">—</div>
+      <div style="font-size:12px;color:#94a3b8;margin-top:4px;" id="r-date">—</div>
+    </div>
+
+    <!-- Score Ring -->
+    <div class="card" style="text-align:center;margin-bottom:16px;padding:32px 20px;">
+      <div style="position:relative;width:130px;height:130px;margin:0 auto 16px;">
+        <svg width="130" height="130" viewBox="0 0 130 130" style="transform:rotate(-90deg)">
+          <circle cx="65" cy="65" r="54" fill="none" stroke="#f1f5f9" stroke-width="12"/>
+          <circle id="score-circle" cx="65" cy="65" r="54" fill="none" stroke="#0d9488" stroke-width="12" stroke-linecap="round" stroke-dasharray="339" stroke-dashoffset="339" style="transition:stroke-dashoffset 1s ease"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div id="score-num" style="font-size:32px;font-weight:900;color:#0d9488;">—</div>
+          <div style="font-size:10px;color:#94a3b8;letter-spacing:.5px;">DIAMOND SCORE™</div>
+        </div>
+      </div>
+      <div id="score-tagline" style="font-size:14px;color:#475569;max-width:320px;margin:0 auto;line-height:1.5;">Analyzing your visibility…</div>
+    </div>
+
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Maps Rank</div>
+        <div id="kpi-rank" style="font-size:24px;font-weight:900;color:#0f172a;">—</div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:3px;">Top 3 = 80% of calls</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Rating</div>
+        <div id="kpi-rating" style="font-size:20px;font-weight:900;color:#0f172a;">—</div>
+        <div id="kpi-reviews" style="font-size:10px;color:#94a3b8;margin-top:3px;"></div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Site Speed</div>
+        <div id="kpi-speed" style="font-size:20px;font-weight:900;color:#94a3b8;">—</div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:3px;">Mobile score</div>
+      </div>
+    </div>
+
+    <!-- Competitors -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">📍 Your Local Market</div>
+      <div id="competitors-list"></div>
+    </div>
+
+    <!-- Wins & Issues -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">✓ What's Working</div>
+        <div id="wins-list"></div>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">✗ Needs Fixing</div>
+        <div id="issues-list"></div>
+      </div>
+    </div>
+
+    <!-- Quick Wins -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">⚡ Your Top Quick Wins</div>
+      <div id="quickwins-list"></div>
+    </div>
+
+    <!-- CTA -->
+    <div style="background:linear-gradient(135deg,#0d9488,#0f766e);border-radius:16px;padding:28px 24px;text-align:center;margin-bottom:16px;">
+      <div style="font-size:20px;font-weight:800;color:white;margin-bottom:8px;">Ready to fix this?</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.85);margin-bottom:20px;">No contract. Results in 45 days or we work for free.</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <a href="./onboarding.html" style="background:white;color:#0d9488;padding:12px 24px;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;">Get Started →</a>
+        <a href="https://calendly.com/lucy-diamondpages/30min" target="_blank" style="background:transparent;border:2px solid rgba(255,255,255,0.5);color:white;padding:12px 24px;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;">📅 Book a Call</a>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:14px;">No contract · 45-day guarantee · One client per market</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:8px;">Questions? <a href="mailto:lucy@diamondpages.ai" style="color:rgba(255,255,255,0.9);">Email lucy@diamondpages.ai</a></div>
+    </div>
+  </div><!-- /results-container -->
+
+</div><!-- /container -->
+
+<script>
+  // Service type selector
+  function selectStype(type) {
+    ['location','mobile','both'].forEach(function(t) {
+      var el = document.getElementById('stype-' + t);
+      if (el) el.classList.remove('selected-stype');
+    });
+    var el = document.getElementById('stype-' + type);
+    if (el) el.classList.add('selected-stype');
+    var hi = document.getElementById('f-service-type');
+    if (hi) hi.value = type;
+  }
+
+  // Form submission
+  document.getElementById('audit-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    var bizName = document.getElementById('f-biz').value.trim();
+    var vertical = document.getElementById('f-vertical').value.trim();
+    var city = document.getElementById('f-city').value.trim();
+    var name = document.getElementById('f-name').value.trim();
+    var email = document.getElementById('f-email').value.trim();
+    var phone = (document.getElementById('f-phone') || {value:''}).value.trim();
+    var noWebsite = document.getElementById('f-no-website') ? document.getElementById('f-no-website').checked : false;
+    var website = noWebsite ? null : (document.getElementById('f-website') || {value:''}).value.trim();
+    if (website && !website.startsWith('http')) website = 'https://' + website;
+    if (!website) website = null;
+    var serviceType = (document.getElementById('f-service-type') || {value:'location'}).value || 'location';
+
+    var err = document.getElementById('form-error');
+    if (!bizName || !city || !email) {
+      err.textContent = !bizName ? 'Please enter your business name.' : !city ? 'Please enter your city.' : 'Please enter your email.';
+      err.style.display = 'block';
+      return;
+    }
+    err.style.display = 'none';
+
+    // Show loading
+    document.getElementById('form-container').style.display = 'none';
+    document.getElementById('loading-container').style.display = 'block';
+
+    // Step animation
+    var stepTimer = null;
+    var stepIdx = 0;
+    var steps = ['ls1','ls2','ls3','ls4','ls5'];
+    steps.forEach(function(id) { var el=document.getElementById(id); if(el){el.className='loading-step';el.style.opacity='.4';} });
+    var el0=document.getElementById('ls1'); if(el0){el0.className='loading-step active';el0.style.opacity='1';}
+    stepTimer = setInterval(function() {
+      if (stepIdx < steps.length - 1) {
+        var prev=document.getElementById(steps[stepIdx]); if(prev){prev.className='loading-step done';prev.style.opacity='1';}
+        stepIdx++;
+        var next=document.getElementById(steps[stepIdx]); if(next){next.className='loading-step active';next.style.opacity='1';}
+      }
+    }, 3000);
+
+    try {
+      var response = await fetch('https://api.diamondpages.ai/api/audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessName: bizName, vertical: vertical || 'business', city: city, website: website, ownerName: name, phone: phone || null, email: email, serviceType: serviceType, noWebsite: noWebsite })
+      });
+
+      if (stepTimer) clearInterval(stepTimer);
+      if (!response.ok) throw new Error('Server error ' + response.status);
+
+      var data = await response.json();
+
+      if (data.partial) {
+        document.getElementById('loading-container').style.display = 'none';
+        document.getElementById('partial-container').style.display = 'block';
+        document.getElementById('partial-email').textContent = email;
+        return;
+      }
+
+      // Show results
+      document.getElementById('loading-container').style.display = 'none';
+      document.getElementById('results-container').style.display = 'block';
+      window.scrollTo(0, 0);
+
+      // Render
+      try { document.getElementById('r-biz').textContent = bizName + ' · ' + city; } catch(e){}
+      try { document.getElementById('r-date').textContent = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}); } catch(e){}
+      var s = data.score || 0;
+      var sc = s <= 40 ? '#dc2626' : s <= 70 ? '#d97706' : '#16a34a';
+      try { var sn=document.getElementById('score-num'); sn.textContent=s; sn.style.color=sc; } catch(e){}
+      try { var circ=339; document.getElementById('score-circle').style.strokeDashoffset=(circ-(s/100)*circ); document.getElementById('score-circle').style.stroke=sc; } catch(e){}
+      try { document.getElementById('score-tagline').textContent = s<=40?'Significant opportunity — competitors are capturing calls that should be yours':s<=70?"You're visible but leaving leads on the table":"Strong foundation — let's push you to #1"; } catch(e){}
+      var rank=data.rank;
+      try { var re=document.getElementById('kpi-rank'); re.textContent=typeof rank==='number'?'#'+rank:'Not ranked'; re.style.color=typeof rank==='number'?(rank<=3?'#16a34a':rank<=7?'#d97706':'#dc2626'):'#dc2626'; } catch(e){}
+      try { document.getElementById('kpi-rating').textContent=data.rating?data.rating+' ⭐':'—'; } catch(e){}
+      try { document.getElementById('kpi-reviews').textContent=data.reviewCount?'('+data.reviewCount+' reviews)':''; } catch(e){}
+      try { var sp=data.pageSpeed&&data.pageSpeed.mobile; var se=document.getElementById('kpi-speed'); se.textContent=sp?sp+'/100':'—'; se.style.color=sp?(sp>=80?'#16a34a':sp>=50?'#d97706':'#dc2626'):'#94a3b8'; } catch(e){}
+      try { document.getElementById('competitors-list').innerHTML=(data.competitors||[]).slice(0,5).map(function(c){var isYou=c.rank===rank;return'<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9;"><span style="font-weight:'+(isYou?800:500)+';color:'+(isYou?'#0d9488':'#0f172a')+'">'+(isYou?'★ ':'')+' #'+c.rank+' '+c.name+'</span><span style="font-size:12px;color:#94a3b8;">'+(c.rating||'')+'★ ('+(c.reviews||0)+')</span></div>';}).join('')||'<div style="color:#94a3b8;font-size:13px;">Checking...</div>'; } catch(e){}
+      try { document.getElementById('wins-list').innerHTML=(data.wins||[]).map(function(w){return'<div style="display:flex;gap:6px;padding:5px 0;font-size:13px;"><span style="color:#16a34a;font-weight:700;">✓</span>'+w+'</div>';}).join('')||'<div style="color:#94a3b8;font-size:13px;">—</div>'; } catch(e){}
+      try { document.getElementById('issues-list').innerHTML=(data.issues||[]).map(function(i){return'<div style="display:flex;gap:6px;padding:5px 0;font-size:13px;"><span style="color:#dc2626;font-weight:700;">✗</span>'+i+'</div>';}).join('')||'<div style="color:#16a34a;font-size:13px;">✓ Looking good!</div>'; } catch(e){}
+      try { document.getElementById('quickwins-list').innerHTML=(data.quickWins||[]).slice(0,5).map(function(w){var pc=w.priority==='HIGH'?'#dc2626':'#d97706';var pb=w.priority==='HIGH'?'#fef2f2':'#fffbeb';return'<div style="background:#f8fafc;border-radius:10px;padding:12px;margin-bottom:8px;"><div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;"><span style="background:'+pb+';color:'+pc+';font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;">'+(w.priority||'MED')+'</span><span style="font-size:13px;font-weight:600;">'+w.action+'</span></div><div style="font-size:12px;color:#64748b;">'+w.impact+' · '+w.time+'</div><a href="./onboarding.html" style="display:inline-block;margin-top:6px;font-size:11px;color:#0d9488;font-weight:600;text-decoration:none;">We handle this →</a></div>';}).join('')||'<div style="color:#94a3b8;font-size:13px;">No quick wins data.</div>'; } catch(e){}
+
+    } catch(err) {
+      if (stepTimer) clearInterval(stepTimer);
+      document.getElementById('loading-container').style.display = 'none';
+      document.getElementById('form-container').style.display = 'block';
+      var ferr = document.getElementById('form-error');
+      ferr.textContent = 'Connection error — please try again. (' + err.message + ')';
+      ferr.style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>
