@@ -1369,10 +1369,10 @@ async function submitAudit(e) {
   const bizName  = document.getElementById('f-biz').value.trim();
   const vertical = document.getElementById('f-vertical').value;
   const city     = document.getElementById('f-city').value.trim();
-  const noWebsite = document.getElementById('f-no-website').checked;
-    let website = noWebsite ? null : document.getElementById('f-website').value.trim();
-    if (website && !website.startsWith('http')) website = 'https://' + website;
-    if (!website || website === 'https://') website = null;
+  const noWebsite = document.getElementById('f-no-website') ? document.getElementById('f-no-website').checked : false;
+  let website = noWebsite ? null : document.getElementById('f-website').value.trim();
+  if (website && !website.startsWith('http')) website = 'https://' + website;
+  if (!website || website === 'https://') website = null;
   const name     = document.getElementById('f-name').value.trim();
   const phone    = document.getElementById('f-phone').value.trim();
   const email    = document.getElementById('f-email').value.trim();
