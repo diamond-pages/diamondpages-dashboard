@@ -377,13 +377,16 @@
     var website   = noWebsite ? null : document.getElementById('f-website').value.trim();
     if (website && !website.startsWith('http')) website = 'https://' + website;
     if (!website) website = null;
-    var serviceType = document.querySelector('input[name="service-type"]:checked').value;
+    var stEl = document.querySelector('input[name="service-type"]:checked'); var serviceType = stEl ? stEl.value : (document.getElementById('f-service-type')?.value || 'location');
 
     // Validation
-    if (!bizName || !vertical || !city || !name || !email) {
+    if (!bizName || !city || !email) {
       var err = document.getElementById('form-error');
-      err.textContent = 'Please fill in all required fields.';
+      if (!bizName) err.textContent = 'Please enter your business name.';
+      else if (!city) err.textContent = 'Please enter your city.';
+      else err.textContent = 'Please enter your email address.';
       err.style.display = 'block';
+      err.scrollIntoView({behavior:'smooth', block:'center'});
       return;
     }
     document.getElementById('form-error').style.display = 'none';
@@ -398,7 +401,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           businessName: bizName,
-          vertical: vertical,
+          vertical: vertical || 'business',
           city: city,
           website: website,
           ownerName: name,
