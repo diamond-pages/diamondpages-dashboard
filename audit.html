@@ -784,7 +784,7 @@
         </div>
         <div class="field">
           <label class="field-label">City <span class="field-required">*</span></label>
-          <input class="field-input" id="f-city" type="text" placeholder="Fort Lauderdale" required>
+          <input class="field-input" id="f-city" type="text" placeholder="e.g. Fort Lauderdale, Miami" required autocomplete="address-level2">
         </div>
 
         <div class="field" id="service-type-field" style="margin-top:4px;">
@@ -825,7 +825,8 @@
 
         <div class="field">
           <label class="field-label">Website URL</label>
-          <input class="field-input" id="f-website" type="text" placeholder="https://yourbusiness.com">
+          <input class="field-input" id="f-website" type="text" placeholder="yourbusiness.com or leave blank" 
+          onblur="if(this.value&&!this.value.startsWith('http'))this.value='https://'+this.value">
           <div class="field-hint">We'll analyze your page speed and on-page SEO</div>
         </div>
 
@@ -1324,7 +1325,9 @@ async function submitAudit(e) {
   const bizName  = document.getElementById('f-biz').value.trim();
   const vertical = document.getElementById('f-vertical').value;
   const city     = document.getElementById('f-city').value.trim();
-  const website  = document.getElementById('f-website').value.trim();
+  let website  = document.getElementById('f-website').value.trim();
+    if (website && !website.startsWith('http')) website = 'https://' + website;
+    if (!website) website = null;
   const name     = document.getElementById('f-name').value.trim();
   const phone    = document.getElementById('f-phone').value.trim();
   const email    = document.getElementById('f-email').value.trim();
