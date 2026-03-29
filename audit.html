@@ -1418,10 +1418,7 @@ async function submitAudit(e) {
   const formData = { businessName: bizName, city, email, ownerName: name, serviceType, radius };
 
   try {
-    const controller = new AbortController();
-    const fetchTimeout = setTimeout(() => controller.abort(), 40000); // 40s browser timeout
     const res = await fetch('https://api.diamondpages.ai/api/audit', {
-      signal: controller.signal,
       method: 'POST',
       cache: 'no-store',
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
@@ -1440,7 +1437,6 @@ async function submitAudit(e) {
     });
 
     clearInterval(stepInterval);
-    clearTimeout(fetchTimeout);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     
     const data = await res.json();
@@ -1470,7 +1466,21 @@ async function submitAudit(e) {
     clearInterval(stepInterval);
     document.getElementById('loading').classList.remove('active');
     document.getElementById('submit-btn').disabled = false;
-    alert('Something went wrong — please try again or email us at admin@diamondpages.ai');
+    // Show inline error instead of alert
+    document.getElementById('loading').classList.remove('active');
+    document.getElementById('form-section').style.display = 'block';
+    document.getElementById('submit-btn').disabled = false;
+    let errBanner = document.getElementById('form-error-banner');
+    if (!errBanner) {
+      errBanner = document.createElement('div');
+      errBanner.id = 'form-error-banner';
+      errBanner.style.cssText = 'background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 16px;font-size:13px;color:#dc2626;margin-bottom:12px;font-weight:600;';
+      const form = document.getElementById('audit-form');
+      if (form) form.prepend(errBanner);
+    }
+    errBanner.textContent = '⚠️ ' + (err.message || 'Something went wrong — please try again');
+    errBanner.style.display = 'block';
+    console.error('[Audit Error]', err);
   }
 }
   // ── Admin preview mode — ?preview=auditId ──
