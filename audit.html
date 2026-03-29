@@ -422,10 +422,25 @@
         return;
       }
 
-      renderResults(data, { businessName: bizName, city: city, email: email });
+      // Show results immediately
       document.getElementById('loading-container').style.display = 'none';
       document.getElementById('results-container').style.display = 'block';
       window.scrollTo(0, 0);
+      
+      // Set key values directly first (always works)
+      const s = data.score || 0;
+      const sc = s <= 40 ? '#dc2626' : s <= 70 ? '#d97706' : '#16a34a';
+      try { document.getElementById('r-biz').textContent = bizName + ' · ' + city; } catch(e){}
+      try { document.getElementById('r-date').textContent = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}); } catch(e){}
+      try { const el=document.getElementById('score-num'); el.textContent=s; el.style.color=sc; } catch(e){}
+      try { const el=document.getElementById('score-tagline'); el.textContent=s<=40?'Significant opportunity — competitors are capturing calls that should be yours':s<=70?"You're visible but leaving leads on the table":"Strong foundation — let's push you to #1"; } catch(e){}
+      try { const el=document.getElementById('kpi-rank'); const r=data.rank; el.textContent=typeof r==='number'?'#'+r:'Not ranked'; el.style.color=typeof r==='number'?(r<=3?'#16a34a':r<=7?'#d97706':'#dc2626'):'#dc2626'; } catch(e){}
+      try { document.getElementById('kpi-rating').textContent=data.rating?data.rating+' ⭐':'—'; } catch(e){}
+      try { document.getElementById('kpi-reviews').textContent=data.reviewCount?'('+data.reviewCount+' reviews)':''; } catch(e){}
+      try { const el=document.getElementById('kpi-speed'); const sp=data.pageSpeed?.mobile; el.textContent=sp?sp+'/100':'—'; el.style.color=sp?(sp>=80?'#16a34a':sp>=50?'#d97706':'#dc2626'):'#94a3b8'; } catch(e){}
+      
+      // Full render (may add more detail)
+      try { renderResults(data, { businessName: bizName, city: city, email: email }); } catch(e){ console.error('render:',e.message); }
 
     } catch(err) {
       document.getElementById('loading-container').style.display = 'none';
