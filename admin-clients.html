@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Client Management — DiamondPages.ai</title>
+  <meta name="theme-color" content="#0d9488"/>
+  <style>
+    :root {
+      --teal: #0d9488; --teal2: #14b8a6; --teal-dim: rgba(13,148,136,0.08);
+      --green: #16a34a; --green-dim: rgba(22,163,74,0.08);
+      --yellow: #d97706; --yellow-dim: rgba(217,119,6,0.1);
+      --red: #dc2626; --red-dim: rgba(220,38,38,0.08);
+      --indigo: #6366f1; --indigo-dim: rgba(99,102,241,0.08);
+      --bg: #f8fafc; --surface: #fff; --elevated: #f1f5f9;
+      --border: rgba(0,0,0,0.07); --text: #0f172a; --text2: #475569; --muted: #94a3b8;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+    /* ── HEADER ── */
+    .header {
+      background:var(--surface); border-bottom:1px solid var(--border);
+      padding:14px 20px; display:flex; align-items:center; justify-content:space-between;
+      position:sticky; top:0; z-index:50; box-shadow:0 1px 8px rgba(0,0,0,0.05);
+    }
+    .header-brand { display:flex; align-items:center; gap:9px; }
+    .brand-icon { width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg,var(--teal),var(--teal2)); display:flex; align-items:center; justify-content:center; font-size:16px; }
+    .brand-name { font-size:13px; font-weight:800; color:var(--text); }
+    .brand-name span { color:var(--teal); }
+    .header-right { display:flex; align-items:center; gap:10px; }
+    .admin-badge { font-size:10px; font-weight:700; background:var(--indigo-dim); color:var(--indigo); border:1px solid rgba(99,102,241,.2); border-radius:99px; padding:3px 10px; }
+    .refresh-btn { background:none; border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--text2); cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:5px; }
+    .refresh-btn:hover { background:var(--elevated); color:var(--text); }
+
+    /* ── CONTENT ── */
+    .content { max-width:1100px; margin:0 auto; padding:24px 16px 60px; }
+
+    /* ── PAGE TITLE ── */
+    .page-title { font-size:22px; font-weight:900; letter-spacing:-.02em; margin-bottom:4px; }
+    .page-sub { font-size:13px; color:var(--muted); margin-bottom:24px; }
+
+    /* ── STATS GRID ── */
+    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:28px; }
+    @media(max-width:700px) { .stats-grid { grid-template-columns:repeat(2,1fr); } }
+    .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 16px; box-shadow:0 1px 6px rgba(0,0,0,0.04); }
+    .stat-label { font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:8px; font-weight:600; }
+    .stat-val { font-size:26px; font-weight:900; letter-spacing:-.03em; color:var(--text); margin-bottom:2px; }
+    .stat-sub { font-size:11px; color:var(--muted); }
+    .stat-card.teal .stat-val { color:var(--teal); }
+    .stat-card.green .stat-val { color:var(--green); }
+    .stat-card.yellow .stat-val { color:var(--yellow); }
+    .stat-card.red .stat-val { color:var(--red); }
+
+    /* ── SEARCH / FILTER ── */
+    .toolbar { display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+    .search-wrap { flex:1; min-width:200px; position:relative; }
+    .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:14px; }
+    .search-input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:9px 12px 9px 32px; font-size:13px; color:var(--text); outline:none; transition:border-color .15s; }
+    .search-input:focus { border-color:var(--teal); box-shadow:0 0 0 3px rgba(13,148,136,.1); }
+    .filter-select { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:9px 12px; font-size:13px; color:var(--text2); outline:none; cursor:pointer; }
+
+    /* ── TABLE ── */
+    .table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:16px; box-shadow:0 1px 6px rgba(0,0,0,0.04); overflow:hidden; }
+    table { width:100%; border-collapse:collapse; }
+    thead th { background:var(--elevated); padding:11px 14px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); text-align:left; border-bottom:1px solid var(--border); }
+    tbody tr { border-bottom:1px solid var(--border); transition:background .1s; }
+    tbody tr:last-child { border-bottom:none; }
+    tbody tr:hover { background:var(--elevated); }
+    tbody td { padding:13px 14px; vertical-align:middle; }
+
+    /* ── MOBILE CARDS ── */
+    .client-cards { display:none; }
+    @media(max-width:768px) {
+      .table-wrap { display:none; }
+      .client-cards { display:block; }
+    }
+    .client-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:10px; box-shadow:0 1px 6px rgba(0,0,0,0.04); }
+    .card-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; }
+    .card-biz { font-size:15px; font-weight:700; margin-bottom:2px; }
+    .card-meta { font-size:12px; color:var(--muted); }
+    .card-score { text-align:right; }
+    .card-score-num { font-size:28px; font-weight:900; letter-spacing:-.03em; }
+    .card-score-label { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .card-row { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text2); margin-bottom:6px; }
+    .card-actions { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+    .card-actions a { flex:1; min-width:100px; text-align:center; text-decoration:none; border-radius:10px; padding:9px 12px; font-size:12px; font-weight:700; }
+    .btn-dash { background:var(--teal); color:#fff !important; }
+    .btn-audit { background:var(--elevated); color:var(--text2) !important; border:1px solid var(--border); }
+
+    /* ── BUTTONS ── */
+    .btn-sm { display:inline-block; text-decoration:none; border-radius:8px; padding:6px 12px; font-size:11px; font-weight:700; transition:opacity .15s; white-space:nowrap; }
+    .btn-sm:hover { opacity:.85; }
+    .btn-teal { background:var(--teal); color:#fff !important; }
+    .btn-ghost { background:var(--elevated); color:var(--text2) !important; border:1px solid var(--border); }
+
+    /* ── BADGE ── */
+    .tier-badge { display:inline-block; font-size:10px; font-weight:700; border-radius:99px; padding:3px 9px; }
+
+    /* ── LOADING / EMPTY ── */
+    .loading-state { text-align:center; padding:60px 20px; color:var(--muted); }
+    .spinner { width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--teal); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 14px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
+    .empty-icon { font-size:40px; margin-bottom:12px; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    .fade-in { animation:fadeUp .35s ease both; }
+
+    /* ── MRR PLACEHOLDER ── */
+    .mrr-hint { font-size:11px; color:var(--muted); font-style:italic; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="brand-icon">💎</div>
+    <div>
+      <div class="brand-name">Diamond<span>Pages</span>.ai</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="admin-badge">⚙️ Admin</span>
+    <button class="refresh-btn" onclick="loadClients()">↻ Refresh</button>
+  </div>
+</header>
+
+<!-- CONTENT -->
+<div class="content">
+  <div class="fade-in">
+    <h1 class="page-title">Client Management</h1>
+    <p class="page-sub">All active DiamondPages clients — live stats and quick access</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid fade-in" id="stats-grid">
+    <div class="stat-card teal">
+      <div class="stat-label">Total Clients</div>
+      <div class="stat-val" id="stat-total">—</div>
+      <div class="stat-sub">All time</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Avg Diamond Score™</div>
+      <div class="stat-val" id="stat-score">—</div>
+      <div class="stat-sub">Across all clients</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Growth or Pro</div>
+      <div class="stat-val" id="stat-growth">—</div>
+      <div class="stat-sub">Paid tiers</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-label">No Website</div>
+      <div class="stat-val" id="stat-noweb">—</div>
+      <div class="stat-sub mrr-hint" id="stat-noweb-sub">Upsell opportunity</div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar fade-in">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="text" id="search-input" placeholder="Search by name, email, city..." oninput="filterClients()">
+    </div>
+    <select class="filter-select" id="tier-filter" onchange="filterClients()">
+      <option value="">All Tiers</option>
+      <option value="Starter">Starter</option>
+      <option value="Growth">Growth</option>
+      <option value="Pro">Pro</option>
+    </select>
+    <select class="filter-select" id="status-filter" onchange="filterClients()">
+      <option value="">All Status</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+
+  <!-- DESKTOP TABLE -->
+  <div class="table-wrap fade-in" id="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Business</th>
+          <th>Owner</th>
+          <th>Score</th>
+          <th>Tier</th>
+          <th>Start Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="clients-tbody">
+        <tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><div>Loading clients…</div></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MOBILE CARDS -->
+  <div class="client-cards fade-in" id="client-cards">
+    <div class="loading-state"><div class="spinner"></div><div>Loading clients…</div></div>
+  </div>
+
+</div>
+
+<script>
+  let allClients = [];
+
+  function scoreColor(s) {
+    if (!s || s === 0) return '#94a3b8';
+    if (s <= 40) return '#dc2626';
+    if (s <= 70) return '#d97706';
+    return '#16a34a';
+  }
+
+  function tierColors(tier) {
+    if (tier === 'Pro') return { bg: 'rgba(99,102,241,0.1)', color: '#6366f1', border: 'rgba(99,102,241,0.25)' };
+    if (tier === 'Growth') return { bg: 'rgba(13,148,136,0.1)', color: '#0d9488', border: 'rgba(13,148,136,0.25)' };
+    return { bg: 'rgba(100,116,139,0.1)', color: '#64748b', border: 'rgba(100,116,139,0.2)' };
+  }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function renderStats(clients) {
+    const total = clients.length;
+    const scores = clients.filter(c => c.auditScore > 0).map(c => c.auditScore);
+    const avgScore = scores.length ? Math.round(scores.reduce((s,v) => s+v, 0) / scores.length) : 0;
+    const growthPlus = clients.filter(c => c.tier === 'Growth' || c.tier === 'Pro').length;
+    const noWebsite = clients.filter(c => !c.website).length;
+
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-score').textContent = avgScore ? avgScore + '/100' : '—';
+    document.getElementById('stat-growth').textContent = growthPlus;
+    document.getElementById('stat-noweb').textContent = noWebsite;
+  }
+
+  function renderTable(clients) {
+    if (!clients.length) {
+      const empty = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><div>No clients found</div></div></td></tr>';
+      document.getElementById('clients-tbody').innerHTML = empty;
+      document.getElementById('client-cards').innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div>No clients found</div></div>';
+      return;
+    }
+
+    // Desktop table rows
+    document.getElementById('clients-tbody').innerHTML = clients.map(c => {
+      const sc = scoreColor(c.auditScore);
+      const tc = tierColors(c.tier || 'Starter');
+      const tier = c.tier || 'Starter';
+      const auditLink = c.auditId ? `https://dashboard.diamondpages.ai/audit/${c.auditId}` : `https://dashboard.diamondpages.ai`;
+      return `<tr>
+        <td>
+          <div style="font-weight:700;font-size:14px">${escHtml(c.bizName || '—')}</div>
+          <div style="font-size:11px;color:#94a3b8;margin-top:2px">${escHtml(c.vertical || '')}${c.vertical && c.city ? ' · ' : ''}${escHtml(c.city || '')}${c.state ? ', ' + escHtml(c.state) : ''}</div>
+        </td>
+        <td>
+          <div style="font-size:13px;font-weight:600">${escHtml(c.ownerName || '—')}</div>
+          <div style="font-size:11px;color:#94a3b8">${escHtml(c.email || '')}</div>
+          <div style="font-size:11px;color:#94a3b8">${escHtml(c.phone || '')}</div>
+        </td>
+        <td>
+          <span style="font-weight:900;color:${sc};font-size:20px;letter-spacing:-.03em">${c.auditScore || '—'}</span>
+          ${c.auditScore ? '<span style="font-size:10px;color:#94a3b8">/100</span>' : ''}
+        </td>
+        <td>
+          <span style="background:${tc.bg};color:${tc.color};border:1px solid ${tc.border};border-radius:99px;padding:3px 10px;font-size:10px;font-weight:700">${tier}</span>
+        </td>
+        <td style="font-size:12px;color:#94a3b8">${formatDate(c.startDate)}</td>
+        <td>
+          <a href="https://app.diamondpages.ai/${c.clientId}" target="_blank" class="btn-sm btn-teal" style="margin-right:6px">Dashboard →</a>
+          <a href="${auditLink}" target="_blank" class="btn-sm btn-ghost">Audit →</a>
+        </td>
+      </tr>`;
+    }).join('');
+
+    // Mobile cards
+    document.getElementById('client-cards').innerHTML = clients.map(c => {
+      const sc = scoreColor(c.auditScore);
+      const tc = tierColors(c.tier || 'Starter');
+      const tier = c.tier || 'Starter';
+      const auditLink = c.auditId ? `https://dashboard.diamondpages.ai/audit/${c.auditId}` : `https://dashboard.diamondpages.ai`;
+      return `<div class="client-card">
+        <div class="card-header">
+          <div>
+            <div class="card-biz">${escHtml(c.bizName || '—')}</div>
+            <div class="card-meta">${escHtml(c.vertical || '')}${c.vertical && c.city ? ' · ' : ''}${escHtml(c.city || '')}${c.state ? ', ' + escHtml(c.state) : ''}</div>
+          </div>
+          <div class="card-score">
+            <div class="card-score-num" style="color:${sc}">${c.auditScore || '—'}</div>
+            <div class="card-score-label">Score</div>
+          </div>
+        </div>
+        <div class="card-row">👤 <strong>${escHtml(c.ownerName || '—')}</strong></div>
+        <div class="card-row">✉️ ${escHtml(c.email || '—')}</div>
+        <div class="card-row">📞 ${escHtml(c.phone || '—')}</div>
+        <div class="card-row">
+          🗓 ${formatDate(c.startDate)} &nbsp;·&nbsp;
+          <span style="background:${tc.bg};color:${tc.color};border:1px solid ${tc.border};border-radius:99px;padding:2px 8px;font-size:10px;font-weight:700">${tier}</span>
+        </div>
+        ${!c.website ? '<div class="card-row" style="color:#d97706">⚠️ No website (upsell opportunity)</div>' : ''}
+        <div class="card-actions">
+          <a href="https://app.diamondpages.ai/${c.clientId}" target="_blank" class="btn-dash">📊 Dashboard →</a>
+          <a href="${auditLink}" target="_blank" class="btn-audit">🔍 Audit →</a>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function filterClients() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const tier = document.getElementById('tier-filter').value;
+    const status = document.getElementById('status-filter').value;
+
+    const filtered = allClients.filter(c => {
+      const matchQ = !q || [c.bizName, c.ownerName, c.email, c.city, c.state, c.vertical].some(v => (v||'').toLowerCase().includes(q));
+      const matchTier = !tier || (c.tier || 'Starter') === tier;
+      const matchStatus = !status || (status === 'active' ? c.active !== false : c.active === false);
+      return matchQ && matchTier && matchStatus;
+    });
+
+    renderTable(filtered);
+  }
+
+  async function loadClients() {
+    try {
+      document.getElementById('clients-tbody').innerHTML = '<tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><div>Loading clients…</div></div></td></tr>';
+      document.getElementById('client-cards').innerHTML = '<div class="loading-state"><div class="spinner"></div><div>Loading clients…</div></div>';
+
+      const res = await fetch('https://api.diamondpages.ai/api/admin/clients');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      allClients = data.clients || [];
+
+      renderStats(allClients);
+      filterClients();
+    } catch(err) {
+      const msg = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">⚠️</div><div style="color:#dc2626;font-weight:600">Failed to load clients</div><div style="font-size:12px;margin-top:6px;color:#94a3b8">${err.message}</div></div></td></tr>`;
+      document.getElementById('clients-tbody').innerHTML = msg;
+      document.getElementById('client-cards').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div style="color:#dc2626;font-weight:600">Failed to load clients</div><div style="font-size:12px;margin-top:6px;color:#94a3b8">${err.message}</div></div>`;
+    }
+  }
+
+  loadClients();
+</script>
+</body>
+</html>
