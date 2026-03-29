@@ -1062,6 +1062,7 @@ function animateScore(score) {
   else if (score <= 70) color = '#d97706';
   else color = '#16a34a';
 
+  if (!arc || !numEl) { console.error('Score elements not found'); return; }
   arc.style.stroke = color;
   numEl.style.color = color;
 
@@ -1096,11 +1097,13 @@ function animateScore(score) {
 
 // ── Render results ──
 function renderResults(data, formData) {
+  console.log('[renderResults] called with score:', data?.score, '| partial:', data?.partial);
   // Set date
   document.getElementById('r-date').textContent = new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
 
   // Business name
-  document.getElementById('r-biz-name').textContent = `${formData.businessName} · ${formData.city}`;
+  const bizNameEl = document.getElementById('r-biz-name');
+  if (bizNameEl) bizNameEl.textContent = (formData.businessName || '—') + ' · ' + (formData.city || '');
 
   // Partial notice — show friendly state, don't leave blanks
   if (data.partial) {
