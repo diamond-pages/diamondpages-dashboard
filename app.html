@@ -278,11 +278,11 @@
       const res = await fetch(`https://api.diamondpages.ai/api/client/${clientId}`);
       const data = await res.json();
 
-      if (!data.success || !data.client) {
+      // Handle both response formats: { client: {...} } and direct { bizName, ... }
+      const c = data.client || (data.bizName ? data : null);
+      if (!c) {
         throw new Error('Not found');
       }
-
-      const c = data.client;
 
       // Update header
       document.getElementById('header-biz').textContent = c.bizName;
