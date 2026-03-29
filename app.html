@@ -10,7 +10,7 @@
 
     /* Loading */
     #loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
-    .spinner { width: 40px; height: 40px; border: 3px solid #e2e8f0; border-top-color: #0d9488; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .spinner { width: 44px; height: 44px; border: 3px solid #e2e8f0; border-top-color: #0d9488; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text { color: #64748b; font-size: 15px; }
 
@@ -22,53 +22,214 @@
     .error-link { color: #0d9488; text-decoration: none; }
 
     /* Dashboard */
-    #dashboard-state { display: none; max-width: 480px; margin: 0 auto; padding: 0 0 40px; }
+    #dashboard-state { display: none; max-width: 480px; margin: 0 auto; padding: 0 0 56px; }
 
     /* Header */
-    .header { background: #0d9488; color: white; padding: 20px 20px 24px; }
-    .header-logo { font-size: 13px; font-weight: 600; opacity: 0.85; letter-spacing: 0.5px; margin-bottom: 10px; }
-    .header-biz { font-size: 20px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
-    .tier-badge { display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.35); color: white; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .header {
+      background: linear-gradient(135deg, #0d9488 0%, #0f766e 60%, #115e59 100%);
+      color: white;
+      padding: 28px 24px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 160px; height: 160px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50%;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; right: 40px;
+      width: 100px; height: 100px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+    .header-logo {
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0.9;
+      letter-spacing: 0.6px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .header-biz {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 12px;
+      letter-spacing: -0.3px;
+    }
+    .tier-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+    }
 
     /* Cards */
-    .card { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin: 12px 16px 0; padding: 20px; }
-    .card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #94a3b8; margin-bottom: 14px; }
+    .card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      margin: 14px 16px 0;
+      padding: 22px 20px;
+    }
+    .card-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      margin-bottom: 16px;
+      padding-left: 10px;
+      border-left: 3px solid #0d9488;
+    }
 
     /* Score */
-    .score-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    .score-ring { transform: rotate(-90deg); }
-    .score-track { fill: none; stroke: #f1f5f9; stroke-width: 12; }
-    .score-fill { fill: none; stroke-width: 12; stroke-linecap: round; stroke-dasharray: 314; transition: none; }
-    .score-label { font-size: 32px; font-weight: 800; }
-    .score-tagline { font-size: 13px; color: #64748b; text-align: center; line-height: 1.5; max-width: 280px; }
+    .score-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .score-ring { transform: rotate(-90deg); filter: drop-shadow(0 0 10px rgba(13,148,136,0.25)); }
+    .score-track { fill: none; stroke: #f1f5f9; stroke-width: 13; }
+    .score-fill {
+      fill: none;
+      stroke-width: 13;
+      stroke-linecap: round;
+      stroke-dasharray: 346;
+      stroke-dashoffset: 346;
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease;
+    }
+    .score-tagline { font-size: 13px; color: #64748b; text-align: center; line-height: 1.6; max-width: 280px; }
 
     /* KPIs */
-    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 16px 0; }
-    .kpi-card { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 14px 10px; text-align: center; }
-    .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #94a3b8; margin-bottom: 6px; }
-    .kpi-value { font-size: 22px; font-weight: 800; color: #1e293b; line-height: 1; }
-    .kpi-sub { font-size: 10px; color: #94a3b8; margin-top: 3px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 16px 0; }
+    .kpi-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      padding: 16px 10px 14px;
+      text-align: center;
+      border-top: 3px solid transparent;
+    }
+    .kpi-card.rank  { border-top-color: #0d9488; }
+    .kpi-card.rating { border-top-color: #d97706; }
+    .kpi-card.speed { border-top-color: #2563eb; }
+    .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: #94a3b8; margin-bottom: 7px; }
+    .kpi-value { font-size: 26px; font-weight: 800; color: #1e293b; line-height: 1; }
+    .kpi-sub { font-size: 10px; color: #94a3b8; margin-top: 4px; }
 
     /* Competitors */
-    .comp-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    .comp-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 13px;
+      transition: background 0.15s;
+      border-radius: 6px;
+      padding-left: 4px;
+      padding-right: 4px;
+    }
     .comp-row:last-child { border-bottom: none; }
-    .comp-name { color: #334155; }
+    .comp-row:hover { background: #f8fafc; }
+    .comp-row-inner { display: flex; align-items: center; gap: 10px; }
+    .rank-badge {
+      width: 26px; height: 26px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .comp-name { color: #334155; font-weight: 500; }
     .comp-rating { color: #94a3b8; font-size: 12px; }
 
     /* Tasks */
     .task-list { list-style: none; }
-    .task-list li { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; font-size: 13px; color: #475569; }
-    .task-list li::before { content: '✓'; color: #0d9488; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-    .next-task-list li::before { content: '→'; color: #94a3b8; }
-    .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: #0d9488; margin-bottom: 8px; }
-    .next-section { margin-top: 16px; }
+    .task-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 7px 0;
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.5;
+    }
+    .task-icon { flex-shrink: 0; margin-top: 1px; font-size: 14px; }
+    .task-done .task-icon { color: #0d9488; }
+    .task-next .task-icon { color: #94a3b8; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #0d9488;
+      margin-bottom: 8px;
+    }
+    .next-section { margin-top: 18px; }
     .next-label { color: #94a3b8; }
 
     /* Lucy CTA */
-    .cta-card { background: linear-gradient(135deg, #0d9488, #0f766e); color: white; border-radius: 12px; margin: 12px 16px 0; padding: 20px; text-align: center; }
-    .cta-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-    .cta-sub { font-size: 13px; opacity: 0.85; margin-bottom: 14px; }
-    .cta-btn { display: inline-block; background: white; color: #0d9488; font-weight: 700; font-size: 14px; padding: 10px 24px; border-radius: 8px; text-decoration: none; }
+    .cta-card {
+      background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+      color: white;
+      border-radius: 14px;
+      margin: 14px 16px 0;
+      padding: 24px 20px;
+    }
+    .cta-title { font-size: 18px; font-weight: 800; margin-bottom: 7px; }
+    .cta-sub { font-size: 13px; opacity: 0.85; margin-bottom: 18px; line-height: 1.5; }
+    .cta-btns { display: flex; gap: 10px; }
+    .cta-btn {
+      flex: 1;
+      display: inline-block;
+      background: white;
+      color: #0d9488;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 11px 14px;
+      border-radius: 9px;
+      text-decoration: none;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .cta-btn-secondary {
+      flex: 1;
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 11px 14px;
+      border-radius: 9px;
+      text-decoration: none;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Mobile safe area */
+    @media (max-width: 480px) {
+      #dashboard-state { padding-bottom: 80px; }
+      .kpi-grid { gap: 8px; }
+      .cta-btns { flex-direction: column; }
+      .card { margin: 12px 12px 0; }
+      .kpi-grid { margin: 12px 12px 0; }
+      .cta-card { margin: 12px 12px 0; }
+    }
   </style>
 </head>
 <body>
@@ -103,11 +264,11 @@
     <div class="card">
       <div class="card-title">Diamond Score</div>
       <div class="score-wrap">
-        <svg width="120" height="120" viewBox="0 0 120 120" class="score-ring">
-          <circle class="score-track" cx="60" cy="60" r="50"></circle>
-          <circle class="score-fill" id="score-circle" cx="60" cy="60" r="50" stroke="#0d9488" stroke-dashoffset="314"></circle>
-          <text id="score-num" x="60" y="60" text-anchor="middle" dominant-baseline="central"
-            style="font-size:28px;font-weight:800;fill:#0d9488;transform:rotate(90deg);transform-origin:60px 60px;">
+        <svg width="140" height="140" viewBox="0 0 140 140" class="score-ring">
+          <circle class="score-track" cx="70" cy="70" r="55"></circle>
+          <circle class="score-fill" id="score-circle" cx="70" cy="70" r="55" stroke="#0d9488"></circle>
+          <text id="score-num" x="70" y="70" text-anchor="middle" dominant-baseline="central"
+            style="font-size:34px;font-weight:800;fill:#0d9488;transform:rotate(90deg);transform-origin:70px 70px;">
             0
           </text>
         </svg>
@@ -117,17 +278,17 @@
 
     <!-- KPIs -->
     <div class="kpi-grid">
-      <div class="kpi-card">
+      <div class="kpi-card rank">
         <div class="kpi-label">Maps Rank</div>
         <div class="kpi-value" id="kpi-rank">—</div>
         <div class="kpi-sub">Local Pack</div>
       </div>
-      <div class="kpi-card">
+      <div class="kpi-card rating">
         <div class="kpi-label">Rating</div>
         <div class="kpi-value" id="kpi-rating">—</div>
         <div class="kpi-sub" id="kpi-reviews"></div>
       </div>
-      <div class="kpi-card">
+      <div class="kpi-card speed">
         <div class="kpi-label">Page Speed</div>
         <div class="kpi-value" id="kpi-speed">—</div>
         <div class="kpi-sub">Mobile</div>
@@ -140,6 +301,20 @@
       <div id="competitors">
         <div style="color:#94a3b8;font-size:13px;">Loading...</div>
       </div>
+
+      <!-- Competitor Refinement -->
+      <div style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;">
+        <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">Not seeing the right competitors?</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input id="refine-vertical" type="text" placeholder="e.g. auto dealer, car lot, used cars..."
+            style="flex:1;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;outline:none;">
+          <button onclick="refineCompetitors()"
+            style="background:#0d9488;color:white;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">
+            Update →
+          </button>
+        </div>
+        <div id="refine-status" style="font-size:12px;color:#0d9488;margin-top:6px;display:none;"></div>
+      </div>
     </div>
 
     <!-- This Week / Next Week -->
@@ -148,19 +323,19 @@
 
       <div class="section-label">This Week</div>
       <ul class="task-list">
-        <li>2 Google Business Profile posts published</li>
-        <li>Review responses (all new reviews addressed)</li>
-        <li>Citation audit &amp; 5 new directory submissions</li>
-        <li>Weekly performance report delivered</li>
+        <li class="task-done"><span class="task-icon">✓</span>2 Google Business Profile posts published</li>
+        <li class="task-done"><span class="task-icon">✓</span>Review responses (all new reviews addressed)</li>
+        <li class="task-done"><span class="task-icon">✓</span>Citation audit &amp; 5 new directory submissions</li>
+        <li class="task-done"><span class="task-icon">✓</span>Weekly performance report delivered</li>
       </ul>
 
       <div class="next-section">
         <div class="section-label next-label">Next Week</div>
-        <ul class="task-list next-task-list">
-          <li>2 more GBP posts (seasonal &amp; service focus)</li>
-          <li>Blog post published to your website</li>
-          <li>Local link building outreach (3 targets)</li>
-          <li>Review request campaign sent to past customers</li>
+        <ul class="task-list">
+          <li class="task-next"><span class="task-icon">→</span>2 more GBP posts (seasonal &amp; service focus)</li>
+          <li class="task-next"><span class="task-icon">→</span>Blog post published to your website</li>
+          <li class="task-next"><span class="task-icon">→</span>Local link building outreach (3 targets)</li>
+          <li class="task-next"><span class="task-icon">→</span>Review request campaign sent to past customers</li>
         </ul>
       </div>
     </div>
@@ -168,8 +343,11 @@
     <!-- Lucy CTA -->
     <div class="cta-card">
       <div class="cta-title">Questions? I'm here.</div>
-      <div class="cta-sub">Your dedicated SEO strategist, Lucy, is always available.</div>
-      <a class="cta-btn" href="mailto:lucy@diamondpages.ai">✉ Message Lucy</a>
+      <div class="cta-sub">Your dedicated SEO strategist, Lucy, is always available to help you grow.</div>
+      <div class="cta-btns">
+        <a class="cta-btn" href="mailto:lucy@diamondpages.ai">✉ Message Lucy</a>
+        <a class="cta-btn-secondary" href="tel:+19544983728">📞 Call Us</a>
+      </div>
     </div>
 
   </div>
@@ -203,11 +381,17 @@
 
           // Score ring
           var score = c.auditScore || 0;
-          var circ = 314;
+          var circ = 346;
           var offset = circ - (score / 100) * circ;
           var color = score <= 40 ? '#dc2626' : score <= 70 ? '#d97706' : '#16a34a';
-          document.getElementById('score-circle').style.stroke = color;
-          document.getElementById('score-circle').style.strokeDashoffset = offset;
+          var glowColor = score <= 40 ? 'rgba(220,38,38,0.3)' : score <= 70 ? 'rgba(217,119,6,0.3)' : 'rgba(22,163,74,0.3)';
+          var ring = document.getElementById('score-circle');
+          ring.style.stroke = color;
+          ring.closest('svg').style.filter = 'drop-shadow(0 0 12px ' + glowColor + ')';
+          // Animate after brief delay
+          setTimeout(function() {
+            ring.style.strokeDashoffset = offset;
+          }, 100);
           document.getElementById('score-num').textContent = score;
           document.getElementById('score-num').style.fill = color;
           document.getElementById('score-tagline').textContent = score <= 40
@@ -236,9 +420,14 @@
           var comps = m.competitors || [];
           if (comps.length > 0) {
             document.getElementById('competitors').innerHTML = comps.slice(0, 5).map(function(comp) {
+              var rankBg = comp.rank === 1 ? '#fef3c7' : comp.rank === 2 ? '#f1f5f9' : comp.rank === 3 ? '#fff7ed' : '#f8fafc';
+              var rankColor = comp.rank === 1 ? '#d97706' : comp.rank === 2 ? '#64748b' : comp.rank === 3 ? '#ea580c' : '#94a3b8';
               return '<div class="comp-row">'
-                + '<span class="comp-name">#' + comp.rank + ' ' + comp.name + '</span>'
-                + '<span class="comp-rating">' + (comp.rating || '') + ' ★</span>'
+                + '<div class="comp-row-inner">'
+                + '<div class="rank-badge" style="background:' + rankBg + ';color:' + rankColor + ';">' + comp.rank + '</div>'
+                + '<span class="comp-name">' + comp.name + '</span>'
+                + '</div>'
+                + '<span class="comp-rating">' + (comp.rating || '') + ' ★ (' + (comp.reviews || 0) + ')</span>'
                 + '</div>';
             }).join('');
           } else {
@@ -254,6 +443,47 @@
           document.getElementById('loading-state').style.display = 'none';
           document.getElementById('error-state').style.display = 'flex';
         });
+    }
+
+    function refineCompetitors() {
+      var vertical = document.getElementById('refine-vertical').value.trim();
+      var status = document.getElementById('refine-status');
+      if (!vertical) return;
+
+      status.textContent = 'Updating your competitors...';
+      status.style.display = 'block';
+      status.style.color = '#0d9488';
+
+      // POST to API to update the search
+      fetch('https://api.diamondpages.ai/api/client/' + clientId + '/refine', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vertical: vertical })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.competitors && data.competitors.length > 0) {
+          // Re-render competitors
+          document.getElementById('competitors').innerHTML = data.competitors.slice(0,5).map(function(comp) {
+            var rankBg = comp.rank === 1 ? '#fef3c7' : comp.rank === 2 ? '#f1f5f9' : comp.rank === 3 ? '#fff7ed' : '#f8fafc';
+            var rankColor = comp.rank === 1 ? '#d97706' : comp.rank === 2 ? '#64748b' : comp.rank === 3 ? '#ea580c' : '#94a3b8';
+            return '<div class="comp-row">'
+              + '<div class="comp-row-inner">'
+              + '<div class="rank-badge" style="background:' + rankBg + ';color:' + rankColor + ';">' + comp.rank + '</div>'
+              + '<span class="comp-name">' + comp.name + '</span>'
+              + '</div>'
+              + '<span class="comp-rating">' + (comp.rating || '') + '★ (' + (comp.reviews || 0) + ')</span>'
+              + '</div>';
+          }).join('');
+          status.textContent = '✅ Updated! Showing ' + data.competitors.length + ' competitors for "' + vertical + '"';
+        } else {
+          status.textContent = 'No results found — try a different term';
+        }
+      })
+      .catch(function() {
+        status.textContent = 'Update failed — please try again';
+        status.style.color = '#dc2626';
+      });
     }
   </script>
 
