@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Website Portal — DiamondPages.ai</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal: #0d9488;
+      --teal-dark: #0b7c72;
+      --teal-light: #ccfbf1;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 1px 3px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.06);
+      --radius: 14px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .logo {
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--teal);
+      white-space: nowrap;
+      letter-spacing: -0.3px;
+    }
+    .logo span { color: var(--text); }
+    .biz-info { min-width: 0; }
+    .biz-name {
+      font-weight: 700;
+      font-size: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .biz-label {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 1px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #fef9c3;
+      color: #854d0e;
+    }
+    .status-badge.live { background: #dcfce7; color: #166534; }
+    .view-site-btn {
+      background: var(--teal);
+      color: white;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 44px;
+      flex-shrink: 0;
+    }
+    .view-site-btn:hover { background: var(--teal-dark); }
+
+    /* ── Main content ── */
+    .main { padding: 20px 16px 60px; max-width: 680px; margin: 0 auto; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 28px 0 12px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 20px;
+    }
+
+    /* ── Progress steps ── */
+    .progress-card { padding: 24px 20px 20px; }
+    .progress-steps {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      min-width: 70px;
+    }
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 17px;
+      left: 50%;
+      right: -50%;
+      height: 3px;
+      background: var(--border);
+      z-index: 0;
+    }
+    .step.done:not(:last-child)::after { background: var(--teal); }
+    .step.current:not(:last-child)::after { background: linear-gradient(to right, var(--teal), var(--border)); }
+    .step-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      margin: 0 auto 6px;
+      position: relative;
+      z-index: 1;
+      background: var(--bg);
+      border: 3px solid var(--border);
+    }
+    .step.done .step-icon { border-color: var(--teal); background: var(--teal-light); }
+    .step.current .step-icon { border-color: var(--teal); background: white; box-shadow: 0 0 0 4px #ccfbf180; }
+    .step-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+    .step.done .step-label, .step.current .step-label { color: var(--teal-dark); }
+    .current-tag {
+      display: inline-block;
+      background: #fff7ed;
+      color: #c2410c;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+      margin-top: 3px;
+      border: 1px solid #fed7aa;
+    }
+    .progress-cta {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      min-height: 52px;
+    }
+    .progress-cta:hover { background: var(--teal-dark); }
+
+    /* ── Quick actions ── */
+    .actions-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .action-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .action-header {
+      padding: 16px 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .action-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: var(--teal-light);
+      flex-shrink: 0;
+    }
+    .action-title { font-weight: 700; font-size: 15px; }
+    .action-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .action-chevron {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 18px;
+      transition: transform .2s;
+      flex-shrink: 0;
+    }
+    .action-card.open .action-chevron { transform: rotate(90deg); }
+    .action-body {
+      display: none;
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--border);
+    }
+    .action-card.open .action-body { display: block; padding-top: 16px; }
+
+    /* ── Drop zone ── */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      margin-bottom: 12px;
+    }
+    .drop-zone.hover { border-color: var(--teal); background: var(--teal-light); }
+    .drop-zone p { font-size: 14px; color: var(--muted); margin-top: 8px; }
+    .drop-zone input { display: none; }
+    .file-list { font-size: 13px; color: var(--text); margin-bottom: 10px; line-height: 1.8; }
+    .file-list .file-item::before { content: "📎 "; }
+
+    /* ── Inputs / Textarea ── */
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--bg);
+      resize: vertical;
+      transition: border-color .2s;
+      margin-bottom: 10px;
+    }
+    textarea:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--teal);
+    }
+    textarea { min-height: 90px; }
+
+    /* ── Buttons ── */
+    .btn-teal {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-teal:hover { background: var(--teal-dark); }
+    .btn-teal:disabled { opacity: .6; cursor: not-allowed; }
+    .btn-outline {
+      background: white;
+      color: var(--teal);
+      border: 1.5px solid var(--teal);
+      border-radius: 8px;
+      padding: 11px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+    .btn-outline:hover { background: var(--teal-light); }
+
+    /* ── Success / Error messages ── */
+    .msg-success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .msg-error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    /* ── DNS records ── */
+    .dns-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+    .dns-table th {
+      background: var(--bg);
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .dns-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      font-family: monospace;
+      vertical-align: middle;
+    }
+    .dns-table tr:last-child td { border-bottom: none; }
+    .copy-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 3px 7px;
+      font-size: 11px;
+      cursor: pointer;
+      color: var(--teal);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { background: var(--teal-light); }
+    .copy-btn.copied { color: #166534; background: #dcfce7; border-color: #bbf7d0; }
+    .dns-note {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      color: #166534;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    .dns-upsell {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .dns-upsell a { color: var(--teal); font-weight: 600; text-decoration: none; }
+
+    /* ── What's included ── */
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .checklist li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .checklist li::before {
+      content: "✅";
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .package-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--teal), #0ea5e9);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    /* ── Upgrade marketplace ── */
+    .upgrades-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .upgrade-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .upgrade-icon {
+      font-size: 26px;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: var(--bg);
+      border-radius: 10px;
+    }
+    .upgrade-info { flex: 1; min-width: 0; }
+    .upgrade-name { font-weight: 700; font-size: 14px; }
+    .upgrade-desc { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+    .upgrade-price {
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--teal);
+      white-space: nowrap;
+    }
+    .upgrade-price small { font-size: 11px; font-weight: 500; color: var(--muted); display: block; }
+    .upgrade-cta {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      flex-shrink: 0;
+    }
+    .upgrade-cta:hover { background: var(--teal-dark); }
+    @media (max-width: 480px) {
+      .upgrade-card { flex-wrap: wrap; }
+      .upgrade-cta { margin-left: auto; margin-top: 4px; }
+    }
+
+    /* ── Help section ── */
+    .help-card {
+      text-align: center;
+      padding: 28px 20px;
+    }
+    .help-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+    .help-card p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+    .help-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .help-btns a { min-height: 44px; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .footer a { color: var(--teal); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo">Diamond<span>Pages</span>.ai</div>
+    <div style="width:1px;height:30px;background:var(--border);flex-shrink:0;"></div>
+    <div class="biz-info">
+      <div class="biz-name" id="bizNameHeader">Loading…</div>
+      <div class="biz-label">
+        Your Website &nbsp;
+        <span class="status-badge" id="statusBadge">🟡 Staging</span>
+      </div>
+    </div>
+  </div>
+  <a class="view-site-btn" id="viewSiteBtn" href="https://diamond-pages.github.io/mint-jewelers/" target="_blank" rel="noopener">
+    View My Site →
+  </a>
+</header>
+
+<!-- ── Main ── -->
+<main class="main">
+
+  <!-- ── 1. Site Status ── -->
+  <div class="section-label">Your Build Progress</div>
+  <div class="card progress-card">
+    <div class="progress-steps" id="progressSteps">
+      <div class="step done">
+        <div class="step-icon">✅</div>
+        <div class="step-label">Brief<br>Received</div>
+      </div>
+      <div class="step done">
+        <div class="step-icon">✅</div>
+        <div class="step-label">Site<br>Built</div>
+      </div>
+      <div class="step current">
+        <div class="step-icon">🔄</div>
+        <div class="step-label">Your Review<br><span class="current-tag">You are here</span></div>
+      </div>
+      <div class="step">
+        <div class="step-icon">🌐</div>
+        <div class="step-label">Go<br>Live</div>
+      </div>
+    </div>
+    <a class="progress-cta" id="stagingBtn" href="https://diamond-pages.github.io/mint-jewelers/" target="_blank" rel="noopener">
+      🚀 View Your Staging Site →
+    </a>
+  </div>
+
+  <!-- ── 2. Quick Actions ── -->
+  <div class="section-label">Manage Your Site</div>
+  <div class="actions-grid">
+
+    <!-- Add Photos -->
+    <div class="action-card" id="card-photos">
+      <div class="action-header" onclick="toggleCard('photos')">
+        <div class="action-icon">📷</div>
+        <div>
+          <div class="action-title">Add Photos</div>
+          <div class="action-desc">Upload photos — we'll add them within 24 hours</div>
+        </div>
+        <div class="action-chevron">›</div>
+      </div>
+      <div class="action-body">
+        <div class="drop-zone" id="dropZone" onclick="document.getElementById('photoInput').click()">
+          <div style="font-size:32px;">📸</div>
+          <p><strong>Tap to select photos</strong><br>or drag & drop here</p>
+          <input type="file" id="photoInput" accept="image/*" multiple onchange="handleFiles(this.files)" />
+        </div>
+        <div class="file-list" id="fileList"></div>
+        <button class="btn-teal" id="sendPhotosBtn" style="display:none;" onclick="submitPhotos()">
+          Send to Lucy ✉️
+        </button>
+        <div id="photoMsg"></div>
+      </div>
+    </div>
+
+    <!-- Request a Change -->
+    <div class="action-card" id="card-change">
+      <div class="action-header" onclick="toggleCard('change')">
+        <div class="action-icon">✏️</div>
+        <div>
+          <div class="action-title">Request a Change</div>
+          <div class="action-desc">Update text, hours, services, or anything else</div>
+        </div>
+        <div class="action-chevron">›</div>
+      </div>
+      <div class="action-body">
+        <textarea id="changeText" placeholder="Describe what you'd like changed…" rows="4"></textarea>
+        <button class="btn-teal" onclick="submitChange()">Send Request ✉️</button>
+        <div id="changeMsg"></div>
+      </div>
+    </div>
+
+    <!-- Connect Domain -->
+    <div class="action-card" id="card-domain">
+      <div class="action-header" onclick="toggleCard('domain')">
+        <div class="action-icon">🌐</div>
+        <div>
+          <div class="action-title">Connect Your Domain</div>
+          <div class="action-desc">Go live on your own domain (e.g. mintjeweler.com)</div>
+        </div>
+        <div class="action-chevron">›</div>
+      </div>
+      <div class="action-body">
+        <input type="text" id="domainInput" placeholder="e.g. mintjeweler.com" />
+        <button class="btn-teal" onclick="showDNS()">Get DNS Instructions →</button>
+        <div id="dnsInstructions" style="display:none; margin-top:16px;">
+          <p style="font-size:13px;font-weight:600;margin-bottom:8px;">Add these records to your domain's DNS:</p>
+          <table class="dns-table">
+            <thead>
+              <tr><th>Type</th><th>Name</th><th>Value</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>A</td><td>@</td>
+                <td id="dns-a1">185.199.108.153</td>
+                <td><button class="copy-btn" onclick="copyDNS(this,'185.199.108.153')">Copy</button></td>
+              </tr>
+              <tr>
+                <td>A</td><td>@</td>
+                <td>185.199.109.153</td>
+                <td><button class="copy-btn" onclick="copyDNS(this,'185.199.109.153')">Copy</button></td>
+              </tr>
+              <tr>
+                <td>A</td><td>@</td>
+                <td>185.199.110.153</td>
+                <td><button class="copy-btn" onclick="copyDNS(this,'185.199.110.153')">Copy</button></td>
+              </tr>
+              <tr>
+                <td>A</td><td>@</td>
+                <td>185.199.111.153</td>
+                <td><button class="copy-btn" onclick="copyDNS(this,'185.199.111.153')">Copy</button></td>
+              </tr>
+              <tr>
+                <td>CNAME</td><td>www</td>
+                <td>diamond-pages.github.io</td>
+                <td><button class="copy-btn" onclick="copyDNS(this,'diamond-pages.github.io')">Copy</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="dns-note">
+            ✅ After adding these records, email <a href="mailto:lucy@diamondpages.ai" style="color:var(--teal);font-weight:700;">lucy@diamondpages.ai</a> and we'll complete the setup within 2 hours.
+          </div>
+          <div class="dns-upsell">
+            🛠️ <strong>Need help?</strong> We can do this for you — <strong>$49 one-time.</strong><br>
+            <a href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Book a 15-min call →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /actions-grid -->
+
+  <!-- ── 3. What's Included ── -->
+  <div class="section-label">Your Package</div>
+  <div class="card">
+    <div class="package-badge">✨ Ecommerce Website Package</div>
+    <ul class="checklist">
+      <li>Custom luxury website design</li>
+      <li>Mobile responsive</li>
+      <li>All 8 services listed</li>
+      <li>Product/inventory showcase (6 items)</li>
+      <li>Google Maps embed</li>
+      <li>Contact form</li>
+      <li>SSL certificate (https)</li>
+      <li>30 days free edits</li>
+      <li>SEO meta tags &amp; schema markup</li>
+    </ul>
+  </div>
+
+  <!-- ── 4. Upgrade Marketplace ── -->
+  <div class="section-label">Unlock More for Your Website</div>
+  <div class="upgrades-grid">
+
+    <div class="upgrade-card">
+      <div class="upgrade-icon">🖼️</div>
+      <div class="upgrade-info">
+        <div class="upgrade-name">Professional Photo Shoot</div>
+        <div class="upgrade-desc">We coordinate a local photographer for your store</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="upgrade-price">$299<small>one-time</small></div>
+        <a class="upgrade-cta" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Add →</a>
+      </div>
+    </div>
+
+    <div class="upgrade-card">
+      <div class="upgrade-icon">📦</div>
+      <div class="upgrade-info">
+        <div class="upgrade-name">Full Product Catalog</div>
+        <div class="upgrade-desc">50+ products with descriptions, photos &amp; pricing</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="upgrade-price">$497<small>one-time</small></div>
+        <a class="upgrade-cta" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Add →</a>
+      </div>
+    </div>
+
+    <div class="upgrade-card">
+      <div class="upgrade-icon">💳</div>
+      <div class="upgrade-info">
+        <div class="upgrade-name">Live Checkout</div>
+        <div class="upgrade-desc">Accept payments directly on your site (Stripe/PayPal)</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="upgrade-price">$397<small>one-time</small></div>
+        <a class="upgrade-cta" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Add →</a>
+      </div>
+    </div>
+
+    <div class="upgrade-card">
+      <div class="upgrade-icon">📝</div>
+      <div class="upgrade-info">
+        <div class="upgrade-name">Blog Setup</div>
+        <div class="upgrade-desc">Monthly blog posts for SEO — drives more Google traffic</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="upgrade-price">$197<small>/month</small></div>
+        <a class="upgrade-cta" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Add →</a>
+      </div>
+    </div>
+
+    <div class="upgrade-card">
+      <div class="upgrade-icon">🤖</div>
+      <div class="upgrade-info">
+        <div class="upgrade-name">AI Chat Widget</div>
+        <div class="upgrade-desc">Live chat that answers customer questions 24/7</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="upgrade-price">$97<small>/month</small></div>
+        <a class="upgrade-cta" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Add →</a>
+      </div>
+    </div>
+
+    <div class="upgrade-card">
+      <div class="upgrade-icon">🔍</div>
+      <div class="upgrade-info">
+        <div class="upgrade-name">SEO Growth Plan</div>
+        <div class="upgrade-desc">Rank higher on Google Maps + organic search</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="upgrade-price">$997<small>/month</small></div>
+        <a class="upgrade-cta" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Add →</a>
+      </div>
+    </div>
+
+    <div class="upgrade-card">
+      <div class="upgrade-icon">🏆</div>
+      <div class="upgrade-info">
+        <div class="upgrade-name">Website Care Plan</div>
+        <div class="upgrade-desc">Hosting, updates, security &amp; monthly changes</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="upgrade-price">$97<small>/month</small></div>
+        <a class="upgrade-cta" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Add →</a>
+      </div>
+    </div>
+
+  </div><!-- /upgrades-grid -->
+
+  <!-- ── 5. Need Help? ── -->
+  <div class="section-label">Need Help?</div>
+  <div class="card help-card">
+    <h3>💬 Questions? Lucy reads every message.</h3>
+    <p>Reply within a few hours, usually faster.</p>
+    <div class="help-btns">
+      <a class="btn-teal" href="mailto:lucy@diamondpages.ai">Email Lucy →</a>
+      <a class="btn-outline" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">📅 Book a Call →</a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <p>© 2024 <a href="https://diamondpages.ai" target="_blank">DiamondPages.ai</a> — Built with 💎 for <span id="bizNameFooter">your business</span></p>
+</footer>
+
+<script>
+  // ── Client config ──
+  const API_BASE = 'https://api.diamondpages.ai';
+  const DEFAULT_CLIENT = {
+    clientId: 'dp_46292461',
+    bizName: 'Mint Jewelers by Boodaddy Diamonds',
+    stagingUrl: 'https://diamond-pages.github.io/mint-jewelers/',
+    status: 'staging'
+  };
+
+  let client = { ...DEFAULT_CLIENT };
+  let selectedFiles = [];
+
+  // ── Parse URL params ──
+  const params = new URLSearchParams(window.location.search);
+  const clientId = params.get('client') || DEFAULT_CLIENT.clientId;
+
+  // ── Init ──
+  async function init() {
+    try {
+      const res = await fetch(`${API_BASE}/api/client/${clientId}`, { signal: AbortSignal.timeout(5000) });
+      if (res.ok) {
+        const data = await res.json();
+        const name = data.bizName || data.client?.bizName || DEFAULT_CLIENT.bizName;
+        const staging = data.stagingUrl || data.client?.stagingUrl || DEFAULT_CLIENT.stagingUrl;
+        const status = data.siteStatus || data.client?.siteStatus || DEFAULT_CLIENT.status;
+        client = { ...DEFAULT_CLIENT, bizName: name, stagingUrl: staging, status };
+      }
+    } catch (e) {
+      // Use defaults if API unreachable
+    }
+    renderClient();
+  }
+
+  function renderClient() {
+    const nameEls = [document.getElementById('bizNameHeader'), document.getElementById('bizNameFooter')];
+    nameEls.forEach(el => { if (el) el.textContent = client.bizName; });
+
+    const stagingBtn = document.getElementById('stagingBtn');
+    const viewSiteBtn = document.getElementById('viewSiteBtn');
+    if (stagingBtn) stagingBtn.href = client.stagingUrl;
+    if (viewSiteBtn) viewSiteBtn.href = client.stagingUrl;
+
+    const badge = document.getElementById('statusBadge');
+    if (badge) {
+      if (client.status === 'live') {
+        badge.textContent = '🟢 Live';
+        badge.classList.add('live');
+      } else {
+        badge.textContent = '🟡 Staging';
+      }
+    }
+  }
+
+  // ── Toggle action cards ──
+  function toggleCard(id) {
+    const card = document.getElementById(`card-${id}`);
+    const isOpen = card.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.action-card').forEach(c => c.classList.remove('open'));
+    if (!isOpen) card.classList.add('open');
+  }
+
+  // ── Photos ──
+  function handleFiles(files) {
+    selectedFiles = Array.from(files);
+    const list = document.getElementById('fileList');
+    const btn = document.getElementById('sendPhotosBtn');
+    if (selectedFiles.length) {
+      list.innerHTML = selectedFiles.map(f => `<div class="file-item">${f.name}</div>`).join('');
+      btn.style.display = 'inline-flex';
+    } else {
+      list.innerHTML = '';
+      btn.style.display = 'none';
+    }
+  }
+
+  // Drag & drop
+  const dz = document.getElementById('dropZone');
+  ['dragenter','dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('hover'); }));
+  ['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('hover'); }));
+  dz.addEventListener('drop', ev => {
+    if (ev.dataTransfer?.files?.length) handleFiles(ev.dataTransfer.files);
+  });
+
+  async function submitPhotos() {
+    const btn = document.getElementById('sendPhotosBtn');
+    const msgEl = document.getElementById('photoMsg');
+    if (!selectedFiles.length) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    try {
+      const formData = new FormData();
+      formData.append('clientId', client.clientId);
+      formData.append('bizName', client.bizName);
+      selectedFiles.forEach(f => formData.append('photos', f));
+
+      const res = await fetch(`${API_BASE}/api/website/photos`, {
+        method: 'POST',
+        body: formData,
+        signal: AbortSignal.timeout(15000)
+      });
+
+      if (res.ok) {
+        msgEl.innerHTML = '<div class="msg-success">✅ Photos sent! We\'ll have them on your site within 24 hours.</div>';
+        document.getElementById('fileList').innerHTML = '';
+        btn.style.display = 'none';
+        selectedFiles = [];
+        return;
+      }
+    } catch (e) { /* fall through to email fallback */ }
+
+    // Fallback: mailto
+    const subject = encodeURIComponent(`Photos for ${client.bizName}`);
+    const body = encodeURIComponent(`Hi Lucy, here are my photos for the website.`);
+    window.location.href = `mailto:lucy@diamondpages.ai?subject=${subject}&body=${body}`;
+    msgEl.innerHTML = '<div class="msg-success">📧 Opening your email app — just attach your photos and send!</div>';
+    btn.disabled = false;
+    btn.textContent = 'Send to Lucy ✉️';
+  }
+
+  // ── Change request ──
+  async function submitChange() {
+    const text = document.getElementById('changeText').value.trim();
+    const msgEl = document.getElementById('changeMsg');
+    if (!text) { msgEl.innerHTML = '<div class="msg-error">Please describe what you\'d like changed.</div>'; return; }
+
+    msgEl.innerHTML = '<div style="color:var(--muted);font-size:13px;margin-top:8px;">Sending…</div>';
+
+    try {
+      const res = await fetch(`${API_BASE}/api/website/change-request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientId: client.clientId, bizName: client.bizName, message: text }),
+        signal: AbortSignal.timeout(10000)
+      });
+      if (res.ok) {
+        msgEl.innerHTML = '<div class="msg-success">✅ Request received! Changes within 24 hours.</div>';
+        document.getElementById('changeText').value = '';
+        return;
+      }
+    } catch (e) { /* fall through */ }
+
+    // Fallback: email
+    const subject = encodeURIComponent(`Website change request — ${client.bizName}`);
+    const body = encodeURIComponent(`Hi Lucy,\n\nI'd like the following change on my website:\n\n${text}\n\nThanks!`);
+    window.open(`mailto:lucy@diamondpages.ai?subject=${subject}&body=${body}`);
+    msgEl.innerHTML = '<div class="msg-success">📧 Opening email — just hit send!</div>';
+  }
+
+  // ── DNS ──
+  function showDNS() {
+    const domain = document.getElementById('domainInput').value.trim();
+    const el = document.getElementById('dnsInstructions');
+    el.style.display = el.style.display === 'none' ? 'block' : 'block';
+    if (domain) {
+      document.querySelector('#dnsInstructions p strong') && null;
+    }
+    el.style.display = 'block';
+  }
+
+  function copyDNS(btn, value) {
+    navigator.clipboard.writeText(value).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    }).catch(() => {
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = value;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // ── Boot ──
+  init();
+</script>
+</body>
+</html>
