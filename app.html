@@ -306,7 +306,7 @@
       <div style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;">
         <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">Not seeing the right competitors?</div>
         <div style="display:flex;gap:8px;align-items:center;">
-          <input id="refine-vertical" type="text" placeholder="e.g. auto dealer, car lot, used cars..."
+          <input id="refine-vertical" type="text" placeholder="e.g. car dealership, used cars, auto sales..."
             style="flex:1;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;outline:none;">
           <button onclick="refineCompetitors()"
             style="background:#0d9488;color:white;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">
@@ -477,7 +477,7 @@
           }).join('');
           status.textContent = '✅ Updated! Showing ' + data.competitors.length + ' competitors for "' + vertical + '"';
         } else {
-          status.textContent = 'No results found — try a different term';
+          status.textContent = 'No results found for "' + vertical + '" — try adding your city (e.g. "car dealership Hollywood") or a more specific term';
         }
       })
       .catch(function() {
