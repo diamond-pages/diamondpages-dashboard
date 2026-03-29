@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Website Portal — DiamondPages.ai</title>
+  <meta name="theme-color" content="#0d9488"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <style>
+    :root {
+      --teal: #0d9488; --teal2: #14b8a6; --teal-dim: rgba(13,148,136,0.08);
+      --green: #16a34a; --green-dim: rgba(22,163,74,0.08);
+      --yellow: #d97706; --yellow-dim: rgba(217,119,6,0.1);
+      --red: #dc2626; --red-dim: rgba(220,38,38,0.08);
+      --purple: #7c3aed; --purple-dim: rgba(124,58,237,0.08);
+      --bg: #f8fafc; --surface: #fff; --elevated: #f1f5f9;
+      --border: rgba(0,0,0,0.07); --text: #0f172a; --text2: #475569; --muted: #94a3b8;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+    /* ── HEADER ── */
+    .header {
+      background:var(--surface); border-bottom:1px solid var(--border);
+      padding:14px 20px; display:flex; align-items:center; justify-content:space-between;
+      position:sticky; top:0; z-index:50; box-shadow:0 1px 8px rgba(0,0,0,0.05);
+      gap:12px;
+    }
+    .header-left { display:flex; align-items:center; gap:10px; min-width:0; }
+    .brand-icon { width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,var(--teal),var(--teal2)); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+    .brand-text { min-width:0; }
+    .brand-name { font-size:13px; font-weight:800; color:var(--text); white-space:nowrap; }
+    .brand-name span { color:var(--teal); }
+    .brand-sub { font-size:10px; color:var(--muted); font-weight:500; letter-spacing:.04em; text-transform:uppercase; }
+    .btn-view-site {
+      background:var(--teal); color:#fff; border:none; border-radius:8px;
+      padding:8px 14px; font-size:12px; font-weight:700; cursor:pointer;
+      white-space:nowrap; text-decoration:none; display:inline-flex; align-items:center; gap:5px;
+      transition:background .15s;
+    }
+    .btn-view-site:hover { background:var(--teal2); }
+
+    /* ── BIZ NAME BAR ── */
+    .biz-bar {
+      background:linear-gradient(135deg, var(--teal), #0f766e);
+      padding:18px 20px;
+      color:#fff;
+    }
+    .biz-bar h1 { font-size:20px; font-weight:800; letter-spacing:-.02em; margin-bottom:4px; }
+    .biz-bar p { font-size:13px; opacity:.85; }
+
+    /* ── CONTENT ── */
+    .content { max-width:680px; margin:0 auto; padding:20px 16px 80px; }
+
+    /* ── LOADING ── */
+    .loading { text-align:center; padding:60px 20px; }
+    .spinner { width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--teal); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 14px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading-text { font-size:14px; color:var(--muted); }
+
+    /* ── SECTION TITLE ── */
+    .section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+
+    /* ── QUICK ACTIONS ── */
+    .actions-grid { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+    .action-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:14px;
+      padding:16px 18px; box-shadow:0 1px 6px rgba(0,0,0,0.04);
+      transition:box-shadow .15s, border-color .15s;
+    }
+    .action-card:focus-within { border-color:var(--teal); box-shadow:0 0 0 3px rgba(13,148,136,.1); }
+    .action-card-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .action-icon { font-size:20px; }
+    .action-label { font-size:14px; font-weight:700; color:var(--text); }
+    .action-desc { font-size:12px; color:var(--text2); margin-bottom:12px; line-height:1.5; }
+
+    /* Inputs */
+    .field-row { display:flex; gap:8px; }
+    input[type="text"], input[type="url"], textarea {
+      width:100%; border:1px solid var(--border); border-radius:8px;
+      padding:9px 12px; font-size:13px; color:var(--text); background:var(--bg);
+      outline:none; font-family:inherit; transition:border-color .15s;
+    }
+    input[type="text"]:focus, input[type="url"]:focus, textarea:focus { border-color:var(--teal); }
+    textarea { resize:vertical; min-height:80px; }
+
+    /* Buttons */
+    .btn {
+      border:none; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:700;
+      cursor:pointer; white-space:nowrap; transition:background .15s, transform .08s;
+      display:inline-flex; align-items:center; gap:5px;
+    }
+    .btn:active { transform:scale(.97); }
+    .btn-primary { background:var(--teal); color:#fff; }
+    .btn-primary:hover { background:var(--teal2); }
+    .btn-primary:disabled { opacity:.55; cursor:not-allowed; }
+    .btn-ghost { background:var(--elevated); color:var(--text2); }
+    .btn-ghost:hover { background:#e2e8f0; }
+    .btn-upload { width:100%; justify-content:center; background:var(--teal-dim); color:var(--teal); border:1.5px dashed rgba(13,148,136,.4); border-radius:10px; padding:16px; font-size:13px; font-weight:600; }
+    .btn-upload:hover { background:rgba(13,148,136,.12); }
+
+    .field-msg { font-size:11px; margin-top:6px; display:none; }
+    .field-msg.success { color:var(--green); display:block; }
+    .field-msg.error { color:var(--red); display:block; }
+
+    /* ── PACKAGE CARD ── */
+    .package-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:14px;
+      padding:18px; margin-bottom:24px; box-shadow:0 1px 6px rgba(0,0,0,0.04);
+    }
+    .package-header { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+    .package-badge { background:var(--teal-dim); color:var(--teal); font-size:11px; font-weight:700; border:1px solid rgba(13,148,136,.2); border-radius:99px; padding:3px 12px; }
+    .package-name { font-size:15px; font-weight:800; }
+    .feature-list { display:flex; flex-direction:column; gap:8px; }
+    .feature-item { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text2); }
+    .feature-check { font-size:15px; flex-shrink:0; }
+
+    /* ── UPGRADES ── */
+    .upgrades-list { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+    .upgrade-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:14px;
+      padding:16px 18px; box-shadow:0 1px 6px rgba(0,0,0,0.04);
+      display:flex; align-items:center; gap:14px;
+    }
+    .upgrade-lock { font-size:20px; flex-shrink:0; opacity:.7; }
+    .upgrade-body { flex:1; min-width:0; }
+    .upgrade-name { font-size:13px; font-weight:700; color:var(--text); margin-bottom:2px; }
+    .upgrade-desc { font-size:11px; color:var(--text2); line-height:1.4; }
+    .upgrade-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+    .upgrade-price { font-size:13px; font-weight:800; color:var(--text); white-space:nowrap; }
+    .upgrade-cadence { font-size:10px; color:var(--muted); font-weight:500; }
+    .btn-unlock {
+      background:var(--teal); color:#fff; border:none; border-radius:8px;
+      padding:7px 13px; font-size:12px; font-weight:700; cursor:pointer;
+      white-space:nowrap; transition:background .15s, transform .08s;
+    }
+    .btn-unlock:hover { background:var(--teal2); }
+    .btn-unlock:active { transform:scale(.96); }
+    .btn-unlock:disabled { opacity:.55; cursor:not-allowed; }
+
+    /* highlight for upgrades */
+    .upgrade-card.featured { border-color:rgba(13,148,136,.3); background:rgba(13,148,136,.025); }
+    .upgrade-card.plan { border-color:rgba(124,58,237,.2); background:var(--purple-dim); }
+    .upgrade-card.plan .upgrade-lock { color:var(--purple); }
+    .upgrade-card.plan .btn-unlock { background:var(--purple); }
+    .upgrade-card.plan .btn-unlock:hover { background:#6d28d9; }
+
+    /* ── STATS ROW ── */
+    .stats-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:14px;
+      padding:16px 18px; box-shadow:0 1px 6px rgba(0,0,0,0.04);
+    }
+    .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    .stat-item { display:flex; flex-direction:column; gap:3px; }
+    .stat-label { font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); font-weight:600; }
+    .stat-val { font-size:13px; font-weight:700; color:var(--text); }
+    .stat-val a { color:var(--teal); text-decoration:none; font-size:12px; }
+    .stat-val a:hover { text-decoration:underline; }
+    .status-live { color:var(--green); }
+
+    /* ── TOAST ── */
+    #toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+      background:#1e293b; color:#fff; font-size:13px; font-weight:600;
+      padding:10px 20px; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,.25);
+      opacity:0; transition:opacity .2s, transform .2s; pointer-events:none; z-index:999;
+      white-space:nowrap;
+    }
+    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    @media (min-width:540px) {
+      .actions-grid { flex-direction:row; flex-wrap:wrap; }
+      .action-card { flex:1 1 calc(50% - 5px); min-width:220px; }
+      .stats-grid { grid-template-columns:repeat(4,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="brand-icon">💎</div>
+    <div class="brand-text">
+      <div class="brand-name">Diamond<span>Pages</span>.ai</div>
+      <div class="brand-sub">Website Portal</div>
+    </div>
+  </div>
+  <a id="viewSiteBtn" class="btn-view-site" href="#" target="_blank" rel="noopener">
+    View My Site →
+  </a>
+</header>
+
+<!-- BIZ NAME BAR -->
+<div class="biz-bar">
+  <h1 id="bizName">Loading…</h1>
+  <p id="bizTagline">Your website management portal</p>
+</div>
+
+<!-- LOADING STATE -->
+<div id="loadingState" class="loading">
+  <div class="spinner"></div>
+  <div class="loading-text">Loading your portal…</div>
+</div>
+
+<!-- MAIN CONTENT (hidden until loaded) -->
+<main id="mainContent" class="content" style="display:none">
+
+  <!-- SECTION: QUICK ACTIONS -->
+  <div class="section-title">⚡ Quick Actions</div>
+  <div class="actions-grid">
+
+    <!-- Upload Photos -->
+    <div class="action-card">
+      <div class="action-card-header">
+        <div class="action-icon">📷</div>
+        <div class="action-label">Upload Photos</div>
+      </div>
+      <div class="action-desc">Add real photos to your gallery. Tap to select or drag &amp; drop.</div>
+      <input type="file" id="photoInput" multiple accept="image/*" style="display:none"/>
+      <button class="btn btn-upload" onclick="document.getElementById('photoInput').click()">
+        📁 Select Photos
+      </button>
+      <div class="field-msg" id="photoMsg"></div>
+    </div>
+
+    <!-- Booking Link -->
+    <div class="action-card">
+      <div class="action-card-header">
+        <div class="action-icon">📅</div>
+        <div class="action-label">Set Booking Link</div>
+      </div>
+      <div class="action-desc">Paste your Calendly or booking URL and we'll update your site within 2 hours.</div>
+      <div class="field-row">
+        <input type="url" id="bookingInput" placeholder="https://calendly.com/yourname"/>
+        <button class="btn btn-primary" id="bookingBtn" onclick="saveBookingLink()">Save</button>
+      </div>
+      <div class="field-msg" id="bookingMsg"></div>
+    </div>
+
+    <!-- Request a Change -->
+    <div class="action-card" style="flex-basis:100%">
+      <div class="action-card-header">
+        <div class="action-icon">✏️</div>
+        <div class="action-label">Request a Change</div>
+      </div>
+      <div class="action-desc">Need to update your hours, services, or anything else? Just tell us.</div>
+      <textarea id="changeInput" placeholder="e.g. Update my hours to Mon–Sat 9am–6pm, add Winter Promo to homepage…"></textarea>
+      <button class="btn btn-primary" id="changeBtn" onclick="submitChange()" style="margin-top:8px">Submit Request</button>
+      <div class="field-msg" id="changeMsg"></div>
+    </div>
+
+  </div>
+
+  <!-- SECTION: WHAT'S INCLUDED -->
+  <div class="section-title">✅ Your Package — What's Included</div>
+  <div class="package-card">
+    <div class="package-header">
+      <div class="package-name" id="packageName">Basic Website</div>
+      <div class="package-badge" id="packageBadge">Basic</div>
+    </div>
+    <div class="feature-list" id="featureList">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- SECTION: UPGRADES -->
+  <div class="section-title">🔒 Unlock More — Available Upgrades</div>
+  <div class="upgrades-list" id="upgradesList">
+    <!-- populated by JS -->
+  </div>
+
+  <!-- SECTION: SITE STATS -->
+  <div class="section-title">📊 Site Stats</div>
+  <div class="stats-card">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-label">Site Status</div>
+        <div class="stat-val status-live" id="statStatus">🟢 Live</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Last Updated</div>
+        <div class="stat-val" id="statUpdated">—</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Mobile Score</div>
+        <div class="stat-val" id="statMobile">📱 100/100</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Staging URL</div>
+        <div class="stat-val" id="statUrl">—</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+  // ── Config ──
+  const API_BASE = 'https://api.diamondpages.ai';
+
+  const PRICES = {
+    photo_gallery:     'price_photo_gallery',
+    booking_widget:    'price_booking_widget',
+    blog_section:      'price_blog_section',
+    live_chat:         'price_live_chat',
+    care_plan:         'price_1TG8x9Gfei3BtoHO254a0kPc',
+    seo_starter:       'price_1TG8x5Gfei3BtoHOK97rDGHw',
+    seo_growth:        'price_1TG8x5Gfei3BtoHOigi4DlW7',
+    upgrade_premium:   'price_upgrade_premium',
+    upgrade_ecommerce: 'price_upgrade_ecommerce',
+  };
+
+  const BASIC_FEATURES = [
+    '5 Pages (Home, About, Services, Gallery, Contact)',
+    'Mobile Responsive Design',
+    'Contact Form',
+    'Google Maps Embed',
+    'Basic SEO Setup',
+    'SSL Certificate',
+    '30 Days Free Edits',
+  ];
+
+  const UPGRADES = [
+    { key:'photo_gallery',     icon:'📷', name:'Photo Gallery Update',    desc:'Swap placeholders with your real photos, professionally optimized.',  price:'$99',    cadence:'one-time' },
+    { key:'booking_widget',    icon:'📅', name:'Online Booking Widget',   desc:'Add Calendly or Square booking directly to your site.',               price:'$149',   cadence:'one-time' },
+    { key:'blog_section',      icon:'📝', name:'Blog / News Section',     desc:'Publish updates, promotions, and tips. Great for SEO.',               price:'$199',   cadence:'one-time' },
+    { key:'live_chat',         icon:'💬', name:'Live Chat Widget',        desc:'Talk to website visitors in real time via Tidio or Crisp.',           price:'$149',   cadence:'one-time' },
+    { key:'care_plan',         icon:'🛡️', name:'Website Care Plan',      desc:'Hosting, updates, security, and 1 hr of changes per month.',          price:'$97',    cadence:'/mo', plan:true },
+    { key:'seo_starter',       icon:'📍', name:'SEO Starter Plan',        desc:'Rank on Google Maps and local search.',                               price:'$397',   cadence:'/mo', plan:true },
+    { key:'seo_growth',        icon:'🚀', name:'SEO Growth Plan',         desc:'Full local SEO campaign + GEO targeting + content strategy.',         price:'$997',   cadence:'/mo', plan:true },
+    { key:'upgrade_premium',   icon:'⭐', name:'Upgrade to Premium Site', desc:'Unlimited pages, booking, blog, social feed — everything unlocked.',   price:'$700',   cadence:'one-time', featured:true },
+    { key:'upgrade_ecommerce', icon:'🛒', name:'Upgrade to Ecommerce',    desc:'Add an online store with Stripe/PayPal checkout.',                    price:'$2,200', cadence:'one-time', featured:true },
+  ];
+
+  // ── Parse clientId from URL ──
+  function getClientId() {
+    // /site/dp_46292461
+    const m = window.location.pathname.match(/\/site\/([^/?#]+)/);
+    if (m) return m[1];
+    // ?id=dp_46292461
+    const p = new URLSearchParams(window.location.search);
+    return p.get('id') || null;
+  }
+
+  let clientId = null;
+  let clientData = null;
+
+  // ── Toast ──
+  function toast(msg, ms=3000) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), ms);
+  }
+
+  // ── Render package features ──
+  function renderFeatures(pkg) {
+    const features = BASIC_FEATURES; // extend per pkg later
+    const el = document.getElementById('featureList');
+    el.innerHTML = features.map(f =>
+      `<div class="feature-item"><span class="feature-check">✅</span><span>${f}</span></div>`
+    ).join('');
+  }
+
+  // ── Render upgrades ──
+  function renderUpgrades() {
+    const el = document.getElementById('upgradesList');
+    el.innerHTML = UPGRADES.map(u => {
+      const cls = u.plan ? 'plan' : (u.featured ? 'featured' : '');
+      return `
+        <div class="upgrade-card ${cls}">
+          <div class="upgrade-lock">${u.icon}</div>
+          <div class="upgrade-body">
+            <div class="upgrade-name">${u.name}</div>
+            <div class="upgrade-desc">${u.desc}</div>
+          </div>
+          <div class="upgrade-right">
+            <div>
+              <div class="upgrade-price">${u.price}</div>
+              <div class="upgrade-cadence">${u.cadence}</div>
+            </div>
+            <button class="btn-unlock" id="btn_${u.key}" onclick="checkout('${u.key}')">Unlock →</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Populate page with client data ──
+  function populatePage(data) {
+    clientData = data;
+    const biz = data.bizName || data.businessName || 'Your Business';
+    document.title = `${biz} — Website Portal`;
+    document.getElementById('bizName').textContent = biz;
+    document.getElementById('bizTagline').textContent = `${data.city || ''} · ${data.vertical || 'Website'} · Client Portal`.replace(/^·\s*/, '').replace(/\s*·\s*Website/, data.vertical ? ` · ${data.vertical}` : ' · Website');
+
+    const stagingUrl = data.stagingUrl || data.website || '#';
+    const viewBtn = document.getElementById('viewSiteBtn');
+    if (stagingUrl !== '#') viewBtn.href = stagingUrl;
+
+    // package
+    const pkg = data.package || data.tier || 'Basic';
+    document.getElementById('packageName').textContent = `${pkg} Website`;
+    document.getElementById('packageBadge').textContent = pkg;
+    renderFeatures(pkg);
+    renderUpgrades();
+
+    // stats
+    const updated = data.lastUpdated || data.updatedAt || data.createdAt;
+    if (updated) {
+      document.getElementById('statUpdated').textContent = new Date(updated).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    }
+    if (stagingUrl && stagingUrl !== '#') {
+      document.getElementById('statUrl').innerHTML = `<a href="${stagingUrl}" target="_blank" rel="noopener">Open ↗</a>`;
+    }
+
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  }
+
+  // ── Fallback demo data ──
+  function loadFallback() {
+    populatePage({
+      bizName: 'Your Business',
+      vertical: 'Local Business',
+      city: '',
+      package: 'Basic',
+      stagingUrl: '#',
+      createdAt: new Date().toISOString(),
+    });
+  }
+
+  // ── Init: fetch client data ──
+  async function init() {
+    clientId = getClientId();
+    if (!clientId) { loadFallback(); return; }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/client/${clientId}`, { signal: AbortSignal.timeout(10000) });
+      if (!res.ok) throw new Error('Not found');
+      const data = await res.json();
+      populatePage(data);
+    } catch (err) {
+      console.warn('Could not load client data:', err.message);
+      loadFallback();
+    }
+  }
+
+  // ── Upload Photos ──
+  document.getElementById('photoInput').addEventListener('change', function() {
+    const files = this.files;
+    if (!files.length) return;
+    const biz = clientData?.bizName || 'My Business';
+    const subject = encodeURIComponent(`Photos for ${biz}`);
+    const body = encodeURIComponent(`Hi Lucy,\n\nI'm uploading ${files.length} photo(s) for my website.\n\nClient ID: ${clientId || 'N/A'}\nBusiness: ${biz}\n\nPlease update my gallery. Thanks!`);
+    window.location.href = `mailto:lucy@diamondpages.ai?subject=${subject}&body=${body}`;
+    showMsg('photoMsg', `📧 Opening email with ${files.length} photo${files.length>1?'s':''}… Attach them before sending!`, 'success');
+  });
+
+  // ── Save Booking Link ──
+  async function saveBookingLink() {
+    const url = document.getElementById('bookingInput').value.trim();
+    if (!url) { showMsg('bookingMsg','Please paste your booking URL first.','error'); return; }
+    const btn = document.getElementById('bookingBtn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      const res = await fetch(`${API_BASE}/api/client/${clientId}/booking-link`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ bookingUrl: url })
+      });
+      if (!res.ok) throw new Error('Server error');
+      showMsg('bookingMsg','✅ Saved! We\'ll update your site within 2 hours.','success');
+      toast('✅ Booking link saved!');
+    } catch {
+      showMsg('bookingMsg','⚠️ Couldn\'t save right now. Email lucy@diamondpages.ai.','error');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Save';
+    }
+  }
+
+  // ── Submit Change Request ──
+  async function submitChange() {
+    const msg = document.getElementById('changeInput').value.trim();
+    if (!msg) { showMsg('changeMsg','Please describe the change you need.','error'); return; }
+    const btn = document.getElementById('changeBtn');
+    btn.disabled = true; btn.textContent = 'Sending…';
+    try {
+      const res = await fetch(`${API_BASE}/api/client/${clientId}/change-request`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ message: msg })
+      });
+      if (!res.ok) throw new Error('Server error');
+      showMsg('changeMsg','✅ Received! We\'ll take care of it shortly.','success');
+      document.getElementById('changeInput').value = '';
+      toast('✅ Change request submitted!');
+    } catch {
+      showMsg('changeMsg','⚠️ Couldn\'t send right now. Email lucy@diamondpages.ai.','error');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Submit Request';
+    }
+  }
+
+  // ── Stripe Checkout ──
+  async function checkout(featureKey) {
+    const priceId = PRICES[featureKey];
+    if (!priceId) { toast('⚠️ Price not configured yet.'); return; }
+    const btn = document.getElementById(`btn_${featureKey}`);
+    if (!btn) return;
+    btn.disabled = true; btn.textContent = '…';
+    try {
+      const res = await fetch(`${API_BASE}/api/checkout`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ priceId, clientId: clientId || 'guest', feature: featureKey })
+      });
+      if (!res.ok) throw new Error('Checkout failed');
+      const data = await res.json();
+      if (data.url) { window.location.href = data.url; }
+      else throw new Error('No URL returned');
+    } catch (err) {
+      toast('⚠️ Checkout unavailable right now. Try again shortly.');
+      btn.disabled = false; btn.textContent = 'Unlock →';
+    }
+  }
+
+  // ── Helper: show field message ──
+  function showMsg(id, text, type) {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = `field-msg ${type}`;
+  }
+
+  init();
+</script>
+</body>
+</html>
