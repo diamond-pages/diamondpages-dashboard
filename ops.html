@@ -1501,12 +1501,18 @@
     </div>
 
     <div class="page" id="page-pipeline">
-      <h2>Pipeline</h2>
-      <p class="section-desc">HubSpot deal pipeline — coming soon.</p>
-      <div class="card" style="margin-top:20px;text-align:center;padding:48px;">
-        <div style="font-size:40px;margin-bottom:12px;">📊</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:6px;">Pipeline not connected</div>
-        <div style="font-size:13px;color:var(--muted)">Requires HubSpot API key. Wire credentials to activate.</div>
+      <div class="section-header">
+        <div>
+          <h2>Pipeline</h2>
+          <p class="section-desc">HubSpot deal pipeline — live data.</p>
+        </div>
+        <button onclick="loadPipeline()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;">↻ Refresh</button>
+      </div>
+
+      <div id="pipeline-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;"></div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;" id="pipeline-board">
+        <div style="text-align:center;padding:40px;color:var(--muted);">Loading pipeline...</div>
       </div>
     </div>
 
@@ -1528,6 +1534,87 @@
   document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
+
+  // ── Load Pipeline (HubSpot) ──
+  async function loadPipeline() {
+    try {
+      // Fetch pipeline data via our API proxy (keeps token server-side)
+      const [dealsRes, contactsRes] = await Promise.all([
+        fetch('https://api.diamondpages.ai/api/pipeline/deals'),
+        fetch('https://api.diamondpages.ai/api/pipeline/contacts')
+      ]);
+      
+      const dealsData = await dealsRes.json();
+      const contactsData = await contactsRes.json();
+      const deals = dealsData.results || [];
+      const contacts = contactsData.results || [];
+
+      // Group by stage
+      const stages = {
+        'New Lead': [],
+        'Audit Sent': [],
+        'Call Scheduled': [],
+        'Proposal Sent': [],
+        'Negotiation': [],
+        'Closed Won': [],
+        'Closed Lost': []
+      };
+
+      // Use contacts as leads (since deals may be sparse)
+      contacts.forEach(c => {
+        const p = c.properties;
+        const stage = p.lifecyclestage === 'customer' ? 'Closed Won' : 'New Lead';
+        if (stages[stage]) stages[stage].push({
+          name: (p.firstname || '') + ' ' + (p.lastname || ''),
+          company: p.company || '—',
+          email: p.email || '',
+          score: p.audit_score || null,
+          tier: p.tier_interest || null
+        });
+      });
+
+      // Stats
+      const total = contacts.length;
+      const closedWon = stages['Closed Won'].length;
+      const newLeads = stages['New Lead'].length;
+      const auditSent = contacts.filter(c => c.properties.audit_score).length;
+
+      document.getElementById('pipeline-stats').innerHTML = `
+        <div class="stat-card"><div class="stat-label">Total Contacts</div><div class="stat-value">${total}</div></div>
+        <div class="stat-card"><div class="stat-label">New Leads</div><div class="stat-value" style="color:var(--blue)">${newLeads}</div></div>
+        <div class="stat-card"><div class="stat-label">Audits Sent</div><div class="stat-value" style="color:var(--yellow)">${auditSent}</div></div>
+        <div class="stat-card"><div class="stat-label">Closed Won</div><div class="stat-value" style="color:var(--green)">${closedWon}</div></div>
+      `;
+
+      // Pipeline board - show key stages
+      const displayStages = ['New Lead', 'Audit Sent', 'Call Scheduled', 'Closed Won'];
+      document.getElementById('pipeline-board').innerHTML = displayStages.map(stageName => {
+        const items = stages[stageName] || [];
+        const stageColor = stageName === 'Closed Won' ? 'var(--green)' : stageName === 'New Lead' ? 'var(--blue)' : 'var(--accent)';
+        return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+            <div style="font-size:12px;font-weight:700;color:${stageColor};text-transform:uppercase;letter-spacing:.06em;">${stageName}</div>
+            <div style="font-size:11px;background:var(--elevated);color:var(--muted);padding:2px 8px;border-radius:99px;">${items.length}</div>
+          </div>
+          ${items.length === 0 
+            ? '<div style="font-size:12px;color:var(--muted);text-align:center;padding:16px 0;">Empty</div>'
+            : items.slice(0,5).map(item => `
+              <div style="padding:8px 10px;background:var(--elevated);border-radius:8px;margin-bottom:6px;">
+                <div style="font-size:12px;font-weight:600;">${item.company || item.name}</div>
+                <div style="font-size:11px;color:var(--muted);">${item.email}</div>
+                ${item.score ? `<div style="font-size:10px;color:var(--accent);margin-top:2px;">Score: ${item.score}/100</div>` : ''}
+              </div>`).join('')
+          }
+        </div>`;
+      }).join('');
+
+    } catch(err) {
+      document.getElementById('pipeline-board').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--red);">Error loading pipeline: ${err.message}</div>`;
+    }
+  }
+
+  // Auto-load audits when page shown
+  const _origShowPage = showPage;
 
   // ── Load Audits ──
   async function loadAudits() {
@@ -1687,6 +1774,7 @@
   const titles = {
     overview: 'Overview',
     audits: 'Audits',
+    pipeline: 'Pipeline',
     agents: 'Agent Stack',
     ops: 'Ops & Dev Tasks',
     projections: 'Year 1 Projections',
@@ -1704,6 +1792,7 @@
     btn.classList.add('active');
     document.getElementById('topbar-title').textContent = titles[id];
     if (id === 'audits') loadAudits();
+    if (id === 'pipeline') loadPipeline();
   }
   // ═══════════════════════════════════════════
   // PROJECTIONS ENGINE

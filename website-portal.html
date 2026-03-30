@@ -554,27 +554,37 @@
   <div class="section-label">Manage Your Site</div>
   <div class="actions-grid">
 
-    <!-- Add Photos -->
+    <!-- Upload Photos & Logo -->
     <div class="action-card" id="card-photos">
-      <div class="action-header" onclick="toggleCard('photos')">
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:16px 18px 0;">
         <div class="action-icon">📷</div>
-        <div>
-          <div class="action-title">Add Photos</div>
-          <div class="action-desc">Upload photos — we'll add them within 24 hours</div>
+        <div style="flex:1;min-width:0;">
+          <div class="action-title">Upload Photos &amp; Logo</div>
+          <div class="action-desc">Add your logo and photos — we'll update your site within 24 hours.</div>
         </div>
-        <div class="action-chevron">›</div>
       </div>
-      <div class="action-body">
-        <div class="drop-zone" id="dropZone" onclick="document.getElementById('photoInput').click()">
-          <div style="font-size:32px;">📸</div>
-          <p><strong>Tap to select photos</strong><br>or drag & drop here</p>
-          <input type="file" id="photoInput" accept="image/*" multiple onchange="handleFiles(this.files)" />
+      <div style="padding:0 18px 18px;">
+        <div id="upload-area" style="margin-top:12px;border:2px dashed #d1fae5;border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:#f0fdf4;transition:background .2s;"
+          onclick="document.getElementById('file-input').click()"
+          ondragover="event.preventDefault();this.style.background='#dcfce7'"
+          ondragleave="this.style.background='#f0fdf4'"
+          ondrop="handleDrop(event)">
+          <div style="font-size:32px;margin-bottom:8px;">📁</div>
+          <div style="font-size:14px;font-weight:600;color:#0d9488;">Tap to select files</div>
+          <div style="font-size:12px;color:#94a3b8;margin-top:4px;">JPG, PNG, PDF — up to 10 files, 10MB each</div>
         </div>
-        <div class="file-list" id="fileList"></div>
-        <button class="btn-teal" id="sendPhotosBtn" style="display:none;" onclick="submitPhotos()">
-          Send to Lucy ✉️
-        </button>
-        <div id="photoMsg"></div>
+
+        <input type="file" id="file-input" multiple accept="image/*,.pdf" style="display:none" onchange="handleFiles(this.files)">
+
+        <div id="file-list" style="margin-top:10px;display:none;">
+          <div id="file-items"></div>
+          <button onclick="uploadFiles()" id="upload-btn"
+            style="width:100%;margin-top:10px;background:#0d9488;color:white;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;">
+            📤 Upload Files
+          </button>
+        </div>
+
+        <div id="upload-status" style="margin-top:10px;font-size:13px;display:none;"></div>
       </div>
     </div>
 
@@ -790,11 +800,15 @@
   };
 
   let client = { ...DEFAULT_CLIENT };
-  let selectedFiles = [];
 
   // ── Parse URL params ──
   const params = new URLSearchParams(window.location.search);
   const clientId = params.get('client') || DEFAULT_CLIENT.clientId;
+
+  // ── Upload state ──
+  var selectedFiles = [];
+  var portalClientId = new URLSearchParams(window.location.search).get('client') || 'unknown';
+  var portalBizName = DEFAULT_CLIENT.bizName;
 
   // ── Init ──
   async function init() {
@@ -814,6 +828,7 @@
   }
 
   function renderClient() {
+    portalBizName = client.bizName;
     const nameEls = [document.getElementById('bizNameHeader'), document.getElementById('bizNameFooter')];
     nameEls.forEach(el => { if (el) el.textContent = client.bizName; });
 
@@ -842,64 +857,63 @@
     if (!isOpen) card.classList.add('open');
   }
 
-  // ── Photos ──
-  function handleFiles(files) {
-    selectedFiles = Array.from(files);
-    const list = document.getElementById('fileList');
-    const btn = document.getElementById('sendPhotosBtn');
-    if (selectedFiles.length) {
-      list.innerHTML = selectedFiles.map(f => `<div class="file-item">${f.name}</div>`).join('');
-      btn.style.display = 'inline-flex';
-    } else {
-      list.innerHTML = '';
-      btn.style.display = 'none';
-    }
+  // ── File Upload ──
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('upload-area').style.background = '#f0fdf4';
+    handleFiles(e.dataTransfer.files);
   }
 
-  // Drag & drop
-  const dz = document.getElementById('dropZone');
-  ['dragenter','dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('hover'); }));
-  ['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('hover'); }));
-  dz.addEventListener('drop', ev => {
-    if (ev.dataTransfer?.files?.length) handleFiles(ev.dataTransfer.files);
-  });
+  function handleFiles(files) {
+    selectedFiles = Array.from(files);
+    var fileItems = document.getElementById('file-items');
+    var fileList = document.getElementById('file-list');
+    fileItems.innerHTML = selectedFiles.map(function(f) {
+      return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;border-bottom:1px solid #f1f5f9;">'
+        + '<span style="font-size:16px;">' + (f.type.includes('image') ? '🖼️' : '📄') + '</span>'
+        + '<span style="flex:1;">' + f.name + '</span>'
+        + '<span style="color:#94a3b8;font-size:11px;">' + (f.size/1024/1024).toFixed(1) + 'MB</span>'
+        + '</div>';
+    }).join('');
+    fileList.style.display = 'block';
+  }
 
-  async function submitPhotos() {
-    const btn = document.getElementById('sendPhotosBtn');
-    const msgEl = document.getElementById('photoMsg');
-    if (!selectedFiles.length) return;
-
+  function uploadFiles() {
+    if (selectedFiles.length === 0) return;
+    var btn = document.getElementById('upload-btn');
+    var status = document.getElementById('upload-status');
     btn.disabled = true;
-    btn.textContent = 'Sending…';
+    btn.textContent = '⏳ Uploading...';
+    status.style.display = 'block';
+    status.style.color = '#0d9488';
+    status.textContent = 'Uploading ' + selectedFiles.length + ' file(s)...';
 
-    try {
-      const formData = new FormData();
-      formData.append('clientId', client.clientId);
-      formData.append('bizName', client.bizName);
-      selectedFiles.forEach(f => formData.append('photos', f));
+    var formData = new FormData();
+    formData.append('clientId', portalClientId);
+    formData.append('bizName', portalBizName);
+    selectedFiles.forEach(function(f) { formData.append('files', f); });
 
-      const res = await fetch(`${API_BASE}/api/website/photos`, {
-        method: 'POST',
-        body: formData,
-        signal: AbortSignal.timeout(15000)
-      });
-
-      if (res.ok) {
-        msgEl.innerHTML = '<div class="msg-success">✅ Photos sent! We\'ll have them on your site within 24 hours.</div>';
-        document.getElementById('fileList').innerHTML = '';
+    fetch('https://api.diamondpages.ai/api/website/upload', {
+      method: 'POST',
+      body: formData
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.success) {
+        status.textContent = '✅ ' + data.count + ' file(s) uploaded! Our team will update your site within 24 hours.';
+        status.style.color = '#16a34a';
         btn.style.display = 'none';
-        selectedFiles = [];
-        return;
+        document.getElementById('file-list').innerHTML = '<div style="font-size:13px;color:#16a34a;margin-top:8px;">' + status.textContent + '</div>';
+      } else {
+        throw new Error(data.error || 'Upload failed');
       }
-    } catch (e) { /* fall through to email fallback */ }
-
-    // Fallback: mailto
-    const subject = encodeURIComponent(`Photos for ${client.bizName}`);
-    const body = encodeURIComponent(`Hi Lucy, here are my photos for the website.`);
-    window.location.href = `mailto:lucy@diamondpages.ai?subject=${subject}&body=${body}`;
-    msgEl.innerHTML = '<div class="msg-success">📧 Opening your email app — just attach your photos and send!</div>';
-    btn.disabled = false;
-    btn.textContent = 'Send to Lucy ✉️';
+    })
+    .catch(function(err) {
+      btn.disabled = false;
+      btn.textContent = '📤 Try Again';
+      status.textContent = '❌ Upload failed: ' + err.message + '. Email files to lucy@diamondpages.ai';
+      status.style.color = '#dc2626';
+    });
   }
 
   // ── Change request ──
