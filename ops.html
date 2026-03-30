@@ -1517,13 +1517,16 @@
     </div>
 
     <div class="page" id="page-reporting">
-      <h2>Reporting</h2>
-      <p class="section-desc">Client performance reporting — coming soon.</p>
-      <div class="card" style="margin-top:20px;text-align:center;padding:48px;">
-        <div style="font-size:40px;margin-bottom:12px;">📈</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:6px;">Reporting not active</div>
-        <div style="font-size:13px;color:var(--muted)">Requires Semrush + GBP API + active clients. Coming in Phase 2.</div>
+      <div class="section-header">
+        <div>
+          <h2>Reporting</h2>
+          <p class="section-desc">Live performance data for all active clients — powered by DataForSEO + Google Places.</p>
+        </div>
+        <button onclick="loadReporting()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;">↻ Refresh</button>
       </div>
+
+      <div id="reporting-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;"></div>
+      <div id="reporting-table-wrap" class="card" style="padding:0;overflow:hidden;"></div>
     </div>
 
   </div>
@@ -1534,6 +1537,88 @@
   document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
+
+  // ── Load Reporting (DataForSEO + clients) ──
+  async function loadReporting() {
+    document.getElementById('reporting-stats').innerHTML = '<div style="grid-column:1/-1;padding:20px;color:var(--muted);text-align:center;">Loading client data...</div>';
+    document.getElementById('reporting-table-wrap').innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);">Fetching rankings...</div>';
+
+    try {
+      const [clientsRes, auditsRes] = await Promise.all([
+        fetch('https://api.diamondpages.ai/api/admin/clients'),
+        fetch('https://api.diamondpages.ai/api/audits')
+      ]);
+      const clientsData = await clientsRes.json();
+      const auditsData = await auditsRes.json();
+      const clients = clientsData.clients || [];
+      const audits = auditsData.audits || [];
+
+      // Stats
+      const activeClients = clients.filter(c => c.active).length;
+      const avgScore = clients.length ? Math.round(clients.reduce((s,c) => s+(c.auditScore||0),0)/clients.length) : 0;
+      const ranked = clients.filter(c => c.mapPackRank && typeof c.mapPackRank === 'number' && c.mapPackRank <= 10).length;
+      const totalMRR = clients.reduce((s,c) => s + (c.tier==='Pro'?1997:c.tier==='Growth'?997:397), 0);
+
+      document.getElementById('reporting-stats').innerHTML = `
+        <div class="stat-card"><div class="stat-label">Active Clients</div><div class="stat-value">${activeClients}</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Diamond Score</div><div class="stat-value" style="color:var(--accent)">${avgScore}/100</div></div>
+        <div class="stat-card"><div class="stat-label">In Top 10 Maps</div><div class="stat-value" style="color:var(--green)">${ranked}</div></div>
+        <div class="stat-card"><div class="stat-label">MRR</div><div class="stat-value" style="color:var(--blue)">$${totalMRR.toLocaleString()}</div></div>
+      `;
+
+      const td = 'padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;';
+      const scoreColor = s => s >= 71 ? 'var(--green)' : s >= 41 ? 'var(--yellow)' : 'var(--red)';
+      const rankDisplay = r => typeof r === 'number' ? (r<=3?`<span style="color:var(--green);font-weight:800">#${r}</span>`:r<=7?`<span style="color:var(--yellow);font-weight:700">#${r}</span>`:`<span style="color:var(--muted)">#${r}</span>`) : '<span style="color:var(--muted);font-size:11px">—</span>';
+      const tierBadge = t => `<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${t==='Pro'?'rgba(99,102,241,.15)':t==='Growth'?'var(--accent-dim)':'rgba(113,113,122,.15)'};color:${t==='Pro'?'#818cf8':t==='Growth'?'var(--accent)':'var(--muted)'}">${t||'Starter'}</span>`;
+
+      document.getElementById('reporting-table-wrap').innerHTML = `
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr style="background:var(--elevated);">
+                <th style="${td}text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);">Client</th>
+                <th style="${td}text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);">Score</th>
+                <th style="${td}text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);">Maps Rank</th>
+                <th style="${td}text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);">Rating</th>
+                <th style="${td}text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);">Tier</th>
+                <th style="${td}text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);">Start</th>
+                <th style="${td}text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);">Dashboard</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${clients.length === 0 
+                ? '<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--muted);">No active clients yet</td></tr>'
+                : clients.map(c => `<tr style="transition:background .1s;" onmouseover="this.style.background='var(--elevated)'" onmouseout="this.style.background=''">
+                  <td style="${td}">
+                    <div style="font-weight:600">${c.bizName||'—'}</div>
+                    <div style="font-size:11px;color:var(--muted)">${c.vertical||''} · ${c.city||''}</div>
+                  </td>
+                  <td style="${td}text-align:center;font-size:18px;font-weight:900;color:${scoreColor(c.auditScore||0)}">${c.auditScore||'—'}</td>
+                  <td style="${td}text-align:center;">${rankDisplay(c.mapPackRank)}</td>
+                  <td style="${td}text-align:center;color:var(--yellow)">${c.rating ? c.rating+'★' : '—'}</td>
+                  <td style="${td}text-align:center;">${tierBadge(c.tier)}</td>
+                  <td style="${td}text-align:center;font-size:11px;color:var(--muted)">${c.startDate ? new Date(c.startDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—'}</td>
+                  <td style="${td}text-align:center;"><a href="https://app.diamondpages.ai/${c.clientId}" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;font-weight:600">View →</a></td>
+                </tr>`).join('')
+              }
+            </tbody>
+          </table>
+        </div>
+        ${audits.length > 0 ? `
+        <div style="padding:16px 20px;border-top:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;">Recent Audit Activity</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            ${audits.slice(0,6).map(a => `<div style="background:var(--elevated);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;">
+              <span style="font-weight:600">${a.bizName||'?'}</span>
+              <span style="color:var(--muted);margin-left:6px">${a.score||'?'}/100</span>
+            </div>`).join('')}
+          </div>
+        </div>` : ''}
+      `;
+    } catch(err) {
+      document.getElementById('reporting-table-wrap').innerHTML = `<div style="padding:40px;text-align:center;color:var(--red);">Error: ${err.message}</div>`;
+    }
+  }
 
   // ── Load Pipeline (HubSpot) ──
   async function loadPipeline() {
@@ -1775,6 +1860,7 @@
     overview: 'Overview',
     audits: 'Audits',
     pipeline: 'Pipeline',
+    reporting: 'Reporting',
     agents: 'Agent Stack',
     ops: 'Ops & Dev Tasks',
     projections: 'Year 1 Projections',
@@ -1782,6 +1868,7 @@
     onboarding: 'Onboarding Flow',
     clients: 'Clients',
     pipeline: 'Pipeline',
+    reporting: 'Reporting',
     reporting: 'Reporting'
   };
 
@@ -1793,6 +1880,7 @@
     document.getElementById('topbar-title').textContent = titles[id];
     if (id === 'audits') loadAudits();
     if (id === 'pipeline') loadPipeline();
+    if (id === 'reporting') loadReporting();
   }
   // ═══════════════════════════════════════════
   // PROJECTIONS ENGINE
