@@ -669,6 +669,9 @@
     <button class="nav-item" onclick="showPage('audits', this)">
       <span class="icon">🔍</span> Audits
     </button>
+    <button class="nav-item" onclick="showPage('stack', this)">
+      <span class="icon">⚡</span> Stack & APIs
+    </button>
     <button class="nav-item" onclick="showPage('clients', this)">
       <span class="icon">👥</span> Clients
     </button>
@@ -1538,6 +1541,51 @@
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
 
+  // ── Stack page: check API status ──
+  async function loadStack() {
+    const apis = [
+      { name: 'Audit API Server', icon: '💎', url: 'https://api.diamondpages.ai/health', key: 'status', expected: 'ok', color: '#0d9488' },
+      { name: 'DataForSEO', icon: '🗺️', note: 'Maps rank + competitor data', status: 'configured', cost: '$0.002/query', color: '#3b82f6' },
+      { name: 'Google Places API', icon: '📍', note: 'GBP data, ratings, photos', status: 'configured', cost: '~$0.017/req', color: '#16a34a' },
+      { name: 'PageSpeed Insights', icon: '⚡', note: 'Website speed scoring', status: 'configured', cost: 'Free', color: '#d97706' },
+      { name: 'OpenAI GPT-4o-mini', icon: '🤖', note: 'ChatGPT visibility checks', status: 'configured', cost: '~$0.001/audit', color: '#6366f1' },
+      { name: 'Perplexity Sonar', icon: '🔍', note: 'AI search visibility', status: 'configured', cost: 'Pay-as-go', color: '#a855f7' },
+      { name: 'HubSpot CRM', icon: '📋', note: 'Contacts, pipeline, email templates', status: 'configured', cost: 'Free tier', color: '#f97316' },
+      { name: 'Lucy Gmail', icon: '📧', note: 'lucy@diamondpages.ai — email sequences', status: 'configured', cost: 'Google Workspace', color: '#ef4444' },
+      { name: 'Twilio SMS', icon: '📱', note: 'SMS notifications + client texts', status: 'pending verification', cost: '$0.0079/SMS', color: '#d97706' },
+      { name: 'Stripe', icon: '💳', note: '7 products created (test mode)', status: 'test mode', cost: '2.9% + $0.30', color: '#6366f1' },
+      { name: 'Cloudflare Access', icon: '🔐', note: 'Google login for portals', status: 'active', cost: 'Free (50 users)', color: '#f97316' },
+      { name: 'Calendly', icon: '📅', note: 'calendly.com/lucy-diamondpages/30min', status: 'active', cost: 'Free', color: '#0d9488' },
+    ];
+
+    // Check live API health
+    let serverStatus = 'checking...';
+    try {
+      const r = await fetch('https://api.diamondpages.ai/health');
+      const d = await r.json();
+      serverStatus = d.status === 'ok' ? '✅ Online' : '❌ Error';
+    } catch { serverStatus = '❌ Offline'; }
+    apis[0].liveStatus = serverStatus;
+
+    document.getElementById('api-cards').innerHTML = apis.map(api => {
+      const statusColor = (api.liveStatus||api.status).includes('✅')||api.status==='configured'||api.status==='active' ? api.color : api.status==='pending verification'||api.status==='test mode' ? '#d97706' : '#ef4444';
+      const statusText = api.liveStatus || (api.status==='configured'?'✅ Connected':api.status==='active'?'✅ Active':api.status==='pending verification'?'⏳ Pending':api.status==='test mode'?'🔧 Test Mode':'—');
+      return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.1);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="width:36px;height:36px;border-radius:9px;background:${api.color}22;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${api.icon}</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;">${api.name}</div>
+            <div style="font-size:11px;color:var(--muted);">${api.note||''}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:11px;font-weight:600;color:${statusColor};">${statusText}</span>
+          <span style="font-size:10px;color:var(--muted);">${api.cost||''}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
   // ── Load Reporting (DataForSEO + clients) ──
   async function loadReporting() {
     document.getElementById('reporting-stats').innerHTML = '<div style="grid-column:1/-1;padding:20px;color:var(--muted);text-align:center;">Loading client data...</div>';
@@ -1861,6 +1909,7 @@
     audits: 'Audits',
     pipeline: 'Pipeline',
     reporting: 'Reporting',
+    stack: 'Stack & APIs',
     agents: 'Agent Stack',
     ops: 'Ops & Dev Tasks',
     projections: 'Year 1 Projections',
@@ -1869,6 +1918,7 @@
     clients: 'Clients',
     pipeline: 'Pipeline',
     reporting: 'Reporting',
+    stack: 'Stack & APIs',
     reporting: 'Reporting'
   };
 
@@ -1881,6 +1931,7 @@
     if (id === 'audits') loadAudits();
     if (id === 'pipeline') loadPipeline();
     if (id === 'reporting') loadReporting();
+    if (id === 'stack') loadStack();
   }
   // ═══════════════════════════════════════════
   // PROJECTIONS ENGINE
