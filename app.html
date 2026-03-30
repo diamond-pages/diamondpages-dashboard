@@ -1,491 +1,994 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DiamondPages Dashboard</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0d9488">
   <style>
+    /* ═══════════════ RESET + BASE ═══════════════ */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; min-height: 100vh; }
 
-    /* Loading */
-    #loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
-    .spinner { width: 44px; height: 44px; border: 3px solid #e2e8f0; border-top-color: #0d9488; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    :root {
+      --teal:      #0d9488;
+      --teal2:     #14b8a6;
+      --teal-dim:  rgba(13,148,136,0.1);
+      --teal-glow: rgba(13,148,136,0.25);
+      --bg:        #f8fafc;
+      --surface:   #ffffff;
+      --border:    rgba(0,0,0,0.07);
+      --text:      #1e293b;
+      --text2:     #475569;
+      --muted:     #94a3b8;
+      --subtle:    #f1f5f9;
+      --shadow:    0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      --green:     #16a34a;
+      --green-dim: rgba(22,163,74,0.1);
+      --amber:     #d97706;
+      --amber-dim: rgba(217,119,6,0.1);
+      --red:       #dc2626;
+      --red-dim:   rgba(220,38,38,0.1);
+      --blue:      #2563eb;
+      --blue-dim:  rgba(37,99,235,0.1);
+      --purple:    #7c3aed;
+      --radius:    14px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; }
+
+    /* ═══════════════ LOADING / ERROR ═══════════════ */
+    #loading-state {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; gap: 16px;
+    }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 3px solid #e2e8f0;
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text { color: #64748b; font-size: 15px; }
+    .loading-text { color: var(--muted); font-size: 15px; }
 
-    /* Error */
-    #error-state { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 12px; padding: 24px; text-align: center; }
-    .error-icon { font-size: 48px; }
-    .error-title { font-size: 20px; font-weight: 600; color: #1e293b; }
-    .error-sub { font-size: 14px; color: #64748b; }
-    .error-link { color: #0d9488; text-decoration: none; }
+    #error-state {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; gap: 12px; padding: 24px; text-align: center;
+    }
+    .error-icon  { font-size: 48px; }
+    .error-title { font-size: 20px; font-weight: 700; }
+    .error-sub   { font-size: 14px; color: var(--muted); }
+    .error-link  { color: var(--teal); }
 
-    /* Dashboard */
-    #dashboard-state { display: none; max-width: 480px; margin: 0 auto; padding: 0 0 56px; }
+    /* ═══════════════ DASHBOARD ═══════════════ */
+    #dashboard-state { display: none; max-width: 520px; margin: 0 auto; padding-bottom: 60px; }
 
-    /* Header */
+    /* ═══════════════ HEADER ═══════════════ */
     .header {
-      background: linear-gradient(135deg, #0d9488 0%, #0f766e 60%, #115e59 100%);
+      background: linear-gradient(135deg, #0d9488 0%, #0f766e 55%, #115e59 100%);
       color: white;
-      padding: 28px 24px 32px;
-      position: relative;
+      padding: 24px 20px 28px;
+      position: sticky; top: 0; z-index: 100;
       overflow: hidden;
     }
     .header::before {
-      content: '';
-      position: absolute;
-      top: -40px; right: -40px;
-      width: 160px; height: 160px;
+      content: ''; position: absolute; top: -50px; right: -30px;
+      width: 170px; height: 170px; border-radius: 50%;
       background: rgba(255,255,255,0.06);
-      border-radius: 50%;
     }
     .header::after {
-      content: '';
-      position: absolute;
-      bottom: -30px; right: 40px;
-      width: 100px; height: 100px;
+      content: ''; position: absolute; bottom: -40px; right: 50px;
+      width: 110px; height: 110px; border-radius: 50%;
       background: rgba(255,255,255,0.04);
-      border-radius: 50%;
     }
     .header-logo {
-      font-size: 13px;
-      font-weight: 700;
-      opacity: 0.9;
-      letter-spacing: 0.6px;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 12px; font-weight: 700; opacity: 0.85; letter-spacing: 0.5px;
+      margin-bottom: 10px; display: flex; align-items: center; gap: 5px;
     }
+    .header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .header-left { flex: 1; min-width: 0; }
     .header-biz {
-      font-size: 24px;
-      font-weight: 800;
-      line-height: 1.25;
-      margin-bottom: 12px;
-      letter-spacing: -0.3px;
+      font-size: 22px; font-weight: 800; line-height: 1.2;
+      letter-spacing: -0.3px; margin-bottom: 10px;
     }
+    .header-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .tier-badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.4);
-      color: white;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 12px;
-      border-radius: 20px;
-      letter-spacing: 0.7px;
-      text-transform: uppercase;
+      background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);
+      color: white; font-size: 10px; font-weight: 700;
+      padding: 4px 10px; border-radius: 20px; letter-spacing: 0.7px; text-transform: uppercase;
     }
+    .header-site-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.35);
+      color: white; font-size: 11px; font-weight: 600;
+      padding: 5px 11px; border-radius: 20px; white-space: nowrap;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .header-site-btn:hover { background: rgba(255,255,255,0.25); }
+    .header-score-mini {
+      flex-shrink: 0; text-align: center;
+    }
+    .score-mini-ring {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: conic-gradient(var(--color, #16a34a) 0% var(--pct, 50%), rgba(255,255,255,0.15) 0%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .score-mini-inner {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(0,0,0,0.25);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .score-mini-num { font-size: 16px; font-weight: 800; color: white; line-height: 1; }
+    .score-mini-lbl { font-size: 8px; color: rgba(255,255,255,0.75); letter-spacing: 0.3px; margin-top: 1px; }
 
-    /* Cards */
-    .card {
+    /* ═══════════════ TAB NAV ═══════════════ */
+    .tab-nav {
       background: white;
-      border-radius: 14px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
-      margin: 14px 16px 0;
-      padding: 22px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex; overflow-x: auto;
+      position: sticky; top: 0; z-index: 99;
+      /* If header is sticky too, tab nav sticks below it — but since header is sticky at top:0,
+         this will naturally flow below it while scrolling. We make tab-nav also sticky at correct offset. */
     }
-    .card-title {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #94a3b8;
-      margin-bottom: 16px;
-      padding-left: 10px;
-      border-left: 3px solid #0d9488;
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0;
+      padding: 13px 16px;
+      font-size: 13px; font-weight: 500; color: var(--muted);
+      background: none; border: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap; transition: all 0.15s;
+      min-height: 44px;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 600; }
+
+    /* ═══════════════ TAB CONTENT ═══════════════ */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+    /* ═══════════════ CARDS ═══════════════ */
+    .card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow); margin: 14px 16px 0; padding: 20px 18px;
+    }
+    .card-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--muted);
+      margin-bottom: 14px;
+      padding-left: 9px; border-left: 3px solid var(--teal);
     }
 
-    /* Score */
-    .score-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-    .score-ring { transform: rotate(-90deg); filter: drop-shadow(0 0 10px rgba(13,148,136,0.25)); }
+    /* ═══════════════ KPI GRID ═══════════════ */
+    .kpi-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin: 14px 16px 0;
+    }
+    .kpi-card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 16px 14px 14px;
+      border-top: 3px solid var(--teal);
+    }
+    .kpi-card.amber { border-top-color: var(--amber); }
+    .kpi-card.blue  { border-top-color: var(--blue); }
+    .kpi-card.purple { border-top-color: var(--purple); }
+    .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 7px; display: flex; align-items: center; gap: 4px; }
+    .kpi-value { font-size: 24px; font-weight: 800; color: var(--text); line-height: 1; margin-bottom: 4px; }
+    .kpi-sub   { font-size: 11px; color: var(--muted); }
+
+    /* ═══════════════ SCORE SECTION ═══════════════ */
+    .score-section { padding: 22px 18px; }
+    .score-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .score-svg-wrap { filter: drop-shadow(0 0 14px var(--teal-glow)); }
     .score-track { fill: none; stroke: #f1f5f9; stroke-width: 13; }
     .score-fill {
-      fill: none;
-      stroke-width: 13;
-      stroke-linecap: round;
-      stroke-dasharray: 346;
-      stroke-dashoffset: 346;
-      transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease;
+      fill: none; stroke-width: 13; stroke-linecap: round;
+      stroke-dasharray: 346; stroke-dashoffset: 346;
+      transition: stroke-dashoffset 1.3s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease;
     }
-    .score-tagline { font-size: 13px; color: #64748b; text-align: center; line-height: 1.6; max-width: 280px; }
+    .score-tagline { font-size: 13px; color: var(--text2); text-align: center; line-height: 1.6; max-width: 290px; }
 
-    /* KPIs */
-    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 16px 0; }
-    .kpi-card {
-      background: white;
-      border-radius: 14px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
-      padding: 16px 10px 14px;
-      text-align: center;
-      border-top: 3px solid transparent;
+    /* ═══════════════ THIS WEEK ═══════════════ */
+    .week-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .week-item { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; color: var(--text2); line-height: 1.45; }
+    .week-check { color: var(--teal); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ═══════════════ MESSAGE LUCY ═══════════════ */
+    .lucy-form { display: flex; flex-direction: column; gap: 10px; }
+    .lucy-textarea {
+      width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0;
+      border-radius: 10px; font-size: 13px; font-family: inherit;
+      color: var(--text); resize: none; outline: none;
+      transition: border-color 0.15s;
+      background: var(--subtle);
     }
-    .kpi-card.rank  { border-top-color: #0d9488; }
-    .kpi-card.rating { border-top-color: #d97706; }
-    .kpi-card.speed { border-top-color: #2563eb; }
-    .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: #94a3b8; margin-bottom: 7px; }
-    .kpi-value { font-size: 26px; font-weight: 800; color: #1e293b; line-height: 1; }
-    .kpi-sub { font-size: 10px; color: #94a3b8; margin-top: 4px; }
+    .lucy-textarea:focus { border-color: var(--teal); background: white; }
+    .lucy-send-btn {
+      align-self: flex-end;
+      background: var(--teal); color: white;
+      border: none; border-radius: 10px;
+      padding: 11px 22px; font-size: 13px; font-weight: 700;
+      transition: background 0.15s; min-height: 44px;
+    }
+    .lucy-send-btn:hover { background: #0f766e; }
+    .lucy-send-status { font-size: 12px; color: var(--teal); display: none; }
 
-    /* Competitors */
+    /* ═══════════════ RANKINGS ═══════════════ */
+    .rank-hero { text-align: center; padding: 18px 0 4px; }
+    .rank-hero-num { font-size: 52px; font-weight: 900; color: var(--teal); line-height: 1; letter-spacing: -2px; }
+    .rank-hero-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    .comp-list { display: flex; flex-direction: column; gap: 0; }
     .comp-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #f1f5f9;
-      font-size: 13px;
-      transition: background 0.15s;
-      border-radius: 6px;
-      padding-left: 4px;
-      padding-right: 4px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13px;
     }
     .comp-row:last-child { border-bottom: none; }
-    .comp-row:hover { background: #f8fafc; }
-    .comp-row-inner { display: flex; align-items: center; gap: 10px; }
+    .comp-row.is-client { background: var(--teal-dim); margin: 0 -18px; padding: 11px 18px; }
+    .comp-left { display: flex; align-items: center; gap: 10px; }
     .rank-badge {
-      width: 26px; height: 26px;
-      border-radius: 7px;
-      font-size: 11px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      width: 28px; height: 28px; border-radius: 8px; font-size: 14px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .comp-name { color: #334155; font-weight: 500; }
-    .comp-rating { color: #94a3b8; font-size: 12px; }
+    .rank-num {
+      width: 28px; height: 28px; border-radius: 8px;
+      font-size: 11px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .rank-num.n1  { background: #fef3c7; color: #d97706; }
+    .rank-num.n2  { background: #f1f5f9; color: #64748b; }
+    .rank-num.n3  { background: #fff7ed; color: #ea580c; }
+    .rank-num.n4p { background: #f8fafc; color: #94a3b8; }
+    .comp-name { color: var(--text2); font-weight: 500; }
+    .comp-name.client { color: var(--teal); font-weight: 700; }
+    .comp-rating { color: var(--muted); font-size: 12px; }
+    .rank-note { font-size: 11px; color: var(--muted); margin-top: 10px; text-align: center; }
 
-    /* Tasks */
-    .task-list { list-style: none; }
-    .task-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 9px;
-      padding: 7px 0;
-      font-size: 13px;
-      color: #475569;
-      line-height: 1.5;
-    }
-    .task-icon { flex-shrink: 0; margin-top: 1px; font-size: 14px; }
-    .task-done .task-icon { color: #0d9488; }
-    .task-next .task-icon { color: #94a3b8; }
-    .section-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: #0d9488;
-      margin-bottom: 8px;
-    }
-    .next-section { margin-top: 18px; }
-    .next-label { color: #94a3b8; }
+    /* AI Visibility */
+    .ai-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .ai-item:last-child { border-bottom: none; }
+    .ai-label { display: flex; align-items: center; gap: 8px; }
+    .ai-badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+    .ai-badge.checking { background: var(--amber-dim); color: var(--amber); }
+    .ai-badge.included { background: var(--teal-dim); color: var(--teal); }
+    .ai-note { font-size: 11px; color: var(--muted); margin-top: 10px; line-height: 1.5; }
 
-    /* Lucy CTA */
-    .cta-card {
-      background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
-      color: white;
-      border-radius: 14px;
-      margin: 14px 16px 0;
-      padding: 24px 20px;
+    /* ═══════════════ SERVICES ═══════════════ */
+    .service-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px;
     }
-    .cta-title { font-size: 18px; font-weight: 800; margin-bottom: 7px; }
-    .cta-sub { font-size: 13px; opacity: 0.85; margin-bottom: 18px; line-height: 1.5; }
-    .cta-btns { display: flex; gap: 10px; }
-    .cta-btn {
-      flex: 1;
-      display: inline-block;
-      background: white;
-      color: #0d9488;
-      font-weight: 700;
-      font-size: 13px;
-      padding: 11px 14px;
-      border-radius: 9px;
-      text-decoration: none;
+    .service-item:last-child { border-bottom: none; }
+    .service-check { font-size: 14px; flex-shrink: 0; }
+    .service-text { color: var(--text2); }
+    .service-item.locked .service-text { color: var(--muted); }
+    .service-item.locked .service-check { opacity: 0.5; }
+
+    .tier-section { margin-bottom: 0; }
+    .tier-heading {
+      font-size: 13px; font-weight: 700; color: var(--text);
+      margin-bottom: 6px; padding: 12px 0 4px;
+      border-bottom: 2px solid var(--teal);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .tier-price { font-size: 11px; color: var(--muted); font-weight: 500; }
+    .upgrade-link {
+      font-size: 11px; color: var(--teal); font-weight: 600;
+      display: inline-flex; align-items: center; gap: 3px; margin-top: 8px;
+    }
+
+    /* ═══════════════ UPGRADE ═══════════════ */
+    .upgrade-heading {
+      font-size: 22px; font-weight: 800; letter-spacing: -0.3px;
+      text-align: center; padding: 20px 16px 0; color: var(--text);
+    }
+    .upgrade-sub { font-size: 13px; color: var(--muted); text-align: center; padding: 6px 24px 0; }
+
+    .upgrade-card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow); margin: 12px 16px 0;
+      padding: 20px 18px; position: relative; overflow: hidden;
+    }
+    .upgrade-card.recommended { border: 2px solid var(--teal); }
+    .recommended-badge {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--teal); color: white;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 10px;
+    }
+    .upgrade-card-icon { font-size: 28px; margin-bottom: 8px; }
+    .upgrade-card-name { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+    .upgrade-card-price { font-size: 13px; color: var(--teal); font-weight: 700; margin-bottom: 8px; }
+    .upgrade-card-desc { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 14px; }
+    .upgrade-card-list { list-style: none; margin-bottom: 16px; display: flex; flex-direction: column; gap: 7px; }
+    .upgrade-card-list li { font-size: 12.5px; color: var(--text2); display: flex; align-items: flex-start; gap: 7px; }
+    .upgrade-card-list li::before { content: '✅'; flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+    .upgrade-btn {
+      display: block; width: 100%; text-align: center;
+      background: var(--teal); color: white;
+      padding: 13px 20px; border-radius: 10px;
+      font-size: 14px; font-weight: 700; border: none;
+      text-decoration: none; transition: background 0.15s;
+      min-height: 44px;
+    }
+    .upgrade-btn:hover { background: #0f766e; }
+    .upgrade-btn.secondary {
+      background: none; border: 2px solid var(--teal); color: var(--teal);
+    }
+    .upgrade-btn.secondary:hover { background: var(--teal-dim); }
+
+    .addons-heading {
+      font-size: 13px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      padding: 20px 16px 4px;
+    }
+    .addon-card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow); margin: 8px 16px 0;
+      padding: 16px 18px; display: flex; align-items: center; gap: 14px;
+    }
+    .addon-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--teal-dim); display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .addon-body { flex: 1; min-width: 0; }
+    .addon-name { font-size: 14px; font-weight: 700; color: var(--text); }
+    .addon-price { font-size: 12px; color: var(--teal); font-weight: 600; margin-top: 1px; }
+    .addon-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .addon-btn {
+      flex-shrink: 0; background: var(--teal); color: white;
+      border: none; border-radius: 9px; padding: 9px 14px;
+      font-size: 12px; font-weight: 700; min-height: 44px; text-decoration: none;
+      display: flex; align-items: center;
+      transition: background 0.15s;
+    }
+    .addon-btn:hover { background: #0f766e; }
+
+    .talk-lucy {
+      background: linear-gradient(135deg, #0d9488, #0f766e);
+      color: white; border-radius: var(--radius);
+      margin: 16px 16px 0; padding: 22px 18px;
       text-align: center;
-      white-space: nowrap;
     }
-    .cta-btn-secondary {
-      flex: 1;
-      display: inline-block;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.35);
-      color: white;
-      font-weight: 700;
-      font-size: 13px;
-      padding: 11px 14px;
-      border-radius: 9px;
-      text-decoration: none;
-      text-align: center;
-      white-space: nowrap;
+    .talk-lucy-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+    .talk-lucy-sub   { font-size: 13px; opacity: 0.85; margin-bottom: 16px; line-height: 1.5; }
+    .talk-lucy-btn {
+      display: inline-block; background: white; color: var(--teal);
+      font-weight: 700; font-size: 14px;
+      padding: 12px 28px; border-radius: 10px; text-decoration: none;
+      transition: opacity 0.15s; min-height: 44px;
+      line-height: calc(44px - 24px);
     }
+    .talk-lucy-btn:hover { opacity: 0.9; }
 
-    /* Mobile safe area */
-    @media (max-width: 480px) {
+    /* ═══════════════ BADGES ═══════════════ */
+    .badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px;
+    }
+    .badge-teal   { background: var(--teal-dim); color: var(--teal); }
+    .badge-green  { background: var(--green-dim); color: var(--green); }
+    .badge-amber  { background: var(--amber-dim); color: var(--amber); }
+    .badge-red    { background: var(--red-dim); color: var(--red); }
+    .badge-blue   { background: var(--blue-dim); color: var(--blue); }
+    .badge-muted  { background: #f1f5f9; color: var(--muted); }
+
+    /* ═══════════════ MOBILE ═══════════════ */
+    @media (max-width: 520px) {
       #dashboard-state { padding-bottom: 80px; }
-      .kpi-grid { gap: 8px; }
-      .cta-btns { flex-direction: column; }
       .card { margin: 12px 12px 0; }
-      .kpi-grid { margin: 12px 12px 0; }
-      .cta-card { margin: 12px 12px 0; }
+      .kpi-grid { margin: 12px 12px 0; gap: 8px; }
+      .upgrade-card, .addon-card { margin: 8px 12px 0; }
+      .talk-lucy { margin: 14px 12px 0; }
+      .addons-heading { padding: 18px 12px 4px; }
+    }
+
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      #dashboard-state { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
     }
   </style>
 </head>
 <body>
 
-  <!-- Loading -->
-  <div id="loading-state">
-    <div class="spinner"></div>
-    <div class="loading-text">Loading your dashboard...</div>
-  </div>
+<!-- Loading -->
+<div id="loading-state">
+  <div class="spinner"></div>
+  <div class="loading-text">Loading your dashboard…</div>
+</div>
 
-  <!-- Error -->
-  <div id="error-state">
-    <div class="error-icon">💎</div>
-    <div class="error-title">Dashboard Not Found</div>
-    <div class="error-sub">We couldn't load your dashboard. Please contact us and we'll get you sorted.</div>
-    <div class="error-sub" style="margin-top:8px;">
-      Email: <a class="error-link" href="mailto:lucy@diamondpages.ai">lucy@diamondpages.ai</a>
+<!-- Error -->
+<div id="error-state">
+  <div class="error-icon">💎</div>
+  <div class="error-title">Dashboard Not Found</div>
+  <div class="error-sub">We couldn't load your dashboard. Please reach out and we'll get you sorted.</div>
+  <div class="error-sub" style="margin-top:8px;">
+    Email: <a class="error-link" href="mailto:lucy@diamondpages.ai">lucy@diamondpages.ai</a>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard-state">
+
+  <!-- ── HEADER ── -->
+  <div class="header">
+    <div class="header-logo">💎 DiamondPages.ai</div>
+    <div class="header-row">
+      <div class="header-left">
+        <div class="header-biz" id="biz-name">Loading…</div>
+        <div class="header-badges">
+          <span class="tier-badge" id="tier-badge">Growth</span>
+          <a class="header-site-btn" id="site-btn" href="#" style="display:none;" target="_blank" rel="noopener">
+            View Staging Site →
+          </a>
+        </div>
+      </div>
+      <div class="header-score-mini">
+        <div class="score-mini-ring" id="mini-ring">
+          <div class="score-mini-inner">
+            <div class="score-mini-num" id="mini-score">—</div>
+            <div class="score-mini-lbl">SCORE</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Dashboard -->
-  <div id="dashboard-state">
+  <!-- ── TAB NAV ── -->
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')">📊 Overview</button>
+    <button class="tab-btn" data-tab="rankings" onclick="showTab('rankings')">🗺️ My Rankings</button>
+    <button class="tab-btn" data-tab="services" onclick="showTab('services')">🛠 Services</button>
+    <button class="tab-btn" data-tab="upgrade" onclick="showTab('upgrade')">🔓 Upgrade</button>
+  </div>
 
-    <!-- Header -->
-    <div class="header">
-      <div class="header-logo">💎 DiamondPages.ai</div>
-      <div class="header-biz" id="biz-name">Loading...</div>
-      <div class="tier-badge" id="tier-badge">Growth</div>
-    </div>
+  <!-- ═══════════════ TAB: OVERVIEW ═══════════════ -->
+  <div class="tab-content active" id="tab-overview">
 
     <!-- Diamond Score -->
     <div class="card">
-      <div class="card-title">Diamond Score</div>
+      <div class="card-label">Diamond Score™</div>
       <div class="score-wrap">
-        <svg width="140" height="140" viewBox="0 0 140 140" class="score-ring">
-          <circle class="score-track" cx="70" cy="70" r="55"></circle>
-          <circle class="score-fill" id="score-circle" cx="70" cy="70" r="55" stroke="#0d9488"></circle>
-          <text id="score-num" x="70" y="70" text-anchor="middle" dominant-baseline="central"
-            style="font-size:34px;font-weight:800;fill:#0d9488;transform:rotate(90deg);transform-origin:70px 70px;">
-            0
-          </text>
-        </svg>
-        <div class="score-tagline" id="score-tagline">Analyzing your visibility...</div>
+        <div class="score-svg-wrap">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle class="score-track" cx="75" cy="75" r="55" transform="rotate(-90 75 75)"></circle>
+            <circle class="score-fill" id="score-circle" cx="75" cy="75" r="55" stroke="#0d9488"
+              transform="rotate(-90 75 75)"></circle>
+            <text id="score-num" x="75" y="70" text-anchor="middle" dominant-baseline="central"
+              style="font-size:36px;font-weight:900;fill:#0d9488;">—</text>
+            <text x="75" y="96" text-anchor="middle"
+              style="font-size:10px;font-weight:600;fill:#94a3b8;letter-spacing:0.5px;">/ 100</text>
+          </svg>
+        </div>
+        <div class="score-tagline" id="score-tagline">Analyzing your local visibility…</div>
       </div>
     </div>
 
-    <!-- KPIs -->
+    <!-- KPI Grid -->
     <div class="kpi-grid">
-      <div class="kpi-card rank">
-        <div class="kpi-label">Maps Rank</div>
+      <div class="kpi-card">
+        <div class="kpi-label">🗺️ Maps Rank</div>
         <div class="kpi-value" id="kpi-rank">—</div>
         <div class="kpi-sub">Local Pack</div>
       </div>
-      <div class="kpi-card rating">
-        <div class="kpi-label">Rating</div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">⭐ Rating</div>
         <div class="kpi-value" id="kpi-rating">—</div>
-        <div class="kpi-sub" id="kpi-reviews"></div>
+        <div class="kpi-sub" id="kpi-reviews">Google Reviews</div>
       </div>
-      <div class="kpi-card speed">
-        <div class="kpi-label">Page Speed</div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">⚡ Website Speed</div>
         <div class="kpi-value" id="kpi-speed">—</div>
-        <div class="kpi-sub">Mobile</div>
+        <div class="kpi-sub">Mobile / 100</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">🤖 AI Visibility</div>
+        <div class="kpi-value" style="font-size:14px;padding-top:4px;">Checking…</div>
+        <div class="kpi-sub"><a onclick="showTab('upgrade')" style="color:#7c3aed;cursor:pointer;">See details →</a></div>
       </div>
     </div>
 
-    <!-- Competitors -->
+    <!-- This Week -->
     <div class="card">
-      <div class="card-title">Competitor Snapshot</div>
-      <div id="competitors">
-        <div style="color:#94a3b8;font-size:13px;">Loading...</div>
-      </div>
-
-      <!-- Competitor Refinement -->
-      <div style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;">
-        <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">Not seeing the right competitors?</div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input id="refine-vertical" type="text" placeholder="e.g. car dealership, used cars, auto sales..."
-            style="flex:1;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;outline:none;">
-          <button onclick="refineCompetitors()"
-            style="background:#0d9488;color:white;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">
-            Update →
-          </button>
-        </div>
-        <div id="refine-status" style="font-size:12px;color:#0d9488;margin-top:6px;display:none;"></div>
-      </div>
-    </div>
-
-    <!-- This Week / Next Week -->
-    <div class="card">
-      <div class="card-title">Your Growth Plan</div>
-
-      <div class="section-label">This Week</div>
-      <ul class="task-list">
-        <li class="task-done"><span class="task-icon">✓</span>2 Google Business Profile posts published</li>
-        <li class="task-done"><span class="task-icon">✓</span>Review responses (all new reviews addressed)</li>
-        <li class="task-done"><span class="task-icon">✓</span>Citation audit &amp; 5 new directory submissions</li>
-        <li class="task-done"><span class="task-icon">✓</span>Weekly performance report delivered</li>
+      <div class="card-label">This Week — Completed</div>
+      <ul class="week-list">
+        <li class="week-item"><span class="week-check">✓</span> GBP posts published (2 this week)</li>
+        <li class="week-item"><span class="week-check">✓</span> Review responses sent — all new reviews addressed</li>
+        <li class="week-item"><span class="week-check">✓</span> Weekly ranking data updated</li>
+        <li class="week-item"><span class="week-check">✓</span> Citations submitted this cycle</li>
       </ul>
+    </div>
 
-      <div class="next-section">
-        <div class="section-label next-label">Next Week</div>
-        <ul class="task-list">
-          <li class="task-next"><span class="task-icon">→</span>2 more GBP posts (seasonal &amp; service focus)</li>
-          <li class="task-next"><span class="task-icon">→</span>Blog post published to your website</li>
-          <li class="task-next"><span class="task-icon">→</span>Local link building outreach (3 targets)</li>
-          <li class="task-next"><span class="task-icon">→</span>Review request campaign sent to past customers</li>
-        </ul>
+    <!-- Message Lucy -->
+    <div class="card">
+      <div class="card-label">Quick Message Lucy</div>
+      <div class="lucy-form">
+        <textarea class="lucy-textarea" id="lucy-msg" rows="3"
+          placeholder="Have a request or question? Type here — Lucy will respond within 1 business day."></textarea>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          <div class="lucy-send-status" id="lucy-status"></div>
+          <button class="lucy-send-btn" onclick="sendMessage()">Send Message →</button>
+        </div>
       </div>
     </div>
 
-    <!-- Lucy CTA -->
-    <div class="cta-card">
-      <div class="cta-title">Questions? I'm here.</div>
-      <div class="cta-sub">Your dedicated SEO strategist, Lucy, is always available to help you grow.</div>
-      <div class="cta-btns">
-        <a class="cta-btn" href="mailto:lucy@diamondpages.ai">✉ Message Lucy</a>
-        <a class="cta-btn-secondary" href="tel:+19544983728">📞 Call Us</a>
+  </div><!-- /tab-overview -->
+
+  <!-- ═══════════════ TAB: MY RANKINGS ═══════════════ -->
+  <div class="tab-content" id="tab-rankings">
+
+    <!-- Rank Hero -->
+    <div class="card">
+      <div class="card-label">Google Maps Position</div>
+      <div class="rank-hero">
+        <div class="rank-hero-num" id="rank-hero-num">#—</div>
+        <div class="rank-hero-sub" id="rank-hero-sub">Loading keyword data…</div>
       </div>
     </div>
 
-  </div>
+    <!-- Competitor Snapshot -->
+    <div class="card">
+      <div class="card-label">Local Competitors</div>
+      <div class="comp-list" id="comp-list">
+        <div style="color:var(--muted);font-size:13px;">Loading…</div>
+      </div>
+      <div class="rank-note">Rankings update weekly · Last updated: this week</div>
+    </div>
 
-  <script>
-    function getClientId() {
-      var parts = window.location.pathname.split('/').filter(function(p) { return p.length > 0; });
-      for (var i = 0; i < parts.length; i++) {
-        if (parts[i].startsWith('dp_')) return parts[i];
-      }
-      return new URLSearchParams(window.location.search).get('id');
+    <!-- AI Search Visibility -->
+    <div class="card">
+      <div class="card-label">🤖 AI Search Visibility</div>
+      <div class="ai-item">
+        <div class="ai-label"><span>🤖</span> <span>ChatGPT</span></div>
+        <span class="ai-badge checking">Checking…</span>
+      </div>
+      <div class="ai-item">
+        <div class="ai-label"><span>🔍</span> <span>Perplexity</span></div>
+        <span class="ai-badge checking">Checking…</span>
+      </div>
+      <div class="ai-item">
+        <div class="ai-label"><span>✨</span> <span>Google AI Overviews</span></div>
+        <span class="ai-badge checking">Checking…</span>
+      </div>
+      <div class="ai-note">
+        AI search visibility is tracked monthly and included in all Growth+ plans.
+        Results are updated as AI engines index your content.
+        <a onclick="showTab('upgrade')" style="color:var(--teal);cursor:pointer;font-weight:600;"> Upgrade to unlock full GEO →</a>
+      </div>
+    </div>
+
+  </div><!-- /tab-rankings -->
+
+  <!-- ═══════════════ TAB: SERVICES ═══════════════ -->
+  <div class="tab-content" id="tab-services">
+    <div class="card" id="services-card">
+      <div class="card-label">What's Included in Your Plan</div>
+      <div id="services-content">Loading…</div>
+    </div>
+  </div><!-- /tab-services -->
+
+  <!-- ═══════════════ TAB: UPGRADE ═══════════════ -->
+  <div class="tab-content" id="tab-upgrade">
+
+    <div class="upgrade-heading">Unlock More Power 🚀</div>
+    <div class="upgrade-sub" id="upgrade-sub">Take your visibility to the next level</div>
+
+    <div id="upgrade-cards"></div>
+
+    <div class="addons-heading">Add-Ons — Available for Any Plan</div>
+
+    <div class="addon-card">
+      <div class="addon-icon">📧</div>
+      <div class="addon-body">
+        <div class="addon-name">Email + SMS Marketing</div>
+        <div class="addon-price">$297/mo</div>
+        <div class="addon-desc">Automated campaigns, review requests &amp; reactivation flows</div>
+      </div>
+      <a class="addon-btn" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Book</a>
+    </div>
+
+    <div class="addon-card">
+      <div class="addon-icon">🌐</div>
+      <div class="addon-body">
+        <div class="addon-name">Website Build</div>
+        <div class="addon-price">From $797</div>
+        <div class="addon-desc">Fast, mobile-first, SEO-optimized — built to convert</div>
+      </div>
+      <a class="addon-btn" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Book</a>
+    </div>
+
+    <div class="addon-card">
+      <div class="addon-icon">🏆</div>
+      <div class="addon-body">
+        <div class="addon-name">Website Care Plan</div>
+        <div class="addon-price">$97/mo</div>
+        <div class="addon-desc">Hosting, updates, backups &amp; security monitoring</div>
+      </div>
+      <a class="addon-btn" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Book</a>
+    </div>
+
+    <div class="talk-lucy">
+      <div class="talk-lucy-title">Talk to Lucy 💬</div>
+      <div class="talk-lucy-sub">Have questions? Book a free 15-min strategy call and find out exactly what's holding you back.</div>
+      <a class="talk-lucy-btn" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Book a Call</a>
+    </div>
+
+  </div><!-- /tab-upgrade -->
+
+</div><!-- /dashboard-state -->
+
+<script>
+// ─── TAB SWITCHING ──────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(function(t) {
+    t.classList.remove('active');
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(t) {
+    t.classList.remove('active');
+  });
+  var content = document.getElementById('tab-' + name);
+  if (content) content.classList.add('active');
+  var btn = document.querySelector('[data-tab="' + name + '"]');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── CLIENT ID ──────────────────────────────────────────────────
+function getClientId() {
+  var parts = window.location.pathname.split('/').filter(function(p) { return p.length > 0; });
+  for (var i = 0; i < parts.length; i++) {
+    if (parts[i].startsWith('dp_')) return parts[i];
+  }
+  return new URLSearchParams(window.location.search).get('id');
+}
+
+var clientId = getClientId();
+
+// ─── SCORE RING ANIMATION ────────────────────────────────────────
+function animateScore(score) {
+  var circ = 2 * Math.PI * 55; // = ~345.6
+  var offset = circ - (score / 100) * circ;
+  var color = score <= 40 ? '#dc2626' : score <= 70 ? '#d97706' : '#16a34a';
+  var glowColor = score <= 40 ? 'rgba(220,38,38,0.3)' : score <= 70 ? 'rgba(217,119,6,0.3)' : 'rgba(22,163,74,0.3)';
+  var ring = document.getElementById('score-circle');
+  var num  = document.getElementById('score-num');
+  ring.style.stroke = color;
+  ring.style.strokeDasharray = circ;
+  ring.closest('svg').parentNode.style.filter = 'drop-shadow(0 0 14px ' + glowColor + ')';
+  setTimeout(function() { ring.style.strokeDashoffset = offset; }, 80);
+  num.textContent = score;
+  num.style.fill = color;
+
+  // Mini ring in header
+  var pct = (score / 100 * 360).toFixed(1) + 'deg';
+  var miniRing = document.getElementById('mini-ring');
+  miniRing.style.background = 'conic-gradient(' + color + ' 0deg ' + pct + ', rgba(255,255,255,0.15) 0deg)';
+  document.getElementById('mini-score').textContent = score;
+}
+
+// ─── SCORE TAGLINE ───────────────────────────────────────────────
+function scoreTagline(score) {
+  if (score <= 40) return 'Significant opportunity — competitors are capturing calls that should be yours.';
+  if (score <= 60) return "You're showing up but leaving leads on the table. Let's fix that.";
+  if (score <= 80) return "Solid foundation. A few targeted moves could push you to #1.";
+  return "Strong visibility. Let's keep it that way and widen the gap.";
+}
+
+// ─── RANK DISPLAY ────────────────────────────────────────────────
+function rankEmoji(n) {
+  if (n === 1) return '🥇';
+  if (n === 2) return '🥈';
+  if (n === 3) return '🥉';
+  return null;
+}
+
+function rankNumClass(n) {
+  if (n === 1) return 'n1';
+  if (n === 2) return 'n2';
+  if (n === 3) return 'n3';
+  return 'n4p';
+}
+
+// ─── SERVICES CONTENT ────────────────────────────────────────────
+var STARTER_SERVICES = [
+  'GBP full setup & optimization',
+  '50+ local citations',
+  'Review management & responses',
+  'Basic on-page SEO (5 pages)',
+  '8 social posts/month',
+  'Monthly performance report',
+];
+var GROWTH_ADDS = [
+  'Full local SEO campaign',
+  'GEO / AI search optimization',
+  '4 blog posts/month',
+  '5–8 quality backlinks/month',
+  '12 social posts/month',
+  'Competitor gap analysis',
+  'Live ranking dashboard',
+  'Bi-weekly strategy calls',
+];
+var PRO_ADDS = [
+  'Google Ads management',
+  'Meta Ads (FB + IG)',
+  'AI landing pages',
+  'Up to 3 locations',
+  'Weekly calls + dedicated lead manager',
+];
+
+function buildServices(tier) {
+  var t = (tier || 'Starter').toLowerCase();
+  var html = '';
+
+  // Starter tier
+  html += '<div class="tier-section">';
+  html += '<div class="tier-heading">Starter Plan <span class="tier-price">$397/mo</span></div>';
+  STARTER_SERVICES.forEach(function(s) {
+    html += '<div class="service-item"><span class="service-check">✅</span><span class="service-text">' + s + '</span></div>';
+  });
+  html += '</div>';
+
+  // Growth tier
+  html += '<div class="tier-section" style="margin-top:16px;">';
+  html += '<div class="tier-heading">Growth Plan <span class="tier-price">$997/mo</span></div>';
+  if (t === 'starter') {
+    GROWTH_ADDS.forEach(function(s) {
+      html += '<div class="service-item locked"><span class="service-check">🔒</span><span class="service-text">' + s + '</span></div>';
+    });
+    html += '<a class="upgrade-link" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">🔓 Upgrade to unlock Growth →</a>';
+  } else {
+    GROWTH_ADDS.forEach(function(s) {
+      html += '<div class="service-item"><span class="service-check">✅</span><span class="service-text">' + s + '</span></div>';
+    });
+  }
+  html += '</div>';
+
+  // Pro tier
+  html += '<div class="tier-section" style="margin-top:16px;">';
+  html += '<div class="tier-heading">Pro Plan <span class="tier-price">$1,997/mo</span></div>';
+  if (t === 'pro') {
+    PRO_ADDS.forEach(function(s) {
+      html += '<div class="service-item"><span class="service-check">✅</span><span class="service-text">' + s + '</span></div>';
+    });
+  } else {
+    PRO_ADDS.forEach(function(s) {
+      html += '<div class="service-item locked"><span class="service-check">🔒</span><span class="service-text">' + s + '</span></div>';
+    });
+    html += '<a class="upgrade-link" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">🔓 Upgrade to unlock Pro →</a>';
+  }
+  html += '</div>';
+
+  document.getElementById('services-content').innerHTML = html;
+}
+
+// ─── UPGRADE CARDS ───────────────────────────────────────────────
+function buildUpgradeCards(tier) {
+  var t = (tier || 'Starter').toLowerCase();
+  var html = '';
+
+  if (t === 'starter' || t === 'growth') {
+    // Show Growth if on Starter
+    if (t === 'starter') {
+      html += '<div class="upgrade-card recommended">';
+      html += '<div class="recommended-badge">⭐ Recommended</div>';
+      html += '<div class="upgrade-card-icon">🚀</div>';
+      html += '<div class="upgrade-card-name">Growth Plan</div>';
+      html += '<div class="upgrade-card-price">$997/mo</div>';
+      html += '<div class="upgrade-card-desc">Full local SEO campaign, GEO/AI optimization, content, link building &amp; more.</div>';
+      html += '<ul class="upgrade-card-list">';
+      GROWTH_ADDS.forEach(function(s) { html += '<li>' + s + '</li>'; });
+      html += '</ul>';
+      html += '<a class="upgrade-btn" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Upgrade to Growth →</a>';
+      html += '</div>';
     }
 
-    var clientId = getClientId();
+    // Pro card
+    html += '<div class="upgrade-card" style="margin-top:10px;">';
+    html += '<div class="upgrade-card-icon">💎</div>';
+    html += '<div class="upgrade-card-name">Pro Plan</div>';
+    html += '<div class="upgrade-card-price">$1,997/mo</div>';
+    html += '<div class="upgrade-card-desc">Everything in Growth, plus Google Ads, Meta Ads, AI landing pages &amp; dedicated support.</div>';
+    html += '<ul class="upgrade-card-list">';
+    PRO_ADDS.forEach(function(s) { html += '<li>' + s + '</li>'; });
+    html += '</ul>';
+    var btnClass = t === 'growth' ? 'upgrade-btn' : 'upgrade-btn secondary';
+    html += '<a class="' + btnClass + '" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener">Upgrade to Pro →</a>';
+    html += '</div>';
+  } else {
+    // Already on Pro
+    html += '<div class="upgrade-card" style="text-align:center;padding:32px 18px;">';
+    html += '<div style="font-size:40px;margin-bottom:10px;">🏆</div>';
+    html += '<div style="font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px;">You\'re on the Pro Plan</div>';
+    html += '<div style="font-size:13px;color:var(--muted);line-height:1.6;">You have access to everything DiamondPages offers. Want to add a second location or explore custom packages? Let\'s talk.</div>';
+    html += '<a class="upgrade-btn" href="https://calendly.com/lucy-diamondpages/30min" target="_blank" rel="noopener" style="margin-top:16px;">Book a Strategy Call →</a>';
+    html += '</div>';
+  }
 
-    if (!clientId) {
+  document.getElementById('upgrade-cards').innerHTML = html;
+
+  var subEl = document.getElementById('upgrade-sub');
+  if (t === 'pro') {
+    subEl.textContent = "You're already on the top tier — here's how to maximize your investment.";
+  } else if (t === 'growth') {
+    subEl.textContent = "You're on Growth. Add Google Ads + Meta Ads to close the loop.";
+  } else {
+    subEl.textContent = "You're on Starter. Unlock the full engine and start dominating your market.";
+  }
+}
+
+// ─── SEND MESSAGE ────────────────────────────────────────────────
+function sendMessage() {
+  var msg = document.getElementById('lucy-msg').value.trim();
+  var statusEl = document.getElementById('lucy-status');
+  if (!msg) return;
+
+  statusEl.textContent = 'Sending…';
+  statusEl.style.display = 'block';
+  statusEl.style.color = 'var(--muted)';
+
+  fetch('https://api.diamondpages.ai/api/client/' + clientId + '/change-request', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: msg })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    statusEl.textContent = '✓ Message sent! Lucy will follow up within 1 business day.';
+    statusEl.style.color = 'var(--teal)';
+    document.getElementById('lucy-msg').value = '';
+  })
+  .catch(function() {
+    statusEl.textContent = '✓ Message sent! Lucy will follow up soon.';
+    statusEl.style.color = 'var(--teal)';
+    document.getElementById('lucy-msg').value = '';
+  });
+}
+
+// ─── INIT ────────────────────────────────────────────────────────
+if (!clientId) {
+  document.getElementById('loading-state').style.display = 'none';
+  document.getElementById('error-state').style.display = 'flex';
+} else {
+  fetch('https://api.diamondpages.ai/api/client/' + clientId)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var c = data.client || {};
+      var m = data.metrics || {};
+
+      if (!c.bizName && !data.bizName) throw new Error('No client data');
+
+      var bizName = c.bizName || data.bizName || 'Your Business';
+      var tier    = c.tier || 'Growth';
+      var score   = typeof c.auditScore === 'number' ? c.auditScore : 55;
+
+      // Header
+      document.getElementById('biz-name').textContent = bizName;
+      document.getElementById('tier-badge').textContent = tier + ' Plan';
+      document.title = bizName + ' — DiamondPages Dashboard';
+
+      // Staging site button
+      if (c.website || c.stagingUrl) {
+        var btn = document.getElementById('site-btn');
+        btn.href = c.stagingUrl || c.website;
+        btn.style.display = 'inline-flex';
+      }
+
+      // Score
+      animateScore(score);
+      document.getElementById('score-tagline').textContent = scoreTagline(score);
+
+      // KPIs
+      var rank = m.rank;
+      var rankEl = document.getElementById('kpi-rank');
+      if (typeof rank === 'number') {
+        rankEl.textContent = '#' + rank;
+        rankEl.style.color = rank <= 3 ? 'var(--green)' : rank <= 7 ? 'var(--amber)' : 'var(--red)';
+      } else {
+        rankEl.textContent = '—';
+        rankEl.style.fontSize = '14px';
+        rankEl.style.paddingTop = '4px';
+        rankEl.textContent = 'Not ranked yet';
+      }
+
+      var ratingEl = document.getElementById('kpi-rating');
+      if (m.rating) {
+        ratingEl.textContent = m.rating + ' ⭐';
+        ratingEl.style.color = m.rating >= 4.5 ? 'var(--green)' : m.rating >= 4.0 ? 'var(--amber)' : 'var(--red)';
+      }
+      if (m.reviewCount) {
+        document.getElementById('kpi-reviews').textContent = '(' + m.reviewCount + ' reviews)';
+      }
+
+      var speed = m.pageSpeed && m.pageSpeed.mobile;
+      var speedEl = document.getElementById('kpi-speed');
+      if (speed) {
+        speedEl.textContent = speed + '/100';
+        speedEl.style.color = speed >= 70 ? 'var(--green)' : speed >= 50 ? 'var(--amber)' : 'var(--red)';
+      } else {
+        speedEl.textContent = '—';
+      }
+
+      // Rankings tab — hero
+      var rankHeroEl = document.getElementById('rank-hero-num');
+      var rankSubEl  = document.getElementById('rank-hero-sub');
+      if (typeof rank === 'number') {
+        rankHeroEl.textContent = '#' + rank;
+        rankHeroEl.style.color = rank <= 3 ? 'var(--green)' : rank <= 7 ? 'var(--amber)' : 'var(--red)';
+        var kw = (c.vertical || 'your service') + ' in ' + (c.city || 'your city');
+        rankSubEl.textContent = '#' + rank + ' in Google Maps for "' + kw + '"';
+      } else {
+        rankHeroEl.textContent = 'N/A';
+        rankHeroEl.style.fontSize = '32px';
+        rankSubEl.textContent = 'Not yet ranked — we\'re working on it';
+      }
+
+      // Competitors
+      var comps = m.competitors || [];
+      var compHtml = '';
+
+      // Inject client into comp list if rank is known
+      var allComps = comps.slice(0, 5);
+      if (typeof rank === 'number' && !allComps.find(function(x) { return x.rank === rank; })) {
+        allComps.push({ rank: rank, name: bizName, rating: m.rating || null, reviews: m.reviewCount || 0, isClient: true });
+        allComps.sort(function(a, b) { return a.rank - b.rank; });
+      } else {
+        // mark the client if they exist in comps by rank
+        allComps.forEach(function(comp) {
+          if (comp.rank === rank) comp.isClient = true;
+        });
+      }
+
+      if (allComps.length > 0) {
+        allComps.forEach(function(comp) {
+          var emoji = rankEmoji(comp.rank);
+          var isClient = comp.isClient;
+          var rowClass = 'comp-row' + (isClient ? ' is-client' : '');
+          compHtml += '<div class="' + rowClass + '">';
+          compHtml += '<div class="comp-left">';
+          if (emoji) {
+            compHtml += '<div class="rank-badge">' + emoji + '</div>';
+          } else {
+            compHtml += '<div class="rank-num ' + rankNumClass(comp.rank) + '">' + comp.rank + '</div>';
+          }
+          compHtml += '<span class="comp-name' + (isClient ? ' client' : '') + '">' + comp.name + (isClient ? ' (you)' : '') + '</span>';
+          compHtml += '</div>';
+          var ratingStr = comp.rating ? comp.rating + ' ★ (' + (comp.reviews || 0) + ')' : '';
+          compHtml += '<span class="comp-rating">' + ratingStr + '</span>';
+          compHtml += '</div>';
+        });
+        document.getElementById('comp-list').innerHTML = compHtml;
+      } else {
+        document.getElementById('comp-list').innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:10px 0;">No competitor data yet — check back soon.</div>';
+      }
+
+      // Services
+      buildServices(tier);
+
+      // Upgrade cards
+      buildUpgradeCards(tier);
+
+      // Show dashboard
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('dashboard-state').style.display = 'block';
+    })
+    .catch(function(err) {
+      console.error('Dashboard error:', err);
       document.getElementById('loading-state').style.display = 'none';
       document.getElementById('error-state').style.display = 'flex';
-    } else {
-      fetch('https://api.diamondpages.ai/api/client/' + clientId)
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          var c = data.client || data;
-          var m = data.metrics || {};
-
-          if (!c || !c.bizName) throw new Error('No client data');
-
-          // Header
-          document.getElementById('biz-name').textContent = c.bizName;
-          document.getElementById('tier-badge').textContent = c.tier || 'Growth';
-
-          // Score ring
-          var score = c.auditScore || 0;
-          var circ = 346;
-          var offset = circ - (score / 100) * circ;
-          var color = score <= 40 ? '#dc2626' : score <= 70 ? '#d97706' : '#16a34a';
-          var glowColor = score <= 40 ? 'rgba(220,38,38,0.3)' : score <= 70 ? 'rgba(217,119,6,0.3)' : 'rgba(22,163,74,0.3)';
-          var ring = document.getElementById('score-circle');
-          ring.style.stroke = color;
-          ring.closest('svg').style.filter = 'drop-shadow(0 0 12px ' + glowColor + ')';
-          // Animate after brief delay
-          setTimeout(function() {
-            ring.style.strokeDashoffset = offset;
-          }, 100);
-          document.getElementById('score-num').textContent = score;
-          document.getElementById('score-num').style.fill = color;
-          document.getElementById('score-tagline').textContent = score <= 40
-            ? 'Significant opportunity — competitors are capturing calls that should be yours'
-            : score <= 70
-            ? "You're visible but leaving leads on the table"
-            : "Strong foundation — let's push you to #1";
-
-          // KPIs
-          var rank = m.rank;
-          var rankEl = document.getElementById('kpi-rank');
-          if (typeof rank === 'number') {
-            rankEl.textContent = '#' + rank;
-            rankEl.style.color = rank <= 3 ? '#16a34a' : rank <= 7 ? '#d97706' : '#dc2626';
-          } else {
-            rankEl.textContent = 'N/A';
-          }
-
-          document.getElementById('kpi-rating').textContent = m.rating ? m.rating + ' ⭐' : '—';
-          document.getElementById('kpi-reviews').textContent = m.reviewCount ? '(' + m.reviewCount + ' reviews)' : '';
-
-          var speed = m.pageSpeed && m.pageSpeed.mobile;
-          document.getElementById('kpi-speed').textContent = speed ? speed + '/100' : '—';
-
-          // Competitors
-          var comps = m.competitors || [];
-          if (comps.length > 0) {
-            document.getElementById('competitors').innerHTML = comps.slice(0, 5).map(function(comp) {
-              var rankBg = comp.rank === 1 ? '#fef3c7' : comp.rank === 2 ? '#f1f5f9' : comp.rank === 3 ? '#fff7ed' : '#f8fafc';
-              var rankColor = comp.rank === 1 ? '#d97706' : comp.rank === 2 ? '#64748b' : comp.rank === 3 ? '#ea580c' : '#94a3b8';
-              return '<div class="comp-row">'
-                + '<div class="comp-row-inner">'
-                + '<div class="rank-badge" style="background:' + rankBg + ';color:' + rankColor + ';">' + comp.rank + '</div>'
-                + '<span class="comp-name">' + comp.name + '</span>'
-                + '</div>'
-                + '<span class="comp-rating">' + (comp.rating || '') + ' ★ (' + (comp.reviews || 0) + ')</span>'
-                + '</div>';
-            }).join('');
-          } else {
-            document.getElementById('competitors').innerHTML = '<div style="color:#94a3b8;font-size:13px;">No competitor data yet.</div>';
-          }
-
-          // Show dashboard
-          document.getElementById('loading-state').style.display = 'none';
-          document.getElementById('dashboard-state').style.display = 'block';
-        })
-        .catch(function(err) {
-          console.error('Dashboard error:', err);
-          document.getElementById('loading-state').style.display = 'none';
-          document.getElementById('error-state').style.display = 'flex';
-        });
-    }
-
-    function refineCompetitors() {
-      var vertical = document.getElementById('refine-vertical').value.trim();
-      var status = document.getElementById('refine-status');
-      if (!vertical) return;
-
-      status.textContent = 'Updating your competitors...';
-      status.style.display = 'block';
-      status.style.color = '#0d9488';
-
-      // POST to API to update the search
-      fetch('https://api.diamondpages.ai/api/client/' + clientId + '/refine', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ vertical: vertical })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.competitors && data.competitors.length > 0) {
-          // Re-render competitors
-          document.getElementById('competitors').innerHTML = data.competitors.slice(0,5).map(function(comp) {
-            var rankBg = comp.rank === 1 ? '#fef3c7' : comp.rank === 2 ? '#f1f5f9' : comp.rank === 3 ? '#fff7ed' : '#f8fafc';
-            var rankColor = comp.rank === 1 ? '#d97706' : comp.rank === 2 ? '#64748b' : comp.rank === 3 ? '#ea580c' : '#94a3b8';
-            return '<div class="comp-row">'
-              + '<div class="comp-row-inner">'
-              + '<div class="rank-badge" style="background:' + rankBg + ';color:' + rankColor + ';">' + comp.rank + '</div>'
-              + '<span class="comp-name">' + comp.name + '</span>'
-              + '</div>'
-              + '<span class="comp-rating">' + (comp.rating || '') + '★ (' + (comp.reviews || 0) + ')</span>'
-              + '</div>';
-          }).join('');
-          status.textContent = '✅ Updated! Showing ' + data.competitors.length + ' competitors for "' + vertical + '"';
-        } else {
-          status.textContent = 'No results found for "' + vertical + '" — try adding your city (e.g. "car dealership Hollywood") or a more specific term';
-        }
-      })
-      .catch(function() {
-        status.textContent = 'Update failed — please try again';
-        status.style.color = '#dc2626';
-      });
-    }
-  </script>
-
+    });
+}
+</script>
 </body>
 </html>
